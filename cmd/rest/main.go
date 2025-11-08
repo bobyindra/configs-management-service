@@ -1,13 +1,14 @@
 package main
 
 import (
-	"configs-management-service/internal/config"
 	"database/sql"
 	"log"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
+
+	"github.com/bobyindra/configs-management-service/internal/config"
 )
 
 func main() {
