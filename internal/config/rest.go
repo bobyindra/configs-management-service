@@ -11,7 +11,6 @@ import (
 	"github.com/rs/cors"
 
 	cmsConfig "github.com/bobyindra/configs-management-service/module/configuration/config"
-	cmsEntity "github.com/bobyindra/configs-management-service/module/configuration/entity"
 )
 
 type RestServer struct {
@@ -46,10 +45,8 @@ func NewCmsRest() (*CmsRestApp, error) {
 func NewRestServer(app *CmsRestApp) *RestServer {
 	r := gin.Default()
 
-	entities := cmsEntity.NewEntities(app.Database)
-
 	cmsCfg := cmsConfig.CmsConfig{
-		Database:          entities,
+		Database:          app.Database,
 		Router:            r,
 		JWTSecret:         app.svcCfg.JWTSecret,
 		JWTExpiryDuration: app.svcCfg.JWTExpiryDuration,
