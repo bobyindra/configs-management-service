@@ -42,7 +42,7 @@ require (
 	github.com/gin-gonic/gin v1.11.0
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
-	github.com/mattn/go-sqlite3 v1.14.32 // indirect
+	github.com/mattn/go-sqlite3 v1.14.32
 	github.com/rs/cors v1.11.1
 	github.com/subosito/gotenv v1.6.0
 	gomodules.xyz/envconfig v1.3.0
