@@ -1,0 +1,418 @@
+openapi: 3.0.4
+info:
+  title: Configuration Management Service - OpenAPI
+  description: |-
+    This is an APIs documentation for Configuration Management Service based on the OpenAPI 3.0 specification.
+  contact:
+    email: boby.indr@gmail.com
+  version: v1
+externalDocs:
+  description: Find out more about Swagger
+  url: https://swagger.io
+servers:
+  - url: https://configs.example.com/api
+tags:
+  - name: config
+    description: CRUD a Config
+paths:
+  /v1/configs/{configName}:
+    post:
+      deprecated: false
+      tags:
+        - config
+      summary: Insert Config Values by Config Name
+      description: Insert config values to a config based on config name
+      operationId: insertConfigValuesByConfigName
+      parameters:
+        - name: configName
+          in: path
+          description: Config Name of a config to insert
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Insert config values
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/configRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/configResponseSuccess'
+        '400':
+          description: Bad Request/Missing Params
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ErrorResponse"
+        '401':
+          description: Unauthorized JWT token. Invalid scopes.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ErrorResponse"
+        '403':
+          description: Authorized user does not have correct access to access resource.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ErrorResponse"
+        '404':
+          description: Config Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ErrorResponse"
+        '500':
+          description: Internal Server Error
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ErrorResponse"
+      security:
+        - config_auth:
+            - write:configs
+            - read:configs
+    put:
+      deprecated: false
+      tags:
+        - config
+      summary: Update Config Values by Config Name
+      description: Update config values based on config name
+      operationId: updateConfigValuesByConfigName
+      parameters:
+        - name: configName
+          in: path
+          description: Config Name of a config to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Insert config values
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/configRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/configResponseSuccess'
+        '400':
+          description: Bad Request/Missing Params
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ErrorResponse"
+        '401':
+          description: Unauthorized JWT token. Invalid scopes.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ErrorResponse"
+        '403':
+          description: Authorized user does not have correct access to access resource.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ErrorResponse"
+        '404':
+          description: Config Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ErrorResponse"
+        '500':
+          description: Internal Server Error
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ErrorResponse"
+      security:
+        - config_auth:
+            - write:configs
+            - read:configs
+    get:
+      deprecated: false
+      tags:
+        - config
+      summary: Get Config Values by Config Name
+      description: Get config values to a config based on config name
+      operationId: getConfigValuesByConfigName
+      parameters:
+        - name: configName
+          in: path
+          description: Config Name of a config to get
+          required: true
+          schema:
+            type: string
+        - name: version
+          in: query
+          description: Version of config to retrieve
+          required: false
+          schema:
+            type: integer
+            format: int8
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/configResponseSuccess'
+        '400':
+          description: Bad Request/Missing Params
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ErrorResponse"
+        '401':
+          description: Unauthorized JWT token. Invalid scopes.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ErrorResponse"
+        '403':
+          description: Authorized user does not have correct access to access resource.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ErrorResponse"
+        '404':
+          description: Config Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ErrorResponse"
+        '500':
+          description: Internal Server Error
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ErrorResponse"
+      security:
+        - config_auth:
+            - read:configs
+  /v1/configs/{configName}/rollback:
+    post:
+      deprecated: false
+      tags:
+        - config
+      summary: Rollback Config Values by Config Name
+      description: Rollback config values to any previous version based on config name
+      operationId: rollbackConfigValuesByConfigName
+      parameters:
+        - name: configName
+          in: path
+          description: Config Name of a config to rollback
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Rollback config values payload
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/configRollbackRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/configResponseSuccess'
+        '400':
+          description: Bad Request/Missing Params
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ErrorResponse"
+        '401':
+          description: Unauthorized JWT token. Invalid scopes.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ErrorResponse"
+        '403':
+          description: Authorized user does not have correct access to access resource.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ErrorResponse"
+        '404':
+          description: Config Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ErrorResponse"
+        '500':
+          description: Internal Server Error
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ErrorResponse"
+      security:
+        - config_auth:
+            - write:configs
+            - read:configs
+  /v1/configs/{configName}/versions:
+    get:
+      deprecated: false
+      tags:
+        - config
+      summary: Get Config Versions by Config Name
+      description: Get all config versions based on config name
+      operationId: getConfigVersionsByConfigName
+      parameters:
+        - name: configName
+          in: path
+          description: Config Name of a config to get all versions
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/configResponseSuccess'
+        '400':
+          description: Bad Request/Missing Params
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ErrorResponse"
+        '401':
+          description: Unauthorized JWT token. Invalid scopes.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ErrorResponse"
+        '403':
+          description: Authorized user does not have correct access to access resource.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ErrorResponse"
+        '404':
+          description: Config Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ErrorResponse"
+        '500':
+          description: Internal Server Error
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ErrorResponse"
+      security:
+        - config_auth:
+            - read:configs
+components:
+  schemas:
+    configRequestBody:
+      description: Insert config values payload
+      type: object
+      required:        
+        - config_values
+      properties:
+        config_values:
+          type: object
+          example: {"max_limit":1000,"enabled":true}
+    configResponseSuccess:
+      description: Insert config values payload
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        config_values:
+          type: object
+          example: {"max_limit":1000,"enabled":true}
+        version:
+          type: integer
+          format: int8
+          example: 1
+        created_at:
+          type: string
+          example: "2025-11-08T15:38:41+07:00"
+          description: "The time when the first Config was inserted"
+        updated_at:
+          type: string
+          example: "2025-11-09T13:27:17+07:00"
+          description: "The time when the Config was updated"
+      required:
+        - id
+        - config_values        
+        - version
+        - created_at
+        - updated_at
+    configRollbackRequestBody:
+      description: Rollback config values payload
+      type: object
+      required:        
+        - version
+      properties:
+        version:
+          type: integer
+          format: int8
+          example: 1    
+    v1ErrorResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+              $ref: '#/components/schemas/v1ErrorInfo'
+    v1ErrorInfo:
+      type: object
+      properties:
+        code:
+          title: "code"
+          type: string
+        message:
+          title: "message"
+          type: string
+        field:
+          title: "field"
+          type: string
+      required:
+        - code
+        - message
+  securitySchemes:
+    config_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://configs.example.com/oauth/authorize
+          scopes:
+            "write:configs": Grand access to modify configs
+            "read:configs": Grand access to read configs
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
