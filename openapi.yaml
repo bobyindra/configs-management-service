@@ -164,7 +164,7 @@ paths:
           required: false
           schema:
             type: integer
-            format: int8
+            format: int16
       responses:
         '200':
           description: Successful operation
@@ -355,22 +355,17 @@ components:
           example: {"max_limit":1000,"enabled":true}
         version:
           type: integer
-          format: int8
+          format: int16
           example: 1
         created_at:
           type: string
           example: "2025-11-08T15:38:41+07:00"
           description: "The time when the first Config was inserted"
-        updated_at:
-          type: string
-          example: "2025-11-09T13:27:17+07:00"
-          description: "The time when the Config was updated"
       required:
         - id
         - config_values        
         - version
         - created_at
-        - updated_at
     configRollbackRequestBody:
       description: Rollback config values payload
       type: object
@@ -379,7 +374,7 @@ components:
       properties:
         version:
           type: integer
-          format: int8
+          format: int16
           example: 1    
     v1ErrorResponse:
       type: object
