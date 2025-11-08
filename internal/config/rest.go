@@ -21,7 +21,7 @@ type CmsRestApp struct {
 	svcCfg *ServiceConfig
 }
 
-func NewCmsRest(*CmsRestApp, error) {
+func NewCmsRest() (*CmsRestApp, error) {
 	app := &CmsRestApp{}
 	var err error
 
