@@ -6,3 +6,6 @@ migrate:
 
 migrate-down:
 	go run ./cmd/migrate/main.go down
+
+run:
+	go run ./cmd/rest/main.go

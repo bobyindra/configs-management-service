@@ -2,6 +2,7 @@ package config
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"net/http"
 	"time"
@@ -10,6 +11,7 @@ import (
 	"github.com/rs/cors"
 
 	cmsConfig "github.com/bobyindra/configs-management-service/module/configuration/config"
+	cmsEntity "github.com/bobyindra/configs-management-service/module/configuration/entity"
 )
 
 type RestServer struct {
@@ -19,6 +21,9 @@ type RestServer struct {
 
 type CmsRestApp struct {
 	svcCfg *ServiceConfig
+
+	// Dependencies
+	Database *sql.DB
 }
 
 func NewCmsRest() (*CmsRestApp, error) {
@@ -30,13 +35,21 @@ func NewCmsRest() (*CmsRestApp, error) {
 		return nil, err
 	}
 
+	app.Database, err = app.svcCfg.BuildDatabase()
+	if err != nil {
+		return nil, err
+	}
+
 	return app, nil
 }
 
 func NewRestServer(app *CmsRestApp) *RestServer {
 	r := gin.Default()
 
+	entities := cmsEntity.NewEntities(app.Database)
+
 	cmsCfg := cmsConfig.CmsConfig{
+		Database:          entities,
 		Router:            r,
 		JWTSecret:         app.svcCfg.JWTSecret,
 		JWTExpiryDuration: app.svcCfg.JWTExpiryDuration,

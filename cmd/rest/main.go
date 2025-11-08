@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"log"
 	"os"
 	"os/signal"
@@ -9,6 +8,7 @@ import (
 	"syscall"
 
 	"github.com/bobyindra/configs-management-service/internal/config"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
@@ -17,14 +17,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	// Init DB Connection
-	db, err := sql.Open("sqlite3", "./db/configs.db")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	defer db.Close()
+	defer app.Database.Close()
 
 	restServer := config.NewRestServer(app)
 
@@ -37,7 +30,7 @@ func main() {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		log.Println("Starting Rest server..., listening at %s\n")
+		log.Printf("Starting Rest server..., listening at %s\n", restServer.ApiAddress())
 		if err := restServer.Serve(); err != nil {
 			log.Printf("Rest server stopped with error: %v\n", err)
 		}
