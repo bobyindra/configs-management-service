@@ -41,7 +41,7 @@ func NewRestServer(app *CmsRestApp) *RestServer {
 		JWTSecret:         app.svcCfg.JWTSecret,
 		JWTExpiryDuration: app.svcCfg.JWTExpiryDuration,
 	}
-	cmsConfig.RegisterCmsHandlers(cmsCfg)
+	cmsConfig.RegisterCmsHandler(cmsCfg)
 
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
