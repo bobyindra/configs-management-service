@@ -12,19 +12,19 @@ type ConfigEntity struct {
 type configData []map[string]interface{}
 
 type ConfigRequest struct {
-	Id           uint       `json:"id"`
-	Name         string     `json:"name" binding:"required"`
-	ConfigValues configData `json:"config_values" binding:"required"`
-	Version      uint16     `json:"version"`
-	CreatedAt    time.Time  `json:"created_at"`
+	Id           uint      `json:"id"`
+	Name         string    `json:"name" binding:"required"`
+	ConfigValues any       `json:"config_values" binding:"required"`
+	Version      uint16    `json:"version"`
+	CreatedAt    time.Time `json:"created_at"`
 }
 
 type ConfigResponse struct {
-	Id           uint       `json:"id"`
-	Name         string     `json:"-"`
-	ConfigValues configData `json:"config_values" binding:"required"`
-	Version      uint16     `json:"version"`
-	CreatedAt    time.Time  `json:"created_at" binding:"datetime=2025-11-08T15:38:41+07:00"`
+	Id           uint      `json:"id"`
+	Name         string    `json:"-"`
+	ConfigValues any       `json:"config_values" binding:"required"`
+	Version      uint16    `json:"version"`
+	CreatedAt    time.Time `json:"created_at" binding:"datetime=2025-11-08T15:38:41+07:00"`
 }
 
 type GetConfigRequest struct {

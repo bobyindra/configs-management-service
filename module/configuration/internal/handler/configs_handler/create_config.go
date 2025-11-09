@@ -75,13 +75,7 @@ func (h *configs) validateConfigSchema(param entity.ConfigRequest) error {
 	}
 
 	// Validate
-	var result *jsonschema.EvaluationResult
-	if len(param.ConfigValues) > 1 {
-		result = sch.Validate(param.ConfigValues)
-	} else {
-		result = sch.Validate(param.ConfigValues[0])
-	}
-
+	result := sch.Validate(param.ConfigValues)
 	if result.IsValid() {
 		return nil
 	}
