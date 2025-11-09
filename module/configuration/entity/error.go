@@ -22,9 +22,9 @@ var (
 		HttpCode: http.StatusNotFound,
 	}
 
-	ErrSchemaDoesNotMatch = &ErrorDetail{
-		Message:  "Schema does not match",
-		Code:     "SCHEMA_DOES_NOT_MATCH",
+	ErrInvalidSchema = &ErrorDetail{
+		Message:  "Invalid Schema",
+		Code:     "INVALID_SCHEMA",
 		HttpCode: http.StatusBadRequest,
 	}
 

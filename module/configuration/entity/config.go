@@ -9,25 +9,27 @@ type ConfigEntity struct {
 	DB *sql.DB
 }
 
+type configData []map[string]interface{}
+
 type ConfigRequest struct {
-	Id           int       `json:"-"`
-	Name         string    `json:"name" binding:"required"`
-	ConfigValues string    `json:"config_values" binding:"required"`
-	Version      int       `json:"-"`
-	CreatedAt    time.Time `json:"-"`
+	Id           uint       `json:"id"`
+	Name         string     `json:"name" binding:"required"`
+	ConfigValues configData `json:"config_values" binding:"required"`
+	Version      uint16     `json:"version"`
+	CreatedAt    time.Time  `json:"created_at"`
 }
 
 type ConfigResponse struct {
-	Id           int       `json:"id"`
-	Name         string    `json:"-"`
-	ConfigValues string    `json:"config_values" binding:"required"`
-	Version      int       `json:"version"`
-	CreatedAt    time.Time `json:"created_at" binding:"datetime=2025-11-08T15:38:41+07:00"`
+	Id           uint       `json:"id"`
+	Name         string     `json:"-"`
+	ConfigValues configData `json:"config_values" binding:"required"`
+	Version      uint16     `json:"version"`
+	CreatedAt    time.Time  `json:"created_at" binding:"datetime=2025-11-08T15:38:41+07:00"`
 }
 
 type GetConfigRequest struct {
 	Name    string `form:"name" binding:"required"`
-	Version int    `json:"version" binding:"omitempty"`
+	Version uint16 `json:"version,omitempty"`
 }
 
 type GetListConfigVersionsRequest struct {

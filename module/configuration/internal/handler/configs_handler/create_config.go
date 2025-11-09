@@ -4,10 +4,11 @@ import (
 	"encoding/json"
 	"net/http"
 
-	generalUtil "github.com/bobyindra/configs-management-service/internal/util"
 	"github.com/bobyindra/configs-management-service/module/configuration/entity"
+	"github.com/bobyindra/configs-management-service/module/configuration/schema"
 	"github.com/bobyindra/configs-management-service/module/configuration/util"
 	"github.com/gin-gonic/gin"
+	"github.com/kaptinlin/jsonschema"
 )
 
 func (h *configs) CreateConfigs(c *gin.Context) {
@@ -17,13 +18,22 @@ func (h *configs) CreateConfigs(c *gin.Context) {
 
 	// TODO: Check Permission
 
+	name := c.Param("name")
 	var param entity.ConfigRequest
 	if err := json.NewDecoder(r.Body).Decode(&param); err != nil {
 		util.BuildFailedResponse(w, err)
 		return
 	}
+	param.Name = name
 
+	// check config name
 	createConfigParam, err := h.normalizeCreateConfigRequest(param)
+	if err != nil {
+		util.BuildFailedResponse(w, err)
+		return
+	}
+
+	err = h.validateConfigSchema(param)
 	if err != nil {
 		util.BuildFailedResponse(w, err)
 		return
@@ -45,9 +55,35 @@ func (h *configs) normalizeCreateConfigRequest(param entity.ConfigRequest) (*ent
 	if param.Name == "" {
 		return nil, entity.ErrEmptyField("name")
 	}
-	if len(param.ConfigValues) == 0 {
+	if param.ConfigValues == nil {
 		return nil, entity.ErrEmptyField("config_values")
 	}
 
-	return generalUtil.GeneralNullable(param), nil
+	return &param, nil
+}
+
+func (h *configs) validateConfigSchema(param entity.ConfigRequest) error {
+	fileSchema, err := schema.GetSchemaByConfigName(param.Name)
+	if err != nil {
+		return err
+	}
+
+	compiler := jsonschema.NewCompiler()
+	sch, err := compiler.Compile(fileSchema)
+	if err != nil {
+		return err
+	}
+
+	// Validate
+	var result *jsonschema.EvaluationResult
+	if len(param.ConfigValues) > 1 {
+		result = sch.Validate(param.ConfigValues)
+	} else {
+		result = sch.Validate(param.ConfigValues[0])
+	}
+
+	if result.IsValid() {
+		return nil
+	}
+	return entity.ErrInvalidSchema
 }

@@ -4,19 +4,19 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/bobyindra/configs-management-service/internal/util"
 	"github.com/bobyindra/configs-management-service/module/configuration/entity"
-	modUtil "github.com/bobyindra/configs-management-service/module/configuration/internal/util"
 )
 
 func (r *configsRepository) GetListVersionsByConfigName(ctx context.Context, obj *entity.GetListConfigVersionsRequest) ([]*entity.ConfigResponse, *entity.PaginationResponse, error) {
-	ctx, cancel := context.WithTimeout(ctx, modUtil.DefaultTimeout)
+	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
 	defer cancel()
 
 	limit := obj.Limit
 	if limit == 0 {
-		limit = modUtil.DefaultLimit
+		limit = 10
 	}
 
 	query := fmt.Sprintf("SELECT %s FROM configs WHERE name = $1 ORDER BY version DESC LIMIT $2 OFFSET $3", strings.Join(configsRepositoryColumns, ", "))

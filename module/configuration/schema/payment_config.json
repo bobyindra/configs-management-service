@@ -1,0 +1,15 @@
+{
+  "type": "object",
+  "properties": {
+    "max_limit": {
+      "type": "integer"
+    },
+    "enabled": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "max_limit",
+    "enabled"
+  ]
+}

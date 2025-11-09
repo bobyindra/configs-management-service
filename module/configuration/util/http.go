@@ -11,7 +11,7 @@ type APIResponse struct {
 	Status  int                `json:"-"`
 	Message string             `json:"message,omitempty"`
 	Meta    any                `json:"meta,omitempty"`
-	Data    any                `json:"omitempty"`
+	Data    any                `json:"data,omitempty"`
 	Error   entity.ErrorDetail `json:"error,omitempty"`
 }
 

@@ -1,6 +1,8 @@
 package configs_repository
 
-import "database/sql"
+import (
+	"database/sql"
+)
 
 var (
 	configsRepositoryColumns = []string{
