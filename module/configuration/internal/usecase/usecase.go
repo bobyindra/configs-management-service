@@ -24,9 +24,9 @@ func NewConfigsManagementUsecase(repoList repository.RepositoryList) ConfigsMana
 }
 
 type ConfigsManagementUsecase interface {
-	CreateConfig(ctx context.Context, name string, obj *entity.Config) error
-	GetConfigByConfigName(ctx context.Context, name string) (*entity.Config, error)
-	GetListVersionsByConfigName(ctx context.Context, name string) ([]*entity.Config, error)
-	UpdateConfigByConfigName(ctx context.Context, name string, obj *entity.Config) error
-	RollbackConfigVersionByConfigName(ctx context.Context, name string, version int16) error
+	CreateConfig(ctx context.Context, params *entity.ConfigRequest) (*entity.ConfigResponse, error)
+	GetConfigByConfigName(ctx context.Context, name string) (*entity.ConfigResponse, error)
+	GetListVersionsByConfigName(ctx context.Context, name string) ([]*entity.ConfigResponse, error)
+	UpdateConfigByConfigName(ctx context.Context, params *entity.ConfigRequest) (*entity.ConfigResponse, error)
+	RollbackConfigVersionByConfigName(ctx context.Context, name string, version int16) (*entity.ConfigResponse, error)
 }

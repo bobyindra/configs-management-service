@@ -6,6 +6,6 @@ import (
 	"github.com/bobyindra/configs-management-service/module/configuration/entity"
 )
 
-func (r *configsRepository) UpdateConfigByConfigName(ctx context.Context, name string, obj *entity.Config) error {
+func (r *configsRepository) UpdateConfigByConfigName(ctx context.Context, obj *entity.ConfigRequest) error {
 	return nil
 }

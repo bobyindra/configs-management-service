@@ -23,9 +23,9 @@ func NewConfigsManagementRepository(db *sql.DB) ConfigsManagementRepository {
 }
 
 type ConfigsManagementRepository interface {
-	CreateConfig(ctx context.Context, name string, obj *entity.Config) error
-	GetConfigByConfigName(ctx context.Context, name string) (*entity.Config, error)
-	GetListVersionsByConfigName(ctx context.Context, name string) ([]*entity.Config, error)
-	UpdateConfigByConfigName(ctx context.Context, name string, obj *entity.Config) error
+	CreateConfig(ctx context.Context, obj *entity.ConfigRequest) error
+	GetConfigByConfigName(ctx context.Context, obj *entity.GetConfigRequest) (*entity.ConfigResponse, error)
+	GetListVersionsByConfigName(ctx context.Context, obj *entity.GetListConfigVersionsRequest) ([]*entity.ConfigResponse, *entity.PaginationResponse, error)
+	UpdateConfigByConfigName(ctx context.Context, obj *entity.ConfigRequest) error
 	RollbackConfigVersionByConfigName(ctx context.Context, name string, version int16) error
 }

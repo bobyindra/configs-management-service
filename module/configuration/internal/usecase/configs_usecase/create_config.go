@@ -6,6 +6,16 @@ import (
 	"github.com/bobyindra/configs-management-service/module/configuration/entity"
 )
 
-func (u *configsUsecase) CreateConfig(ctx context.Context, name string, obj *entity.Config) error {
-	return nil
+func (u *configsUsecase) CreateConfig(ctx context.Context, params *entity.ConfigRequest) (*entity.ConfigResponse, error) {
+	configs := &entity.ConfigRequest{
+		Name:         params.Name,
+		ConfigValues: params.ConfigValues,
+	}
+
+	err := u.configsRepo.CreateConfig(ctx, configs)
+	if err != nil {
+		return nil, err
+	}
+
+	return configs.ToResponse(), nil
 }

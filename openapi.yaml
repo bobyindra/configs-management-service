@@ -38,8 +38,8 @@ paths:
               $ref: '#/components/schemas/configRequestBody'
         required: true
       responses:
-        '200':
-          description: Successful operation
+        '201':
+          description: Successfully created
           content:
             application/json:
               schema:
@@ -63,7 +63,13 @@ paths:
               schema:
                 $ref: "#/components/schemas/v1ErrorResponse"
         '404':
-          description: Config Not found
+          description: Schema not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ErrorResponse"
+        '409':
+          description: Config already exists
           content:
             application/json:
               schema:
@@ -287,6 +293,20 @@ paths:
           required: true
           schema:
             type: string
+        - name: limit
+          in: query
+          description: Limit of config list to retrieve
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: offset
+          in: query
+          description: Offset of config list to retrieve
+          required: false
+          schema:
+            type: integer
+            format: int32
       responses:
         '200':
           description: Successful operation
@@ -379,10 +399,9 @@ components:
     v1ErrorResponse:
       type: object
       properties:
-        errors:
-          type: array
-          items:
-              $ref: '#/components/schemas/v1ErrorInfo'
+        error:
+          type: object
+          $ref: '#/components/schemas/v1ErrorInfo'          
     v1ErrorInfo:
       type: object
       properties:

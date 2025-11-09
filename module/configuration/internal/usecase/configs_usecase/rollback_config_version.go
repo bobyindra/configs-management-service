@@ -1,7 +1,11 @@
 package configsusecase
 
-import "context"
+import (
+	"context"
 
-func (u *configsUsecase) RollbackConfigVersionByConfigName(ctx context.Context, name string, version int16) error {
-	return nil
+	"github.com/bobyindra/configs-management-service/module/configuration/entity"
+)
+
+func (u *configsUsecase) RollbackConfigVersionByConfigName(ctx context.Context, name string, version int16) (*entity.ConfigResponse, error) {
+	return nil, nil
 }

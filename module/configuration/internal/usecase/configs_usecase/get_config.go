@@ -6,6 +6,6 @@ import (
 	"github.com/bobyindra/configs-management-service/module/configuration/entity"
 )
 
-func (u *configsUsecase) GetConfigByConfigName(ctx context.Context, name string) (obj *entity.Config, err error) {
+func (u *configsUsecase) GetConfigByConfigName(ctx context.Context, name string) (*entity.ConfigResponse, error) {
 	return nil, nil
 }
