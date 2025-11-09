@@ -43,6 +43,10 @@ func (r *configsRepository) GetListVersionsByConfigName(ctx context.Context, obj
 		result = append(result, util.GeneralNullable(cfgRes))
 	}
 
+	if len(result) == 0 {
+		return nil, nil, entity.ErrNotFound(obj.Name)
+	}
+
 	countQuery := "SELECT COUNT(*) FROM configs WHERE name = $1"
 	row := r.db.QueryRowContext(ctx, countQuery, obj.Name)
 	var total uint32

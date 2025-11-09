@@ -19,15 +19,15 @@ func (h *configs) GetConfig(c *gin.Context) {
 
 	name := c.Param("name")
 
-	listUnitsParam, err := h.normalizeConfigRequest(r.URL.Query())
+	listConfigsParam, err := h.normalizeGetConfigRequest(r.URL.Query())
 	if err != nil {
 		util.BuildFailedResponse(w, err)
 		return
 	}
 
-	listUnitsParam.Name = name
+	listConfigsParam.Name = name
 
-	resp, err := h.configsUscs.GetConfigByConfigName(ctx, listUnitsParam)
+	resp, err := h.configsUscs.GetConfigByConfigName(ctx, listConfigsParam)
 	if err != nil {
 		util.BuildFailedResponse(w, err)
 		return
@@ -39,7 +39,7 @@ func (h *configs) GetConfig(c *gin.Context) {
 	})
 }
 
-func (h *configs) normalizeConfigRequest(query url.Values) (*entity.GetConfigRequest, error) {
+func (h *configs) normalizeGetConfigRequest(query url.Values) (*entity.GetConfigRequest, error) {
 	param := &entity.GetConfigRequest{}
 
 	if ver := query.Get("version"); ver != "" {

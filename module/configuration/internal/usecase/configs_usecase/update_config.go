@@ -7,5 +7,15 @@ import (
 )
 
 func (u *configsUsecase) UpdateConfigByConfigName(ctx context.Context, params *entity.ConfigRequest) (*entity.ConfigResponse, error) {
-	return nil, nil
+	configs := &entity.ConfigRequest{
+		Name:         params.Name,
+		ConfigValues: params.ConfigValues,
+	}
+
+	err := u.configsRepo.UpdateConfigByConfigName(ctx, configs)
+	if err != nil {
+		return nil, err
+	}
+
+	return configs.ToResponse(), nil
 }

@@ -9,8 +9,6 @@ type ConfigEntity struct {
 	DB *sql.DB
 }
 
-type configData []map[string]interface{}
-
 type ConfigRequest struct {
 	Id           uint      `json:"id"`
 	Name         string    `json:"name" binding:"required"`
