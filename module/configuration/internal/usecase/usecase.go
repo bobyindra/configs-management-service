@@ -28,5 +28,5 @@ type ConfigsManagementUsecase interface {
 	GetConfigByConfigName(ctx context.Context, params *entity.GetConfigRequest) (*entity.ConfigResponse, error)
 	GetListVersionsByConfigName(ctx context.Context, params *entity.GetListConfigVersionsRequest) ([]*entity.ConfigResponse, *entity.PaginationResponse, error)
 	UpdateConfigByConfigName(ctx context.Context, params *entity.ConfigRequest) (*entity.ConfigResponse, error)
-	RollbackConfigVersionByConfigName(ctx context.Context, name string, version int16) (*entity.ConfigResponse, error)
+	RollbackConfigVersionByConfigName(ctx context.Context, params *entity.ConfigRequest) (*entity.ConfigResponse, error)
 }

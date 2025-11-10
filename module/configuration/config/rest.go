@@ -24,6 +24,6 @@ func registerConfigsHandler(router *gin.Engine, uscsList usecase.UsecaseList) {
 		v1.GET("/:name", ch.GetConfig)
 		v1.GET("/:name/versions", ch.GetConfigVersions)
 		v1.PUT("/:name", ch.UpdateConfig)
-		v1.POST("/:name/rollback/:version", ch.RollbackConfigVersion)
+		v1.POST("/:name/rollback", ch.RollbackConfigVersion)
 	}
 }

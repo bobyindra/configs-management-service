@@ -2,8 +2,8 @@ package configs_repository
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
-	"log"
 	"time"
 
 	"github.com/bobyindra/configs-management-service/module/configuration/entity"
@@ -21,14 +21,15 @@ func (r *configsRepository) UpdateConfigByConfigName(ctx context.Context, obj *e
 	}
 	jsonString := string(jsonData)
 
-	queryGetVersion := "SELECT version FROM configs WHERE name=$1 ORDER BY version DESC"
-	err = r.db.QueryRowContext(ctx, queryGetVersion, obj.Name).Scan(&obj.Version)
+	queryCheckConfig := "SELECT id FROM configs WHERE name=$1"
+	err = r.db.QueryRowContext(ctx, queryCheckConfig, obj.Name).Scan(&obj.Id)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return entity.ErrNotFound(obj.Name)
+		}
 		return err
 	}
-	obj.Version++
-	log.Println(obj.Version)
 
-	query := "INSERT INTO configs (name, config_values, version, created_at) VALUES ($1, $2, $3, $4) RETURNING id"
-	return r.db.QueryRowContext(ctx, query, obj.Name, jsonString, obj.Version, obj.CreatedAt).Scan(&obj.Id)
+	query := "INSERT INTO configs (name, config_values, version, created_at) VALUES ($1, $2, (SELECT COALESCE(MAX(version), 0) + 1 FROM configs WHERE name = $1), $3) RETURNING id, version"
+	return r.db.QueryRowContext(ctx, query, obj.Name, jsonString, obj.CreatedAt).Scan(&obj.Id, &obj.Version)
 }

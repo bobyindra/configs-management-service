@@ -8,11 +8,11 @@ import (
 )
 
 type APIResponse struct {
-	Status  int                `json:"-"`
-	Message string             `json:"message,omitempty"`
-	Meta    any                `json:"meta,omitempty"`
-	Data    any                `json:"data,omitempty"`
-	Error   entity.ErrorDetail `json:"error,omitempty"`
+	Status  int                 `json:"-"`
+	Message string              `json:"message,omitempty"`
+	Meta    any                 `json:"meta,omitempty"`
+	Data    any                 `json:"data,omitempty"`
+	Error   *entity.ErrorDetail `json:"error,omitempty"`
 }
 
 func BuildSuccessResponse(w http.ResponseWriter, resp APIResponse) {
@@ -20,6 +20,7 @@ func BuildSuccessResponse(w http.ResponseWriter, resp APIResponse) {
 	w.WriteHeader(resp.Status)
 
 	apiResponse := APIResponse{}
+	apiResponse.Error = nil
 	if resp.Meta != nil {
 		apiResponse.Meta = resp.Meta
 	}
@@ -38,13 +39,13 @@ func BuildFailedResponse(w http.ResponseWriter, err error) {
 		w.WriteHeader(b.HttpCode)
 
 		json.NewEncoder(w).Encode(APIResponse{
-			Error: *b,
+			Error: b,
 		})
 		return
 	}
 
 	w.WriteHeader(http.StatusInternalServerError)
 	json.NewEncoder(w).Encode(APIResponse{
-		Error: *entity.WrapError(err),
+		Error: entity.WrapError(err),
 	})
 }

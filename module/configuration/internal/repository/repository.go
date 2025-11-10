@@ -27,5 +27,5 @@ type ConfigsManagementRepository interface {
 	GetConfigByConfigName(ctx context.Context, obj *entity.GetConfigRequest) (*entity.ConfigResponse, error)
 	GetListVersionsByConfigName(ctx context.Context, obj *entity.GetListConfigVersionsRequest) ([]*entity.ConfigResponse, *entity.PaginationResponse, error)
 	UpdateConfigByConfigName(ctx context.Context, obj *entity.ConfigRequest) error
-	RollbackConfigVersionByConfigName(ctx context.Context, name string, version int16) error
+	RollbackConfigVersionByConfigName(ctx context.Context, obj *entity.ConfigRequest) error
 }

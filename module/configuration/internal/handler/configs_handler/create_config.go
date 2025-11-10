@@ -26,7 +26,7 @@ func (h *configs) CreateConfigs(c *gin.Context) {
 	}
 	param.Name = name
 
-	// check config name
+	// normalize params
 	createConfigParam, err := h.normalizeCreateConfigRequest(param)
 	if err != nil {
 		util.BuildFailedResponse(w, err)

@@ -77,3 +77,11 @@ func ErrNotFound(fieldName string) *ErrorDetail {
 		HttpCode: http.StatusNotFound,
 	}
 }
+
+func ErrConfigVersionNotFound(fieldName string) *ErrorDetail {
+	return &ErrorDetail{
+		Message:  "Config Version " + fieldName + " not found",
+		Code:     "CONFIG_VERSION_NOT_FOUND",
+		HttpCode: http.StatusNotFound,
+	}
+}
