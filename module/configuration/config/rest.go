@@ -1,6 +1,8 @@
 package config
 
 import (
+	"github.com/bobyindra/configs-management-service/module/configuration/internal/auth"
+	authHandler "github.com/bobyindra/configs-management-service/module/configuration/internal/handler/auth"
 	configsHandler "github.com/bobyindra/configs-management-service/module/configuration/internal/handler/configs_handler"
 	"github.com/bobyindra/configs-management-service/module/configuration/internal/repository"
 	"github.com/bobyindra/configs-management-service/module/configuration/internal/usecase"
@@ -10,10 +12,20 @@ import (
 func RegisterCmsHandler(cfg CmsConfig) error {
 	repoList := repository.NewRepositoryList(cfg.Database)
 	uscsList := usecase.NewUsecaseList(repoList)
+	authUtil := auth.NewAuth([]byte(cfg.JWTSecret), cfg.JWTExpiryDuration)
 
+	registerSessionHandler(cfg.Router, authUtil, uscsList)
 	registerConfigsHandler(cfg.Router, uscsList)
 
 	return nil
+}
+
+func registerSessionHandler(router *gin.Engine, auth auth.Auth, uscsList usecase.UsecaseList) {
+	sh := authHandler.NewSession(auth, uscsList.AuthUsecase)
+	v1 := router.Group("/api/v1/auth")
+	{
+		v1.POST("/login", sh.Login)
+	}
 }
 
 func registerConfigsHandler(router *gin.Engine, uscsList usecase.UsecaseList) {

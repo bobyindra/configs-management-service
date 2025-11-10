@@ -6,7 +6,7 @@ import (
 	"github.com/bobyindra/configs-management-service/module/configuration/entity"
 )
 
-func (u *session) Login(ctx context.Context, param *entity.LoginRequest) (*entity.LoginResponse, error) {
+func (u *sessionUscs) Login(ctx context.Context, param *entity.LoginRequest) (*entity.LoginResponse, error) {
 	user, err := u.userRepo.GetByUsername(ctx, param.Username)
 	if err != nil {
 		return nil, err

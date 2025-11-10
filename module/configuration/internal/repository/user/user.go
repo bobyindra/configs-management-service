@@ -6,7 +6,7 @@ var (
 	userColumn = []string{
 		"id",
 		"username",
-		"password",
+		"crypted_password",
 		"role",
 		"created_at",
 		"updated_at",

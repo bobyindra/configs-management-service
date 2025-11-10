@@ -7,10 +7,10 @@ import (
 
 type session struct {
 	auth        auth.Auth
-	sessionUscs usecase.Session
+	sessionUscs usecase.SessionUsecase
 }
 
-func NewSession(auth auth.Auth, sessionUscs usecase.Session) *session {
+func NewSession(auth auth.Auth, sessionUscs usecase.SessionUsecase) *session {
 	return &session{
 		auth:        auth,
 		sessionUscs: sessionUscs,

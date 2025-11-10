@@ -5,6 +5,7 @@ go 1.25.4
 require (
 	github.com/golang-migrate/migrate/v4 v4.19.0
 	github.com/stretchr/testify v1.11.1
+	golang.org/x/crypto v0.41.0
 )
 
 require (
@@ -36,7 +37,6 @@ require (
 	github.com/ugorji/go/codec v1.3.0 // indirect
 	go.uber.org/mock v0.5.0 // indirect
 	golang.org/x/arch v0.20.0 // indirect
-	golang.org/x/crypto v0.41.0 // indirect
 	golang.org/x/mod v0.27.0 // indirect
 	golang.org/x/net v0.43.0 // indirect
 	golang.org/x/sync v0.17.0 // indirect

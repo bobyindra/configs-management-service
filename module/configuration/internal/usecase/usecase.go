@@ -5,18 +5,27 @@ import (
 
 	"github.com/bobyindra/configs-management-service/module/configuration/entity"
 	"github.com/bobyindra/configs-management-service/module/configuration/internal/repository"
+	"github.com/bobyindra/configs-management-service/module/configuration/util"
 
+	authUscs "github.com/bobyindra/configs-management-service/module/configuration/internal/usecase/auth"
 	configsUscs "github.com/bobyindra/configs-management-service/module/configuration/internal/usecase/configs_usecase"
 )
 
 type UsecaseList struct {
+	AuthUsecase       SessionUsecase
 	ConfigsManagement ConfigsManagementUsecase
 }
 
 func NewUsecaseList(repoList repository.RepositoryList) UsecaseList {
 	return UsecaseList{
+		AuthUsecase:       NewAuthUsecase(repoList),
 		ConfigsManagement: NewConfigsManagementUsecase(repoList),
 	}
+}
+
+func NewAuthUsecase(repoList repository.RepositoryList) SessionUsecase {
+	encryption := util.NewEncryption()
+	return authUscs.NewSessionUscs(encryption, repoList.UserRepo)
 }
 
 func NewConfigsManagementUsecase(repoList repository.RepositoryList) ConfigsManagementUsecase {
@@ -31,6 +40,6 @@ type ConfigsManagementUsecase interface {
 	RollbackConfigVersionByConfigName(ctx context.Context, params *entity.ConfigRequest) (*entity.ConfigResponse, error)
 }
 
-type Session interface {
+type SessionUsecase interface {
 	Login(ctx context.Context, param *entity.LoginRequest) (*entity.LoginResponse, error)
 }

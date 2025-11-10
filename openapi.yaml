@@ -315,7 +315,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/configResponseSuccess'
+                  $ref: '#/components/schemas/configVersionListResponseSuccess'
         '400':
           description: Bad Request/Missing Params
           content:
@@ -354,7 +354,7 @@ paths:
 components:
   schemas:
     configRequestBody:
-      description: Insert config values payload
+      description: Config Create and Update Payload
       type: object
       required:        
         - config_values
@@ -363,7 +363,62 @@ components:
           type: object
           example: {"max_limit":1000,"enabled":true}
     configResponseSuccess:
-      description: Insert config values payload
+      description: Config Response
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/configResponseSuccessDetail"
+      required:
+        - data
+    configVersionListResponseSuccess:
+      description: Config Response
+      type: object
+      properties:
+        meta:
+          $ref: "#/components/schemas/offsetPagination"
+        data:
+          $ref: "#/components/schemas/configResponseSuccessDetail"
+      required:
+        - meta
+        - data
+    configRollbackRequestBody:
+      description: Rollback config values payload
+      type: object
+      required:        
+        - version
+      properties:
+        version:
+          type: integer
+          format: int16
+          example: 1    
+    offsetPagination:
+      description: Config Response
+      type: object
+      properties:
+        offset_pagination:
+          $ref: "#/components/schemas/offsetPaginationDetail"
+    offsetPaginationDetail:
+      description: Config Response
+      type: object
+      properties:
+        limit:
+          type: integer
+          format: int32
+          example: 10
+        offset:
+          type: integer
+          format: int32
+          example: 0
+        total:
+          type: integer
+          format: int32
+          example: 25
+      required:
+        - limit
+        - offset        
+        - total
+    configResponseSuccessDetail:
+      description: Config Response
       type: object
       properties:
         id:
@@ -386,16 +441,6 @@ components:
         - config_values        
         - version
         - created_at
-    configRollbackRequestBody:
-      description: Rollback config values payload
-      type: object
-      required:        
-        - version
-      properties:
-        version:
-          type: integer
-          format: int16
-          example: 1    
     v1ErrorResponse:
       type: object
       properties:
