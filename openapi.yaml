@@ -6,15 +6,60 @@ info:
   contact:
     email: boby.indr@gmail.com
   version: v1
-externalDocs:
-  description: Find out more about Swagger
-  url: https://swagger.io
 servers:
   - url: https://configs.example.com/api
 tags:
+  - name: auth
+    description: User Authorization
   - name: config
     description: CRUD a Config
 paths:
+  /v1/auth/login:
+    post:
+      deprecated: false
+      tags:
+        - auth
+      summary: Login to get token
+      description: Login to get token
+      operationId: login
+      requestBody:
+        description: Insert config values
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/loginRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/loginResponseSuccess'
+        '400':
+          description: Bad Request/Missing Params
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ErrorResponse"        
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ErrorResponse"
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ErrorResponse"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ErrorResponse"
   /v1/configs/{configName}:
     post:
       deprecated: false
@@ -76,6 +121,10 @@ paths:
                 $ref: "#/components/schemas/v1ErrorResponse"
         '500':
           description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ErrorResponse"
         default:
           description: Unexpected error
           content:
@@ -140,6 +189,10 @@ paths:
                 $ref: "#/components/schemas/v1ErrorResponse"
         '500':
           description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ErrorResponse"
         default:
           description: Unexpected error
           content:
@@ -204,6 +257,10 @@ paths:
                 $ref: "#/components/schemas/v1ErrorResponse"
         '500':
           description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ErrorResponse"
         default:
           description: Unexpected error
           content:
@@ -268,6 +325,10 @@ paths:
                 $ref: "#/components/schemas/v1ErrorResponse"
         '500':
           description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ErrorResponse"
         default:
           description: Unexpected error
           content:
@@ -342,6 +403,10 @@ paths:
                 $ref: "#/components/schemas/v1ErrorResponse"
         '500':
           description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ErrorResponse"
         default:
           description: Unexpected error
           content:
@@ -353,6 +418,36 @@ paths:
             - read:configs
 components:
   schemas:
+    loginRequestBody:
+      description: Login to get Token
+      type: object
+      required:        
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          example: "labubu"
+        password:
+          type: string
+          example: "secretpassword"
+    loginResponseSuccess:
+      description: Login Response Successful
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/loginResponseDetail"
+      required:
+        - data
+    loginResponseDetail:
+      description: Login Response Detail
+      type: object
+      properties:
+        token:
+          type: string
+          example: "jlasjiowaefnanajda&2akldjfa"        
+      required:
+        - token
     configRequestBody:
       description: Config Create and Update Payload
       type: object
@@ -464,14 +559,6 @@ components:
         - message
   securitySchemes:
     config_auth:
-      type: oauth2
-      flows:
-        implicit:
-          authorizationUrl: https://configs.example.com/oauth/authorize
-          scopes:
-            "write:configs": Grand access to modify configs
-            "read:configs": Grand access to read configs
-    api_key:
-      type: apiKey
-      name: api_key
-      in: header
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

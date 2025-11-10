@@ -15,7 +15,7 @@ func RegisterCmsHandler(cfg CmsConfig) error {
 	authUtil := auth.NewAuth([]byte(cfg.JWTSecret), cfg.JWTExpiryDuration)
 
 	registerSessionHandler(cfg.Router, authUtil, uscsList)
-	registerConfigsHandler(cfg.Router, uscsList)
+	registerConfigsHandler(cfg.Router, authUtil, uscsList)
 
 	return nil
 }
@@ -28,8 +28,8 @@ func registerSessionHandler(router *gin.Engine, auth auth.Auth, uscsList usecase
 	}
 }
 
-func registerConfigsHandler(router *gin.Engine, uscsList usecase.UsecaseList) {
-	ch := configsHandler.NewConfigsHandler(uscsList.ConfigsManagement)
+func registerConfigsHandler(router *gin.Engine, auth auth.Auth, uscsList usecase.UsecaseList) {
+	ch := configsHandler.NewConfigsHandler(auth, uscsList.ConfigsManagement)
 	v1 := router.Group("/api/v1/configs")
 	{
 		v1.POST("/:name", ch.CreateConfigs)

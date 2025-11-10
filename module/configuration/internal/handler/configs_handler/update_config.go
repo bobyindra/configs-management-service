@@ -14,7 +14,15 @@ func (h *configs) UpdateConfig(c *gin.Context) {
 	w := c.Writer
 	ctx := r.Context()
 
-	// TODO: Check Permission
+	claim, err := h.auth.ValidateClaim(ctx, r)
+	if err != nil {
+		util.BuildFailedResponse(w, err)
+		return
+	}
+	if claim.Role != "rw" {
+		util.BuildFailedResponse(w, entity.ErrForbidden)
+		return
+	}
 
 	name := c.Param("name")
 	var param entity.ConfigRequest
@@ -23,6 +31,7 @@ func (h *configs) UpdateConfig(c *gin.Context) {
 		return
 	}
 	param.Name = name
+	param.ActorId = claim.UserID
 
 	// check config name
 	createConfigParam, err := h.normalizeCreateConfigRequest(param)

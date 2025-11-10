@@ -15,28 +15,35 @@ func (h *configs) GetConfig(c *gin.Context) {
 	w := c.Writer
 	ctx := r.Context()
 
-	// TODO: Check Permission
-
-	name := c.Param("name")
-
-	listConfigsParam, err := h.normalizeGetConfigRequest(r.URL.Query())
+	claim, err := h.auth.ValidateClaim(ctx, r)
 	if err != nil {
 		util.BuildFailedResponse(w, err)
 		return
 	}
 
-	listConfigsParam.Name = name
+	if claim.Role == "rw" || claim.Role == "ro" {
+		name := c.Param("name")
+		listConfigsParam, err := h.normalizeGetConfigRequest(r.URL.Query())
+		if err != nil {
+			util.BuildFailedResponse(w, err)
+			return
+		}
 
-	resp, err := h.configsUscs.GetConfigByConfigName(ctx, listConfigsParam)
-	if err != nil {
-		util.BuildFailedResponse(w, err)
-		return
+		listConfigsParam.Name = name
+
+		resp, err := h.configsUscs.GetConfigByConfigName(ctx, listConfigsParam)
+		if err != nil {
+			util.BuildFailedResponse(w, err)
+			return
+		}
+
+		util.BuildSuccessResponse(w, util.APIResponse{
+			Status: http.StatusOK,
+			Data:   resp,
+		})
+	} else {
+		util.BuildFailedResponse(w, entity.ErrForbidden)
 	}
-
-	util.BuildSuccessResponse(w, util.APIResponse{
-		Status: http.StatusOK,
-		Data:   resp,
-	})
 }
 
 func (h *configs) normalizeGetConfigRequest(query url.Values) (*entity.GetConfigRequest, error) {

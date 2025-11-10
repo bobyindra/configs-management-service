@@ -15,28 +15,35 @@ func (h *configs) GetConfigVersions(c *gin.Context) {
 	w := c.Writer
 	ctx := r.Context()
 
-	// TODO: Check Permission
-
-	name := c.Param("name")
-
-	listConfigsParam, err := h.normalizeGetListConfigRequest(r.URL.Query())
-	if err != nil {
-		util.BuildFailedResponse(w, err)
-		return
-	}
-	listConfigsParam.Name = name
-
-	resp, pagination, err := h.configsUscs.GetListVersionsByConfigName(ctx, listConfigsParam)
+	claim, err := h.auth.ValidateClaim(ctx, r)
 	if err != nil {
 		util.BuildFailedResponse(w, err)
 		return
 	}
 
-	util.BuildSuccessResponse(w, util.APIResponse{
-		Status: http.StatusOK,
-		Meta:   pagination,
-		Data:   resp,
-	})
+	if claim.Role == "rw" || claim.Role == "ro" {
+		name := c.Param("name")
+		listConfigsParam, err := h.normalizeGetListConfigRequest(r.URL.Query())
+		if err != nil {
+			util.BuildFailedResponse(w, err)
+			return
+		}
+		listConfigsParam.Name = name
+
+		resp, pagination, err := h.configsUscs.GetListVersionsByConfigName(ctx, listConfigsParam)
+		if err != nil {
+			util.BuildFailedResponse(w, err)
+			return
+		}
+
+		util.BuildSuccessResponse(w, util.APIResponse{
+			Status: http.StatusOK,
+			Meta:   pagination,
+			Data:   resp,
+		})
+	} else {
+		util.BuildFailedResponse(w, entity.ErrForbidden)
+	}
 }
 
 func (h *configs) normalizeGetListConfigRequest(query url.Values) (*entity.GetListConfigVersionsRequest, error) {

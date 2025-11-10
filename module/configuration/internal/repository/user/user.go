@@ -5,7 +5,6 @@ import "database/sql"
 var (
 	userColumn = []string{
 		"id",
-		"username",
 		"crypted_password",
 		"role",
 		"created_at",

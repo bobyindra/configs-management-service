@@ -11,6 +11,7 @@ var (
 		"config_values",
 		"version",
 		"created_at",
+		"actor_id",
 	}
 )
 

@@ -24,6 +24,6 @@ func (r *configsRepository) RollbackConfigVersionByConfigName(ctx context.Contex
 		return err
 	}
 
-	query := "INSERT INTO configs (name, config_values, version, created_at) SELECT name, config_values, (SELECT COALESCE(MAX(version), 0) + 1 FROM configs WHERE name = $1), $2 FROM configs WHERE name=$1 AND version=$3 RETURNING id, config_values, version"
-	return r.db.QueryRowContext(ctx, query, obj.Name, obj.CreatedAt, obj.Version).Scan(&obj.Id, &obj.ConfigValues, &obj.Version)
+	query := "INSERT INTO configs (name, config_values, version, created_at, actor_id) SELECT name, config_values, (SELECT COALESCE(MAX(version), 0) + 1 FROM configs WHERE name = $1), $2, $3 FROM configs WHERE name=$1 AND version=$4 RETURNING id, config_values, version"
+	return r.db.QueryRowContext(ctx, query, obj.Name, obj.CreatedAt, obj.ActorId, obj.Version).Scan(&obj.Id, &obj.ConfigValues, &obj.Version)
 }

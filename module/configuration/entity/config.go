@@ -15,6 +15,7 @@ type ConfigRequest struct {
 	ConfigValues any       `json:"config_values" binding:"required"`
 	Version      uint16    `json:"version"`
 	CreatedAt    time.Time `json:"created_at"`
+	ActorId      uint      `json:"actor_id"`
 }
 
 type ConfigResponse struct {
@@ -23,6 +24,7 @@ type ConfigResponse struct {
 	ConfigValues any       `json:"config_values" binding:"required"`
 	Version      uint16    `json:"version"`
 	CreatedAt    time.Time `json:"created_at" binding:"datetime=2025-11-08T15:38:41+07:00"`
+	ActorId      uint      `json:"actor_id"`
 }
 
 type GetConfigRequest struct {
@@ -43,5 +45,6 @@ func (req *ConfigRequest) ToResponse() *ConfigResponse {
 		ConfigValues: req.ConfigValues,
 		Version:      req.Version,
 		CreatedAt:    req.CreatedAt,
+		ActorId:      req.ActorId,
 	}
 }

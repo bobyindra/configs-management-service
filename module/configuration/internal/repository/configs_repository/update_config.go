@@ -30,6 +30,6 @@ func (r *configsRepository) UpdateConfigByConfigName(ctx context.Context, obj *e
 		return err
 	}
 
-	query := "INSERT INTO configs (name, config_values, version, created_at) VALUES ($1, $2, (SELECT COALESCE(MAX(version), 0) + 1 FROM configs WHERE name = $1), $3) RETURNING id, version"
-	return r.db.QueryRowContext(ctx, query, obj.Name, jsonString, obj.CreatedAt).Scan(&obj.Id, &obj.Version)
+	query := "INSERT INTO configs (name, config_values, version, created_at, actor_id) VALUES ($1, $2, (SELECT COALESCE(MAX(version), 0) + 1 FROM configs WHERE name = $1), $3, $4) RETURNING id, version"
+	return r.db.QueryRowContext(ctx, query, obj.Name, jsonString, obj.CreatedAt, obj.ActorId).Scan(&obj.Id, &obj.Version)
 }

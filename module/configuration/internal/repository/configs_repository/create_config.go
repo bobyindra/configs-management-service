@@ -22,8 +22,8 @@ func (r *configsRepository) CreateConfig(ctx context.Context, obj *entity.Config
 	}
 	jsonString := string(jsonData)
 
-	query := "INSERT INTO configs (name, config_values, version, created_at) VALUES ($1, $2, $3, $4) RETURNING id"
-	err = r.db.QueryRowContext(ctx, query, obj.Name, jsonString, obj.Version, obj.CreatedAt).Scan(&obj.Id)
+	query := "INSERT INTO configs (name, config_values, version, created_at, actor_id) VALUES ($1, $2, $3, $4, $5) RETURNING id"
+	err = r.db.QueryRowContext(ctx, query, obj.Name, jsonString, obj.Version, obj.CreatedAt, obj.ActorId).Scan(&obj.Id)
 	if err != nil {
 		if sqliteErr, ok := err.(sqlite3.Error); ok {
 			if sqlite3.ErrNo(sqliteErr.ExtendedCode) == sqlite3.ErrNo(sqlite3.ErrConstraintUnique) {

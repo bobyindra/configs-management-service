@@ -40,10 +40,10 @@ var (
 		HttpCode: http.StatusBadRequest,
 	}
 
-	ErrInvalidConfigValues = &ErrorDetail{
-		Message:  "Invalid config values",
-		Code:     "INVALID_CONFIG_VALUES",
-		HttpCode: http.StatusBadRequest,
+	ErrForbidden = &ErrorDetail{
+		Message:  "You don't have permission",
+		Code:     "FORBIDDEN",
+		HttpCode: http.StatusForbidden,
 	}
 
 	ErrInvalidRequestParameters = &ErrorDetail{

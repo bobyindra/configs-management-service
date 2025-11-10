@@ -35,7 +35,7 @@ func (h *session) Login(c *gin.Context) {
 		return
 	}
 
-	resp.Token, err = h.auth.GenerateToken(&auth.TokenParam{Subject: fmt.Sprint(resp.UserID)}, &auth.AdditionalClaim{Role: resp.Role})
+	resp.Token, err = h.auth.GenerateToken(&auth.TokenParam{Subject: fmt.Sprint(resp.UserID)}, &auth.AdditionalClaim{UserID: resp.UserID, Role: resp.Role})
 	if err != nil {
 		util.BuildFailedResponse(w, entity.WrapError(err))
 		return

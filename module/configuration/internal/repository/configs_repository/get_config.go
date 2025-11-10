@@ -35,7 +35,7 @@ func (r *configsRepository) GetConfigByConfigName(ctx context.Context, obj *enti
 
 	row := r.db.QueryRowContext(ctx, query, args...)
 
-	err := row.Scan(&cfgRes.Id, &cfgRes.Name, &cfgRes.ConfigValues, &cfgRes.Version, &cfgRes.CreatedAt)
+	err := row.Scan(&cfgRes.Id, &cfgRes.Name, &cfgRes.ConfigValues, &cfgRes.Version, &cfgRes.CreatedAt, &cfgRes.ActorId)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, entity.ErrNotFound(obj.Name)

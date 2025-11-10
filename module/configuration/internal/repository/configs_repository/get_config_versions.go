@@ -36,6 +36,7 @@ func (r *configsRepository) GetListVersionsByConfigName(ctx context.Context, obj
 			&cfgRes.ConfigValues,
 			&cfgRes.Version,
 			&cfgRes.CreatedAt,
+			&cfgRes.ActorId,
 		)
 		if err != nil {
 			return nil, nil, entity.WrapError(err)

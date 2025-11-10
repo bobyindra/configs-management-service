@@ -10,7 +10,7 @@ type UserEntity struct {
 }
 
 type User struct {
-	Id              int
+	Id              uint
 	Username        string
 	CryptedPassword string
 	Role            string
@@ -24,7 +24,7 @@ type LoginRequest struct {
 }
 
 type LoginResponse struct {
-	UserID int    `json:"-"`
+	UserID uint   `json:"-"`
 	Role   string `json:"-"`
 	Token  string `json:"token"`
 }

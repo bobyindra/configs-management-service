@@ -17,7 +17,8 @@ type TokenParam struct {
 }
 
 type AdditionalClaim struct {
-	Role string
+	UserID uint
+	Role   string
 }
 
 type ConfigsJWTClaim struct {
