@@ -42,6 +42,7 @@ func (r *configsRepository) GetConfigByConfigName(ctx context.Context, obj *enti
 		}
 		return nil, err
 	}
+	cfgRes.ConfigValues = util.ParsedAny(cfgRes.ConfigValues)
 
 	return util.GeneralNullable(cfgRes), nil
 }
