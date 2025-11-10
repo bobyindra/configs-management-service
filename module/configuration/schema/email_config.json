@@ -1,0 +1,6 @@
+{
+  "type": "string",
+  "minLength": 5,
+  "maxLength": 50,
+  "format": "email"
+}

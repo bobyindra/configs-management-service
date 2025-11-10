@@ -1,0 +1,44 @@
+{
+  "type": "array",
+  "contains": {
+    "type": "object",
+    "properties": {
+      "image_url": {
+        "type": "string"
+      },
+      "is_show": {
+        "type": "boolean"
+      },
+      "description": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "image_url",
+      "is_show"
+    ]
+  },
+  "items": {
+    "type": "object",
+    "properties": {
+      "image_url": {
+        "type": "string"
+      },
+      "is_show": {
+        "type": "boolean"
+      },
+      "description": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "image_url",
+      "is_show"
+    ]
+  },
+  "maxContains": 100,
+  "maxItems": 10,
+  "minContains": 1,
+  "minItems": 1,
+  "uniqueItems": true
+}
