@@ -10,10 +10,21 @@ type UserEntity struct {
 }
 
 type User struct {
-	Id        int       `json:"id"`
-	Username  string    `json:"username"`
-	Email     string    `json:"email"`
-	Password  string    `json:"-"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	Id              int
+	Username        string
+	CryptedPassword string
+	Role            string
+	CreatedAt       time.Time
+	UpdatedAt       time.Time
+}
+
+type LoginRequest struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+type LoginResponse struct {
+	UserID int    `json:"-"`
+	Role   string `json:"-"`
+	Token  string `json:"token"`
 }

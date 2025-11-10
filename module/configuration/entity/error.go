@@ -34,9 +34,9 @@ var (
 		HttpCode: http.StatusConflict,
 	}
 
-	ErrNoChangesDetected = &ErrorDetail{
-		Message:  "No changes detected",
-		Code:     "NO_CHANGES_DETECTED",
+	ErrInvalidLogin = &ErrorDetail{
+		Message:  "Inccorect login info",
+		Code:     "INVALID_LOGIN",
 		HttpCode: http.StatusBadRequest,
 	}
 
@@ -52,6 +52,14 @@ var (
 		HttpCode: http.StatusBadRequest,
 	}
 )
+
+func NewError(code string, message string, httpCode int) *ErrorDetail {
+	return &ErrorDetail{
+		Code:     code,
+		Message:  message,
+		HttpCode: httpCode,
+	}
+}
 
 func WrapError(err error) *ErrorDetail {
 	return &ErrorDetail{

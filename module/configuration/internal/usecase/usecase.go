@@ -30,3 +30,7 @@ type ConfigsManagementUsecase interface {
 	UpdateConfigByConfigName(ctx context.Context, params *entity.ConfigRequest) (*entity.ConfigResponse, error)
 	RollbackConfigVersionByConfigName(ctx context.Context, params *entity.ConfigRequest) (*entity.ConfigResponse, error)
 }
+
+type Session interface {
+	Login(ctx context.Context, param *entity.LoginRequest) (*entity.LoginResponse, error)
+}
