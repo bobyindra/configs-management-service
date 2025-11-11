@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	userColumn = []string{
+	UserColumns = []string{
 		"id",
 		"username",
 		"crypted_password",
@@ -26,7 +26,7 @@ func NewUserRepository(db *sql.DB) *userRepo {
 	}
 }
 
-type userRecord struct {
+type UserRecord struct {
 	Id              uint      `db:"id"`
 	Username        string    `db:"username"`
 	CryptedPassword string    `db:"crypted_password"`
@@ -35,7 +35,7 @@ type userRecord struct {
 	UpdatedAt       time.Time `db:"updated_at"`
 }
 
-func (ur userRecord) ToEntity() *entity.User {
+func (ur UserRecord) ToEntity() *entity.User {
 	uRes := &entity.User{
 		Id:              ur.Id,
 		Username:        ur.Username,

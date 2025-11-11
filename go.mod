@@ -4,6 +4,7 @@ go 1.25.4
 
 require (
 	github.com/golang-migrate/migrate/v4 v4.19.0
+	github.com/golang/mock v1.6.0
 	github.com/stretchr/testify v1.11.1
 	golang.org/x/crypto v0.41.0
 )
@@ -48,6 +49,7 @@ require (
 )
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/gin-gonic/gin v1.11.0
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/hashicorp/errwrap v1.1.0 // indirect

@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	configsRepositoryColumns = []string{
+	ConfigsRepositoryColumns = []string{
 		"id",
 		"name",
 		"config_values",
@@ -31,7 +31,7 @@ func NewConfigsRepository(db *sql.DB) *configsRepository {
 	}
 }
 
-type configRecord struct {
+type ConfigRecord struct {
 	Id           uint      `db:"id"`
 	Name         string    `db:"name"`
 	ConfigValues any       `db:"config_values"`
@@ -40,7 +40,7 @@ type configRecord struct {
 	ActorId      uint      `db:"actor_id"`
 }
 
-func (cr configRecord) ToEntity() *entity.ConfigResponse {
+func (cr ConfigRecord) ToEntity() *entity.ConfigResponse {
 	cfgRes := &entity.ConfigResponse{
 		Id:           cr.Id,
 		Name:         cr.Name,

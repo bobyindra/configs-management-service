@@ -11,13 +11,14 @@ import (
 	"github.com/bobyindra/configs-management-service/module/configuration/entity"
 )
 
+var GetUserByUsernameQuery = fmt.Sprintf("SELECT %s from users where username = $1", strings.Join(UserColumns, ", "))
+
 func (r *userRepo) GetByUsername(ctx context.Context, username string) (*entity.User, error) {
 	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
 	defer cancel()
-	var user userRecord
+	var user UserRecord
 
-	query := fmt.Sprintf("SELECT %s from users where username = $1", strings.Join(userColumn, ", "))
-	err := r.db.QueryRowContext(ctx, query, username).Scan(&user.Id, &user.Username, &user.CryptedPassword, &user.Role, &user.CreatedAt, &user.UpdatedAt)
+	err := r.db.QueryRowContext(ctx, GetUserByUsernameQuery, username).Scan(&user.Id, &user.Username, &user.CryptedPassword, &user.Role, &user.CreatedAt, &user.UpdatedAt)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, entity.ErrNotFound(username)

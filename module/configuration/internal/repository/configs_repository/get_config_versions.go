@@ -9,6 +9,11 @@ import (
 	"github.com/bobyindra/configs-management-service/module/configuration/entity"
 )
 
+var (
+	GetListVersionsConfigQuery       = fmt.Sprintf("SELECT %s FROM configs WHERE name = $1 ORDER BY version DESC LIMIT $2 OFFSET $3", strings.Join(ConfigsRepositoryColumns, ", "))
+	GetConfigVersionsTotalCountQuery = "SELECT COUNT(*) FROM configs WHERE name = $1"
+)
+
 func (r *configsRepository) GetListVersionsByConfigName(ctx context.Context, obj *entity.GetListConfigVersionsRequest) ([]*entity.ConfigResponse, *entity.PaginationResponse, error) {
 	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
@@ -18,8 +23,7 @@ func (r *configsRepository) GetListVersionsByConfigName(ctx context.Context, obj
 		limit = defaultLimit
 	}
 
-	query := fmt.Sprintf("SELECT %s FROM configs WHERE name = $1 ORDER BY version DESC LIMIT $2 OFFSET $3", strings.Join(configsRepositoryColumns, ", "))
-	rows, err := r.db.QueryContext(ctx, query, obj.Name, limit, obj.Offset)
+	rows, err := r.db.QueryContext(ctx, GetListVersionsConfigQuery, obj.Name, limit, obj.Offset)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -27,7 +31,7 @@ func (r *configsRepository) GetListVersionsByConfigName(ctx context.Context, obj
 
 	resp := make([]*entity.ConfigResponse, 0)
 	for rows.Next() {
-		result := configRecord{}
+		result := ConfigRecord{}
 
 		err := rows.Scan(
 			&result.Id,
@@ -48,8 +52,7 @@ func (r *configsRepository) GetListVersionsByConfigName(ctx context.Context, obj
 		return nil, nil, entity.ErrNotFound(obj.Name)
 	}
 
-	countQuery := "SELECT COUNT(*) FROM configs WHERE name = $1"
-	row := r.db.QueryRowContext(ctx, countQuery, obj.Name)
+	row := r.db.QueryRowContext(ctx, GetConfigVersionsTotalCountQuery, obj.Name)
 	var total uint32
 	err = row.Scan(&total)
 	if err != nil {

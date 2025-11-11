@@ -18,7 +18,7 @@ func (r *configsRepository) GetConfigByConfigName(ctx context.Context, obj *enti
 
 	var args []any
 
-	query := fmt.Sprintf("SELECT %s FROM configs WHERE name = ?", strings.Join(configsRepositoryColumns, ", "))
+	query := fmt.Sprintf("SELECT %s FROM configs WHERE name = ?", strings.Join(ConfigsRepositoryColumns, ", "))
 	args = append(args, obj.Name)
 
 	if obj.Version > 0 {
@@ -28,7 +28,7 @@ func (r *configsRepository) GetConfigByConfigName(ctx context.Context, obj *enti
 		query += " ORDER BY version DESC LIMIT 1"
 	}
 
-	var cfgRes configRecord
+	var cfgRes ConfigRecord
 	query = sqlx.Rebind(sqlx.DOLLAR, query)
 
 	err := r.db.QueryRowContext(ctx, query, args...).Scan(
