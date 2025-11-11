@@ -34,6 +34,18 @@ var (
 		HttpCode: http.StatusConflict,
 	}
 
+	ErrNoChangesFound = &ErrorDetail{
+		Message:  "Configs values is the same with current configs values",
+		Code:     "NO_CHANGES_FOUND",
+		HttpCode: http.StatusBadRequest,
+	}
+
+	ErrRollbackNotAllowed = &ErrorDetail{
+		Message:  "Cannot rollback to the same version as current",
+		Code:     "ROLLBACK_NOT_ALLOWED",
+		HttpCode: http.StatusBadRequest,
+	}
+
 	ErrInvalidLogin = &ErrorDetail{
 		Message:  "Inccorect login info",
 		Code:     "INVALID_LOGIN",

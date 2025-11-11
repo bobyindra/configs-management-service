@@ -9,12 +9,16 @@ import (
 func (u *configsUsecase) RollbackConfigVersionByConfigName(ctx context.Context, params *entity.ConfigRequest) (*entity.ConfigResponse, error) {
 	// Check the config version exists or not
 	getParams := &entity.GetConfigRequest{
-		Name:    params.Name,
-		Version: params.Version,
+		Name: params.Name,
 	}
-	_, err := u.configsRepo.GetConfigByConfigName(ctx, getParams)
+	resp, err := u.configsRepo.GetConfigByConfigName(ctx, getParams)
 	if err != nil {
 		return nil, err
+	}
+
+	// Validate the version equal with current version or not
+	if resp.Version == params.Version {
+		return nil, entity.ErrRollbackNotAllowed
 	}
 
 	// Execute Rollback
