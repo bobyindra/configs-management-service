@@ -47,10 +47,10 @@ Run the server
 Before work with the endpoint, see the APIs Documentation [here](https://github.com/bobyindra/configs-management-service/blob/main/openapi.yaml) - Use [editor.swagger.io](https://editor.swagger.io/) to visualize it or VCS extension if you have
 
 ### Postman Collection
-See the Postman Collection [here]()
+See the Postman Collection [here](https://github.com/bobyindra/configs-management-service/blob/main/collections/Configs%20Management%20Service.postman_collection.json)
 
 ### Supported Configs Schema
-You can see the supported configs schema [here]()
+You can see the supported configs schema [here](https://github.com/bobyindra/configs-management-service/tree/main/module/configuration/schema)
 
 #### Add Config Shcema
 Want to add a new config schema? follow this instruction:
@@ -79,7 +79,7 @@ Want to add a new config schema? follow this instruction:
     }
   }
 ```
-- That's it, you're all set!
+- Rerun the service. That's it, you're all set!
 
 ### Get Token
 As mentioned earlier, we have predifined users to access the endpoint. Here are the details:
