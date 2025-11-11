@@ -64,11 +64,6 @@ Run unit test with coverage report
   make coverage
 ```
 
-Run integration test
-```bash
-  make api-test
-```
-
 ## Work with service
 ### API Documentation
 Before work with the endpoint, see the APIs Documentation [here](https://github.com/bobyindra/configs-management-service/blob/main/openapi.yaml) - Use [editor.swagger.io](https://editor.swagger.io/) to visualize it or VCS extension if you have
