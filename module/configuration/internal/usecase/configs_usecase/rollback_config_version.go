@@ -2,6 +2,7 @@ package configsusecase
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/bobyindra/configs-management-service/module/configuration/entity"
 )
@@ -14,6 +15,11 @@ func (u *configsUsecase) RollbackConfigVersionByConfigName(ctx context.Context, 
 	resp, err := u.configsRepo.GetConfigByConfigName(ctx, getParams)
 	if err != nil {
 		return nil, err
+	}
+
+	// Validate request version bigger than latest version
+	if resp.Version < params.Version {
+		return nil, entity.ErrConfigVersionNotFound(fmt.Sprint(params.Version))
 	}
 
 	// Validate the version equal with current version or not

@@ -46,7 +46,7 @@ func (h *configs) RollbackConfigVersion(c *gin.Context) {
 	}
 
 	util.BuildSuccessResponse(w, util.APIResponse{
-		Status: http.StatusCreated,
+		Status: http.StatusOK,
 		Data:   resp,
 	})
 }
