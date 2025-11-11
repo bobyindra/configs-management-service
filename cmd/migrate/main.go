@@ -10,6 +10,11 @@ import (
 	"github.com/golang-migrate/migrate/v4/source/file"
 )
 
+/*
+This is a migration file to migrate the schema to SQLite database
+This file is needed because at the moment of this program was created
+golang migrate doesn't support migration for SQLite yet
+*/
 func main() {
 	if len(os.Args) < 2 {
 		log.Fatal("Please provide a migration direction: 'up' or 'down'")

@@ -1,0 +1,243 @@
+{
+	"info": {
+		"_postman_id": "ebca0753-9c95-466e-8edd-5998fb990c63",
+		"name": "Configs Management Service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "611296"
+	},
+	"item": [
+		{
+			"name": "Create Config",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwiZXhwIjoxNzYyODYzODA0LCJpYXQiOjE3NjI3Nzc0MDQsIlVzZXJJRCI6MiwiUm9sZSI6InJ3In0.lhJRQfEjeHqnFIt-MOCJBb7Dt6mnONfsVHTO_k9pZZ0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"config_values\":[\n    {\n    \"image_url\": \"www.image.com/banner-1.jpg\",\n    \"is_show\": true\n    },\n    {\n    \"image_url\": \"www.image.com/banner-2.jpg\",\n    \"is_show\": false,\n    \"description\":\"test banner 2\"\n    }\n    ] \n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/v1/configs/payment-config",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"configs",
+						"payment-config"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"rwuser\",\n    \"password\": \"readwriteuser\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/v1/auth/login",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Rollback Config",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwiZXhwIjoxNzYyODYzODA0LCJpYXQiOjE3NjI3Nzc0MDQsIlVzZXJJRCI6MiwiUm9sZSI6InJ3In0.lhJRQfEjeHqnFIt-MOCJBb7Dt6mnONfsVHTO_k9pZZ0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"version\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/v1/configs/banner-config/rollback",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"configs",
+						"banner-config",
+						"rollback"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Config",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwiZXhwIjoxNzYyODYzODA0LCJpYXQiOjE3NjI3Nzc0MDQsIlVzZXJJRCI6MiwiUm9sZSI6InJ3In0.lhJRQfEjeHqnFIt-MOCJBb7Dt6mnONfsVHTO_k9pZZ0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"config_values\": [\n    {\n    \"image_url\": \"www.image.com/banner-1.jpg\",\n    \"is_show\": false \n    },\n    {\n    \"image_url\": \"www.image.com/banner-2.jpg\",\n    \"is_show\": false,\n    \"description\":\"test banner 2\"\n    }\n    ] \n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/v1/configs/banner-config",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"configs",
+						"banner-config"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Config By Config Name",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzYyODQ4OTczLCJpYXQiOjE3NjI3NjI1NzMsIlJvbGUiOiJybyJ9.0RP3BdzDQ8mON5ue90bt2KyVR8ImhaDwVcPe43FL-fI",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept-Encoding",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseURL}}/api/v1/configs/banner-config?version=5",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"configs",
+						"banner-config"
+					],
+					"query": [
+						{
+							"key": "version",
+							"value": "5"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Versions By Config Name",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwiZXhwIjoxNzYyODYzODA0LCJpYXQiOjE3NjI3Nzc0MDQsIlVzZXJJRCI6MiwiUm9sZSI6InJ3In0.lhJRQfEjeHqnFIt-MOCJBb7Dt6mnONfsVHTO_k9pZZ0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept-Encoding",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseURL}}/api/v1/configs/banner-config/versions",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"configs",
+						"banner-config",
+						"versions"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "127.0.0.1:8080",
+			"type": "default"
+		}
+	]
+}

@@ -10,7 +10,7 @@ import (
 )
 
 func (r *configsRepository) CreateConfig(ctx context.Context, obj *entity.ConfigRequest) error {
-	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 	now := time.Now().UTC()
 	obj.CreatedAt = now

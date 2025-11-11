@@ -2,6 +2,7 @@ package configs_repository
 
 import (
 	"database/sql"
+	"time"
 )
 
 var (
@@ -13,6 +14,11 @@ var (
 		"created_at",
 		"actor_id",
 	}
+)
+
+const (
+	defaultLimit = 10
+	timeout      = 3 * time.Second
 )
 
 type configsRepository struct{ db *sql.DB }
