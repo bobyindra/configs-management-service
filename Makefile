@@ -1,7 +1,7 @@
 GO_PACKAGES ?= $(shell go list ./... | grep -v 'examples\|qtest\|mock')
 
 create-migrations:
-	migrate create -ext sql -dir ./db/migrations -seq $(name)
+	migrate create -ext sql -dir ./module/configuration/db/migration -seq $(name)
 
 migrate:
 	go run ./cmd/migrate/main.go up

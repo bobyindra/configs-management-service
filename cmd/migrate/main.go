@@ -34,7 +34,7 @@ func main() {
 		log.Fatalf("Failed to create sqlite3 instance: %v", err)
 	}
 
-	fSrc, err := (&file.File{}).Open("./db/migrations")
+	fSrc, err := (&file.File{}).Open("./module/configuration/db/migration")
 	if err != nil {
 		log.Fatalf("Failed to open migration files: %v", err)
 	}
