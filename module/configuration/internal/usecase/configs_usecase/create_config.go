@@ -10,6 +10,7 @@ func (u *configsUsecase) CreateConfig(ctx context.Context, params *entity.Config
 	configs := &entity.ConfigRequest{
 		Name:         params.Name,
 		ConfigValues: params.ConfigValues,
+		ActorId:      params.ActorId,
 	}
 
 	err := u.configsRepo.CreateConfig(ctx, configs)

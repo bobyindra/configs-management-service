@@ -30,6 +30,7 @@ func (u *configsUsecase) UpdateConfigByConfigName(ctx context.Context, params *e
 	configs := &entity.ConfigRequest{
 		Name:         params.Name,
 		ConfigValues: params.ConfigValues,
+		ActorId:      params.ActorId,
 	}
 
 	err = u.configsRepo.UpdateConfigByConfigName(ctx, configs)

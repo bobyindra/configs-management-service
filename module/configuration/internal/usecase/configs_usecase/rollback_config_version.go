@@ -25,6 +25,7 @@ func (u *configsUsecase) RollbackConfigVersionByConfigName(ctx context.Context, 
 	configs := &entity.ConfigRequest{
 		Name:    params.Name,
 		Version: params.Version,
+		ActorId: params.ActorId,
 	}
 
 	err = u.configsRepo.RollbackConfigVersionByConfigName(ctx, configs)
