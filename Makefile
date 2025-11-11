@@ -16,7 +16,7 @@ run:
 	go run ./cmd/rest/main.go
 
 test:
-	go test -v ${GO_PACKAGES}
+	go test -race -v ${GO_PACKAGES}
 
 coverage:
 	go test -race -cover -coverprofile=coverage.out -json ${GO_PACKAGES} > ./UT-report_coverage.json

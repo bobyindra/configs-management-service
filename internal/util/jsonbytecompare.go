@@ -5,6 +5,10 @@ import (
 	"reflect"
 )
 
+/*
+This function is to compare 2 set of any data type
+and converted to json data to check the values are identical or not
+*/
 func JsonByteEqual(a, b any) (bool, error) {
 	var j, j2 interface{}
 

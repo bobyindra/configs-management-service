@@ -115,7 +115,7 @@ As mentioned earlier, we have predifined users to access the endpoint. Here are 
 | `rouser` | `readonlyuser`  | This user only have access read operations such as get config                 |
 | `rwuser` | `readwriteuser` | This user have access to both read and write operations such as create config |
 
-hit this in your terminal to get the token (you can change the username and password) or feel free to hit it via postman (**Postman Collection is provided if needed [here](postman-collection)**)
+hit this in your terminal to get the token (you can change the username and password) or feel free to hit it via postman (**Postman Collection is provided if needed [here](#postman-collection)**)
 ```bash
 curl --location '127.0.0.1:8080/api/v1/auth/login' \
 --header 'Content-Type: application/json' \
@@ -126,12 +126,12 @@ curl --location '127.0.0.1:8080/api/v1/auth/login' \
 ```
 
 ### Access Endpoint
-Please follow the API documentation above to access the endpoint, don't forget to put the Authorization Token. (**Postman Collection is provided if needed [here](postman-collection)**)
+Please follow the API documentation above to access the endpoint, don't forget to put the Authorization Token. (**Postman Collection is provided if needed [here](#postman-collection)**)
 
 ## Architecture Overview
 ![Project Architecture](https://drive.google.com/file/d/1nh7A1qAGtn6eAnqhDCeBu20iHd6DL3sa/view?usp=sharing)
 
-At the moment, the service architecture contains a simple relation between service and sql database. In the future, the service will have more comprehensive architecture to support real world usage. See the future development plans [here](future-development)
+At the moment, the service architecture contains a simple relation between service and sql database. In the future, the service will have more comprehensive architecture to support real world usage. See the future development plans [here](#future-development)
 
 ### Project Structure
 ```
