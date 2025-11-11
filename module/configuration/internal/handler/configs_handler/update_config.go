@@ -25,7 +25,7 @@ func (h *configs) UpdateConfig(c *gin.Context) {
 	}
 
 	name := c.Param("name")
-	var param entity.ConfigRequest
+	var param entity.Config
 	if err := json.NewDecoder(r.Body).Decode(&param); err != nil {
 		util.BuildFailedResponse(w, err)
 		return

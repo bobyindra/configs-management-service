@@ -30,11 +30,11 @@ func NewUserRepository(db *sql.DB) UserRepository {
 }
 
 type ConfigsManagementRepository interface {
-	CreateConfig(ctx context.Context, obj *entity.ConfigRequest) error
+	CreateConfig(ctx context.Context, obj *entity.Config) error
 	GetConfigByConfigName(ctx context.Context, obj *entity.GetConfigRequest) (*entity.ConfigResponse, error)
 	GetListVersionsByConfigName(ctx context.Context, obj *entity.GetListConfigVersionsRequest) ([]*entity.ConfigResponse, *entity.PaginationResponse, error)
-	UpdateConfigByConfigName(ctx context.Context, obj *entity.ConfigRequest) error
-	RollbackConfigVersionByConfigName(ctx context.Context, obj *entity.ConfigRequest) error
+	UpdateConfigByConfigName(ctx context.Context, obj *entity.Config) error
+	RollbackConfigVersionByConfigName(ctx context.Context, obj *entity.Config) error
 }
 
 type UserRepository interface {

@@ -9,7 +9,7 @@ import (
 	"github.com/mattn/go-sqlite3"
 )
 
-func (r *configsRepository) CreateConfig(ctx context.Context, obj *entity.ConfigRequest) error {
+func (r *configsRepository) CreateConfig(ctx context.Context, obj *entity.Config) error {
 	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 	now := time.Now().UTC()

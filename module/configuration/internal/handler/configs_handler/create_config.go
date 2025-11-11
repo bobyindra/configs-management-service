@@ -27,7 +27,7 @@ func (h *configs) CreateConfigs(c *gin.Context) {
 	}
 
 	name := c.Param("name")
-	var param entity.ConfigRequest
+	var param entity.Config
 	if err := json.NewDecoder(r.Body).Decode(&param); err != nil {
 		util.BuildFailedResponse(w, err)
 		return
@@ -60,7 +60,7 @@ func (h *configs) CreateConfigs(c *gin.Context) {
 	})
 }
 
-func (h *configs) normalizeCreateConfigRequest(param entity.ConfigRequest) (*entity.ConfigRequest, error) {
+func (h *configs) normalizeCreateConfigRequest(param entity.Config) (*entity.Config, error) {
 	if param.Name == "" {
 		return nil, entity.ErrEmptyField("name")
 	}
@@ -71,7 +71,7 @@ func (h *configs) normalizeCreateConfigRequest(param entity.ConfigRequest) (*ent
 	return &param, nil
 }
 
-func (h *configs) validateConfigSchema(param entity.ConfigRequest) error {
+func (h *configs) validateConfigSchema(param entity.Config) error {
 	fileSchema, err := schema.GetSchemaByConfigName(param.Name)
 	if err != nil {
 		return err

@@ -7,7 +7,7 @@ import (
 	"github.com/bobyindra/configs-management-service/module/configuration/entity"
 )
 
-func (u *configsUsecase) UpdateConfigByConfigName(ctx context.Context, params *entity.ConfigRequest) (*entity.ConfigResponse, error) {
+func (u *configsUsecase) UpdateConfigByConfigName(ctx context.Context, params *entity.Config) (*entity.ConfigResponse, error) {
 	// Check the config exists or not
 	getParams := &entity.GetConfigRequest{
 		Name: params.Name,
@@ -27,7 +27,7 @@ func (u *configsUsecase) UpdateConfigByConfigName(ctx context.Context, params *e
 	}
 
 	// Update the config
-	configs := &entity.ConfigRequest{
+	configs := &entity.Config{
 		Name:         params.Name,
 		ConfigValues: params.ConfigValues,
 		ActorId:      params.ActorId,

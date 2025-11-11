@@ -8,7 +8,7 @@ import (
 	"github.com/bobyindra/configs-management-service/module/configuration/entity"
 )
 
-func (r *configsRepository) UpdateConfigByConfigName(ctx context.Context, obj *entity.ConfigRequest) error {
+func (r *configsRepository) UpdateConfigByConfigName(ctx context.Context, obj *entity.Config) error {
 	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 	now := time.Now().UTC()

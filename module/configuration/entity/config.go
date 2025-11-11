@@ -9,13 +9,13 @@ type ConfigEntity struct {
 	DB *sql.DB
 }
 
-type ConfigRequest struct {
-	Id           uint      `json:"id"`
-	Name         string    `json:"name" binding:"required"`
-	ConfigValues any       `json:"config_values" binding:"required"`
-	Version      uint16    `json:"version"`
-	CreatedAt    time.Time `json:"created_at"`
-	ActorId      uint      `json:"actor_id"`
+type Config struct {
+	Id           uint
+	Name         string `form:"name" binding:"required"`
+	ConfigValues any    `json:"config_values" binding:"required"`
+	Version      uint16 `json:"version"`
+	CreatedAt    time.Time
+	ActorId      uint
 }
 
 type ConfigResponse struct {
@@ -38,7 +38,7 @@ type GetListConfigVersionsRequest struct {
 	Offset uint32 `form:"offset"`
 }
 
-func (req *ConfigRequest) ToResponse() *ConfigResponse {
+func (req *Config) ToResponse() *ConfigResponse {
 	return &ConfigResponse{
 		Id:           req.Id,
 		Name:         req.Name,

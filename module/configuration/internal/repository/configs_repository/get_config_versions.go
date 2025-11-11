@@ -25,26 +25,26 @@ func (r *configsRepository) GetListVersionsByConfigName(ctx context.Context, obj
 	}
 	defer rows.Close()
 
-	result := make([]*entity.ConfigResponse, 0)
+	resp := make([]*entity.ConfigResponse, 0)
 	for rows.Next() {
-		var cfgRes entity.ConfigResponse
+		result := configRecord{}
 
 		err := rows.Scan(
-			&cfgRes.Id,
-			&cfgRes.Name,
-			&cfgRes.ConfigValues,
-			&cfgRes.Version,
-			&cfgRes.CreatedAt,
-			&cfgRes.ActorId,
+			&result.Id,
+			&result.Name,
+			&result.ConfigValues,
+			&result.Version,
+			&result.CreatedAt,
+			&result.ActorId,
 		)
 		if err != nil {
 			return nil, nil, entity.WrapError(err)
 		}
-		cfgRes.ConfigValues = util.ParseAny(cfgRes.ConfigValues)
-		result = append(result, util.GeneralNullable(cfgRes))
+		result.ConfigValues = util.ParseAny(result.ConfigValues)
+		resp = append(resp, result.ToEntity())
 	}
 
-	if len(result) == 0 {
+	if len(resp) == 0 {
 		return nil, nil, entity.ErrNotFound(obj.Name)
 	}
 
@@ -64,5 +64,5 @@ func (r *configsRepository) GetListVersionsByConfigName(ctx context.Context, obj
 		},
 	}
 
-	return result, pagination, nil
+	return resp, pagination, nil
 }

@@ -8,31 +8,37 @@ This is a service to manage configs
 ### Installation
 #### Setup Project
 Clone the project
-
 ```bash
   git clone https://github.com/bobyindra/configs-management-service
 ```
 
 Go to the project directory
-
 ```bash
   cd configs-management-service
 ```
 
 Copy environment variables
-
 ```bash
   cp env.sample .env
 ```
 
 #### Setup Database
+The schema will be migrated using golang-migrate tools, ensure you have installed it before. If you haven't, please follow this to install the golang-migrate
+For Mac OS (using Homebrew)
+```bash
+  brew install golang-migrate
+```
+For (for any OS with Go installed)
+```bash
+  go install github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+```
+
 Run migration
 ```bash
   make migrate
 ```
 
 Inject Users (For testing purpose because the API for registering an user is not provided yet in this project). We need the JWT token to hit the endpoint
-
 ```bash
   make inject-user
 ```
@@ -43,6 +49,7 @@ Run the server
 ```bash
   make run
 ```
+It can be accessed on 127.0.0.1:8080
 
 #### Run test
 Run unit test
@@ -124,6 +131,14 @@ Please follow the API documentation above to access the endpoint, don't forget t
 At the moment, the service architecture contains a simple relation between service and sql database. In the future, the service will have more comprehensive architecture to support real world usage. See the future development plans [here](future-development)
 
 ### Project Structure
+```
+  └── config-management-service
+    ├── cmd
+    │ ├── inject
+    │ ├── migrate
+    │ ├── rest
+
+```
 
 ### Database Schema
 ![Database Schema](https://drive.google.com/file/d/1u1tUgl4KVZK9uByMoLkVE8KSbIshjD8H/view?usp=sharing)
@@ -167,6 +182,7 @@ At the moment, the service architecture contains a simple relation between servi
 - For the authentication, this service is already supported login endpoint to get the user's JWT access token. For the testing purpose, I put the user login inside the configs management module. It's should be separated from this module since users management has a different purpose from configs management. For real world scenario, this service can be accessed from other services through internal call (service to service communication) and gRPC to increase the performance because configs service is the heavy read load on the real scenario.
 - This service is not implement any cache database such as Redis yet. So this service is not ready for heavy traffic. Storing frequent accessed configs to cache are indeed needed for the real scenario.
 - At the moment, this service is only supported SQLite (just for the simplicity). Next, I will update this service to support PosgreSQL or MySQL database for better performance.
+- For the sake of simplicity, the db migrations are located on db folder on the root directory. If we want to follow the correct architecture, migration folder and its migration files should be under the module on each project directory, so it fits with project architecture purpose in easily move the module to another service later on. 
 
 ### Future Development
 - Support both Predefined and Undefined schema

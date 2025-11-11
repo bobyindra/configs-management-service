@@ -6,7 +6,7 @@ import (
 	"github.com/bobyindra/configs-management-service/module/configuration/entity"
 )
 
-func (u *configsUsecase) RollbackConfigVersionByConfigName(ctx context.Context, params *entity.ConfigRequest) (*entity.ConfigResponse, error) {
+func (u *configsUsecase) RollbackConfigVersionByConfigName(ctx context.Context, params *entity.Config) (*entity.ConfigResponse, error) {
 	// Check the config version exists or not
 	getParams := &entity.GetConfigRequest{
 		Name: params.Name,
@@ -22,7 +22,7 @@ func (u *configsUsecase) RollbackConfigVersionByConfigName(ctx context.Context, 
 	}
 
 	// Execute Rollback
-	configs := &entity.ConfigRequest{
+	configs := &entity.Config{
 		Name:    params.Name,
 		Version: params.Version,
 		ActorId: params.ActorId,

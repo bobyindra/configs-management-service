@@ -14,12 +14,10 @@ import (
 func (r *userRepo) GetByUsername(ctx context.Context, username string) (*entity.User, error) {
 	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
 	defer cancel()
-
-	user := entity.User{}
+	var user userRecord
 
 	query := fmt.Sprintf("SELECT %s from users where username = $1", strings.Join(userColumn, ", "))
-	row := r.db.QueryRowContext(ctx, query, username)
-	err := row.Scan(&user.Id, &user.CryptedPassword, &user.Role, &user.CreatedAt, &user.UpdatedAt)
+	err := r.db.QueryRowContext(ctx, query, username).Scan(&user.Id, &user.Username, &user.CryptedPassword, &user.Role, &user.CreatedAt, &user.UpdatedAt)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, entity.ErrNotFound(username)
@@ -27,5 +25,5 @@ func (r *userRepo) GetByUsername(ctx context.Context, username string) (*entity.
 		return nil, err
 	}
 
-	return util.GeneralNullable(user), nil
+	return util.GeneralNullable(*user.ToEntity()), nil
 }

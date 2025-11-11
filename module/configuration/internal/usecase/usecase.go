@@ -33,11 +33,11 @@ func NewConfigsManagementUsecase(repoList repository.RepositoryList) ConfigsMana
 }
 
 type ConfigsManagementUsecase interface {
-	CreateConfig(ctx context.Context, params *entity.ConfigRequest) (*entity.ConfigResponse, error)
+	CreateConfig(ctx context.Context, params *entity.Config) (*entity.ConfigResponse, error)
 	GetConfigByConfigName(ctx context.Context, params *entity.GetConfigRequest) (*entity.ConfigResponse, error)
 	GetListVersionsByConfigName(ctx context.Context, params *entity.GetListConfigVersionsRequest) ([]*entity.ConfigResponse, *entity.PaginationResponse, error)
-	UpdateConfigByConfigName(ctx context.Context, params *entity.ConfigRequest) (*entity.ConfigResponse, error)
-	RollbackConfigVersionByConfigName(ctx context.Context, params *entity.ConfigRequest) (*entity.ConfigResponse, error)
+	UpdateConfigByConfigName(ctx context.Context, params *entity.Config) (*entity.ConfigResponse, error)
+	RollbackConfigVersionByConfigName(ctx context.Context, params *entity.Config) (*entity.ConfigResponse, error)
 }
 
 type SessionUsecase interface {

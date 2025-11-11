@@ -18,8 +18,6 @@ func (r *configsRepository) GetConfigByConfigName(ctx context.Context, obj *enti
 
 	var args []any
 
-	cfgRes := entity.ConfigResponse{}
-
 	query := fmt.Sprintf("SELECT %s FROM configs WHERE name = ?", strings.Join(configsRepositoryColumns, ", "))
 	args = append(args, obj.Name)
 
@@ -30,11 +28,17 @@ func (r *configsRepository) GetConfigByConfigName(ctx context.Context, obj *enti
 		query += " ORDER BY version DESC LIMIT 1"
 	}
 
+	var cfgRes configRecord
 	query = sqlx.Rebind(sqlx.DOLLAR, query)
 
-	row := r.db.QueryRowContext(ctx, query, args...)
-
-	err := row.Scan(&cfgRes.Id, &cfgRes.Name, &cfgRes.ConfigValues, &cfgRes.Version, &cfgRes.CreatedAt, &cfgRes.ActorId)
+	err := r.db.QueryRowContext(ctx, query, args...).Scan(
+		&cfgRes.Id,
+		&cfgRes.Name,
+		&cfgRes.ConfigValues,
+		&cfgRes.Version,
+		&cfgRes.CreatedAt,
+		&cfgRes.ActorId,
+	)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, entity.ErrNotFound(obj.Name)
@@ -43,5 +47,5 @@ func (r *configsRepository) GetConfigByConfigName(ctx context.Context, obj *enti
 	}
 	cfgRes.ConfigValues = util.ParseAny(cfgRes.ConfigValues)
 
-	return util.GeneralNullable(cfgRes), nil
+	return util.GeneralNullable(*cfgRes.ToEntity()), nil
 }
