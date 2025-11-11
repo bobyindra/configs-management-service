@@ -1,5 +1,6 @@
 # Configs Management Service Documentation
-This is a service to manage configs
+This is a service to manage configuration
+
 ## Setup
 ### Prerequisite
 - Go 1.25
@@ -24,6 +25,7 @@ Copy environment variables
 
 #### Setup Database
 The schema will be migrated using golang-migrate tools, ensure you have installed it before. If you haven't, please follow this to install the golang-migrate
+
 For Mac OS (using Homebrew)
 ```bash
   brew install golang-migrate
@@ -128,22 +130,39 @@ Please follow the API documentation above to access the endpoint, don't forget t
 
 ## Architecture Overview
 ![Project Architecture](https://drive.google.com/file/d/1nh7A1qAGtn6eAnqhDCeBu20iHd6DL3sa/view?usp=sharing)
+
 At the moment, the service architecture contains a simple relation between service and sql database. In the future, the service will have more comprehensive architecture to support real world usage. See the future development plans [here](future-development)
 
 ### Project Structure
 ```
   └── config-management-service
     ├── cmd
-    │ ├── inject
-    │ ├── migrate
-    │ ├── rest
+    │ ├── inject    <- temporary for testing purpose
+    │ ├── migrate   <- SQLite migration library
+    │ └── rest
+    ├── db    <- SQLite db for this project
+    │ └──  migrations    <- contains all migrations schema
+    ├── internal    <- store all global config and util for all module
+    └──  module
+      └── configuration   <- the application logic is here
+        ├── config
+        ├── entity
+        ├── internal
+        │ ├── auth
+        │ ├── handler
+        │ ├── repository
+        │ └──  usecase
+        ├── schema
+        └──  util
 
 ```
+*Notes:*
+- Module: different domain should be separated from a module. The purpose is if we need to take out the module outside of this project, it can be taked out easily. No dependency between module! To communicate between module, threat it as service to service communication.
 
 ### Database Schema
 ![Database Schema](https://drive.google.com/file/d/1u1tUgl4KVZK9uByMoLkVE8KSbIshjD8H/view?usp=sharing)
 
-*Configs Table*
+**Configs Table**
 | Column Name   | Data Type     | Property                                          | Description                                           |
 | :------------ | :------------ | :------------------------------------------------ | :---------------------------------------------------- |
 | id            | integer       | Primary Key, Auto Increament, Not Null            | id of config                                          |
@@ -153,13 +172,15 @@ At the moment, the service architecture contains a simple relation between servi
 | created_at    | timestamp     | -                                                 | Column to store the time when the config was created  |
 | actor_id      | integer       | Not Null, Foreign Key of `id` from table `users`  | Column to store actor_id for audit purpose            |
 
-*Index on configs Table*
+
+**Index on configs Table**
 | Index Name              | Column        | Description                                                                                                           |
 | :---------------------- | :------------ | :-------------------------------------------------------------------------------------------------------------------- |
 | idx_config_name_version | name, version | This unique index will store name and version of a config because we have query to get config based name and version  |
 | idx_config_name         | name          | This index is to optimize the query of get config by its name                                                         |
 
-*Users Table*
+
+**Users Table**
 | Column Name      | Data Type    | Property                                | Description                                         |
 | :--------------- | :----------- | :-------------------------------------- | :-------------------------------------------------- |
 | id               | integer      | Primary Key, Auto Increament, Not Null  | id of users                                         |
@@ -169,7 +190,8 @@ At the moment, the service architecture contains a simple relation between servi
 | created_at       | timestamp    | -                                       | Column to store the time when the user was created  |
 | updated_at       | timestamp    | -                                       | Column to store the time when the user was updated  |
 
-*Index on users Table*
+
+**Index on users Table**
 | Index Name         | Column    | Description                                                   |
 | :----------------- | :-------- | :------------------------------------------------------------ |
 | idx_users_username | username  | This index is to optimize the query of get users by username  |
