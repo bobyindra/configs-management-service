@@ -41,7 +41,7 @@ func (r *configsRepository) GetListVersionsByConfigName(ctx context.Context, obj
 		if err != nil {
 			return nil, nil, entity.WrapError(err)
 		}
-		cfgRes.ConfigValues = util.ParsedAny(cfgRes.ConfigValues)
+		cfgRes.ConfigValues = util.ParseAny(cfgRes.ConfigValues)
 		result = append(result, util.GeneralNullable(cfgRes))
 	}
 

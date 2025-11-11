@@ -16,6 +16,7 @@ func (r *configsRepository) CreateConfig(ctx context.Context, obj *entity.Config
 	obj.CreatedAt = now
 	obj.Version = 1
 
+	// convert the data to json string
 	jsonData, err := json.Marshal(obj.ConfigValues)
 	if err != nil {
 		return err
