@@ -10,10 +10,10 @@ import (
 func TestUtil_JsonByteEqual(t *testing.T) {
 	t.Parallel()
 
-	t.Run("Compare identical jsondata success", func(t *testing.T) {
+	t.Run("Compare jsondata success return correct result", func(t *testing.T) {
 		t.Parallel()
 
-		// Given couple of set data
+		// Given couple of []map[string] data
 		dataToCompare := []map[string]interface{}{
 			{"name": "payment-config", "enabled": true},
 			{"enabled": true, "name": "payment-config"},
@@ -33,6 +33,7 @@ func TestUtil_JsonByteEqual(t *testing.T) {
 		// Then return false
 		assert.False(t, res)
 
+		// When call JsonByteEqual function with non identical data set
 		res, _ = util.JsonByteEqual(dataToCompare[0], dataToCompare[3])
 
 		// Then return false
@@ -61,4 +62,68 @@ func TestUtil_JsonByteEqual(t *testing.T) {
 		// Then return false
 		assert.False(t, res)
 	})
+
+	t.Run("Given unsupported datatype for json on first data return marshal error", func(t *testing.T) {
+		t.Parallel()
+
+		// Given invalid first data
+		firstData := make(chan int)
+
+		// When
+		valid, err := util.JsonByteEqual(firstData, nil)
+
+		// Then
+		assert.False(t, valid)
+		assert.Error(t, err)
+	})
+
+	t.Run("Given unsupported datatype for json on second data return marshal error", func(t *testing.T) {
+		t.Parallel()
+
+		// Given invalid first data
+		secondData := make(chan int)
+
+		// When
+		valid, err := util.JsonByteEqual(nil, secondData)
+
+		// Then
+		assert.False(t, valid)
+		assert.Error(t, err)
+	})
+
+	t.Run("Given broken json on first data return unmarshal error", func(t *testing.T) {
+		t.Parallel()
+
+		// Given invalid first data
+		firstData := BadJSON{}
+		secondData := "Test"
+
+		// When
+		valid, err := util.JsonByteEqual(firstData, secondData)
+
+		// Then
+		assert.False(t, valid)
+		assert.Error(t, err)
+	})
+
+	t.Run("Given broken json on second data return unmarshal error", func(t *testing.T) {
+		t.Parallel()
+
+		// Given invalid first data
+		firstData := "Test"
+		secondData := BadJSON{}
+
+		// When
+		valid, err := util.JsonByteEqual(firstData, secondData)
+
+		// Then
+		assert.False(t, valid)
+		assert.Error(t, err)
+	})
+}
+
+type BadJSON struct{}
+
+func (BadJSON) MarshalJSON() ([]byte, error) {
+	return []byte("{invalid"), nil // intentionally broken JSON
 }
