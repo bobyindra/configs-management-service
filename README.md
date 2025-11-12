@@ -30,7 +30,7 @@ For Mac OS (using Homebrew)
 ```bash
   brew install golang-migrate
 ```
-For (for any OS with Go installed)
+For any OS with Go installed
 ```bash
   go install github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 ```
@@ -124,7 +124,7 @@ curl --location '127.0.0.1:8080/api/v1/auth/login' \
 Please follow the API documentation above to access the endpoint, don't forget to put the Authorization Token. (**Postman Collection is provided if needed [here](#postman-collection)**)
 
 ## Architecture Overview
-![Project Architecture](https://drive.google.com/file/d/1nh7A1qAGtn6eAnqhDCeBu20iHd6DL3sa/view?usp=sharing)
+[Project Architecture](https://drive.google.com/file/d/1nh7A1qAGtn6eAnqhDCeBu20iHd6DL3sa/view)
 
 At the moment, the service architecture contains a simple relation between service and sql database. In the future, the service will have more comprehensive architecture to support real world usage. See the future development plans [here](#future-development)
 
@@ -156,7 +156,7 @@ At the moment, the service architecture contains a simple relation between servi
 - Module: different domain should be separated from a module. The purpose is if we need to take out the module outside of this project, it can be taked out easily. No dependency between module! To communicate between module, threat it as service to service communication.
 
 ### Database Schema
-![Database Schema](https://drive.google.com/file/d/1u1tUgl4KVZK9uByMoLkVE8KSbIshjD8H/view?usp=sharing)
+[Database Schema Diagram](https://drive.google.com/file/d/1u1tUgl4KVZK9uByMoLkVE8KSbIshjD8H/view?usp=sharing)
 
 **Configs Table**
 | Column Name   | Data Type     | Property                                          | Description                                           |
