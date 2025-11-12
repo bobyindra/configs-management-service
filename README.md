@@ -6,8 +6,8 @@ This is a service to manage configuration
 - Go 1.25
 - SQLite
 
-### Installation
-#### Setup Project
+## Installation
+### Setup Project
 Clone the project
 ```bash
   git clone https://github.com/bobyindra/configs-management-service
@@ -23,7 +23,7 @@ Copy environment variables
   cp env.sample .env
 ```
 
-#### Setup Database
+### Setup Database
 The schema will be migrated using golang-migrate tools, ensure you have installed it before. If you haven't, please follow this to install the golang-migrate
 
 For Mac OS (using Homebrew)
@@ -33,6 +33,11 @@ For Mac OS (using Homebrew)
 For any OS with Go installed
 ```bash
   go install github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+```
+
+Create a directory with name `db` in the root project
+```bash
+  mkdir -p db
 ```
 
 Run migration
@@ -45,7 +50,7 @@ Inject Users (For testing purpose because the API for registering an user is not
   make inject-user
 ```
 
-#### Run the Application
+### Run the Application
 Run the server
 
 ```bash
@@ -53,7 +58,7 @@ Run the server
 ```
 It can be accessed on 127.0.0.1:8080
 
-#### Run test
+### Run test
 Run unit test
 ```bash
   make test
