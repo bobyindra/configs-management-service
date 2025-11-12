@@ -1,12 +1,15 @@
 package configs_repository_test
 
 import (
+	"fmt"
+	"testing"
 	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/bobyindra/configs-management-service/module/configuration/entity"
 	"github.com/bobyindra/configs-management-service/module/configuration/internal/repository"
 	configRepo "github.com/bobyindra/configs-management-service/module/configuration/internal/repository/configs_repository"
+	configsRepo "github.com/bobyindra/configs-management-service/module/configuration/internal/repository/configs_repository"
 	"github.com/bobyindra/configs-management-service/module/configuration/internal/test"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/suite"
@@ -34,6 +37,18 @@ func (s *configsRepoSuite) SetupTest() {
 	s.mock = mocks.DB
 }
 
+func (s *configsRepoSuite) TearDownTest() {
+	s.ctrl.Finish()
+}
+
+func TestConfigsRecordSuite(t *testing.T) {
+	suite.Run(t, new(configsRecordSuite))
+}
+
+func TestConfigsRepository(t *testing.T) {
+	suite.Run(t, new(configsRepoSuite))
+}
+
 func (s *configsRecordSuite) TestConfigs_ConfigToEntity_AllDataProvided() {
 	s.Run("Test ConfigRecord ToEntity with All Data Provided return equal data", func() {
 		// Given All User Record Data
@@ -46,7 +61,7 @@ func (s *configsRecordSuite) TestConfigs_ConfigToEntity_AllDataProvided() {
 			ActorId:      1,
 		}
 
-		expected := &entity.Config{
+		expected := &entity.ConfigResponse{
 			Id:           data.Id,
 			Name:         data.Name,
 			ConfigValues: data.ConfigValues,
@@ -73,7 +88,7 @@ func (s *configsRecordSuite) TestConfigs_ConfigToEntity_SomeDataProvided() {
 			Version:      1,
 		}
 
-		expected := &entity.Config{
+		expected := &entity.ConfigResponse{
 			Id:           data.Id,
 			Name:         data.Name,
 			ConfigValues: data.ConfigValues,
@@ -88,4 +103,35 @@ func (s *configsRecordSuite) TestConfigs_ConfigToEntity_SomeDataProvided() {
 		// Then
 		s.Equal(expected, result)
 	})
+}
+
+func BuildConfigResponseRows(data *entity.Config, rowAdd uint8) *sqlmock.Rows {
+	rows := sqlmock.NewRows(configsRepo.ConfigsRepositoryColumns)
+	if rowAdd == 0 {
+		rowAdd = 1
+	}
+	for range rowAdd {
+		rows.AddRow(
+			data.Id,
+			data.Name,
+			data.ConfigValues,
+			data.Version,
+			data.CreatedAt,
+			data.ActorId,
+		)
+	}
+	println("Build Rows: ", fmt.Sprint(data.CreatedAt))
+
+	return rows
+}
+
+func ConfigEntityToConfigResponse(data *entity.Config) *entity.ConfigResponse {
+	return &entity.ConfigResponse{
+		Id:           data.Id,
+		Name:         data.Name,
+		ConfigValues: data.ConfigValues,
+		Version:      data.Version,
+		CreatedAt:    data.CreatedAt,
+		ActorId:      data.ActorId,
+	}
 }

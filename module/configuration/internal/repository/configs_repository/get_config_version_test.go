@@ -16,14 +16,16 @@ func (s *configsRepoSuite) TestConfigs_GetListVersion_Success() {
 	s.Run("Test Get Config List Version by config-name return success", func() {
 		// Given
 		ctx := context.TODO()
-
-		totalRowValue := 2
 		configData := test.BuildConfigData()
+		totalRowValue := 2
+
 		params := &entity.GetListConfigVersionsRequest{
 			Name:   configData.Name,
 			Limit:  1,
 			Offset: 0,
 		}
+
+		expectedResponse := ConfigEntityToConfigResponse(configData)
 
 		expectedPagination := &entity.PaginationResponse{
 			OffsetPagination: &entity.OffsetPagination{
@@ -33,23 +35,7 @@ func (s *configsRepoSuite) TestConfigs_GetListVersion_Success() {
 			},
 		}
 
-		rows := sqlmock.NewRows(configsRepo.ConfigsRepositoryColumns)
-		rows.AddRow(
-			configData.Id,
-			configData.Name,
-			configData.ConfigValues,
-			configData.Version,
-			configData.CreatedAt,
-			configData.ActorId,
-		)
-		rows.AddRow(
-			configData.Id,
-			configData.Name,
-			configData.ConfigValues,
-			configData.Version,
-			configData.CreatedAt,
-			configData.ActorId,
-		)
+		rows := BuildConfigResponseRows(configData, 2)
 
 		s.mock.ExpectQuery(regexp.QuoteMeta(configsRepo.GetListVersionsConfigQuery)).
 			WithArgs(configData.Name, params.Limit, params.Offset).
@@ -68,7 +54,7 @@ func (s *configsRepoSuite) TestConfigs_GetListVersion_Success() {
 
 		// Then
 		s.Nil(err)
-		s.Equal(configData, result[0], "Result should be equal")
+		s.Equal(expectedResponse, result[0], "Result should be equal")
 		s.LessOrEqual(int(params.Limit), len(result), "Result data should be less or equal as limit")
 		s.Equal(expectedPagination, pagination, "Pagination should be equal")
 	})
@@ -92,7 +78,7 @@ func (s *configsRepoSuite) TestConfigs_GetListVersion_ErrNotFound() {
 		result, pagination, err := s.subject.GetListVersionsByConfigName(ctx, params)
 
 		// Then
-		s.Equal(entity.ErrNotFound(params.Name), err, "Should return ErrNotFound")
+		s.Equal(sql.ErrNoRows, err, "Should return ErrNoRows")
 		s.Nil(result)
 		s.Nil(pagination)
 	})

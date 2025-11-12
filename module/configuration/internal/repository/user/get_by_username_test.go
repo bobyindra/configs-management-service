@@ -51,7 +51,7 @@ func (s *userRepoSuite) TestUser_GetByUsername_ErrNotFound() {
 		result, err := s.subject.GetByUsername(ctx, username)
 
 		// Then
-		s.Equal(entity.ErrNotFound(username), err, "Should return ErrNotFound")
+		s.Equal(entity.ErrInvalidLogin, err, "Should return ErrNotFound")
 		s.Nil(result)
 	})
 }

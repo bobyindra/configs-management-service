@@ -6,7 +6,7 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/bobyindra/configs-management-service/internal/testutil"
-	"github.com/bobyindra/configs-management-service/module/configuration/entity"
+	"github.com/bobyindra/configs-management-service/internal/util"
 	configsRepo "github.com/bobyindra/configs-management-service/module/configuration/internal/repository/configs_repository"
 	"github.com/bobyindra/configs-management-service/module/configuration/internal/test"
 	"github.com/mattn/go-sqlite3"
@@ -18,20 +18,15 @@ func (s *configsRepoSuite) TestConfigs_CreateConfig_Success() {
 		ctx := context.TODO()
 		configData := test.BuildConfigData()
 
-		rows := sqlmock.NewRows(configsRepo.ConfigsRepositoryColumns)
-		rows.AddRow(
-			configData.Id,
-			configData.Name,
-			configData.ConfigValues,
-			configData.Version,
-			configData.CreatedAt,
-			configData.ActorId,
-		)
+		scanColumn := []string{"id"}
+		rows := sqlmock.NewRows(scanColumn)
+		rows.AddRow(configData.Id)
+		rowCfgValue, err := util.ConvertAnyValueToJsonString(configData.ConfigValues)
 
 		s.mock.ExpectQuery(regexp.QuoteMeta(configsRepo.CreateConfigQuery)).
 			WithArgs(
 				configData.Name,
-				configData.ConfigValues,
+				rowCfgValue,
 				configData.Version,
 				configData.CreatedAt,
 				configData.ActorId,
@@ -39,7 +34,7 @@ func (s *configsRepoSuite) TestConfigs_CreateConfig_Success() {
 			WillReturnRows(rows)
 
 		// When
-		err := s.subject.CreateConfig(ctx, configData)
+		err = s.subject.CreateConfig(ctx, configData)
 
 		// Then
 		s.Nil(err)
@@ -53,11 +48,12 @@ func (s *configsRepoSuite) TestConfigs_CreateConfig_ErrConstraintUnique() {
 		// Given
 		ctx := context.TODO()
 		configData := test.BuildConfigData()
+		rowCfgValue, err := util.ConvertAnyValueToJsonString(configData.ConfigValues)
 
 		s.mock.ExpectQuery(regexp.QuoteMeta(configsRepo.CreateConfigQuery)).
 			WithArgs(
 				configData.Name,
-				configData.ConfigValues,
+				rowCfgValue,
 				configData.Version,
 				configData.CreatedAt,
 				configData.ActorId,
@@ -65,10 +61,10 @@ func (s *configsRepoSuite) TestConfigs_CreateConfig_ErrConstraintUnique() {
 			WillReturnError(sqlite3.ErrNo(sqlite3.ErrConstraintUnique))
 
 		// When
-		err := s.subject.CreateConfig(ctx, configData)
+		err = s.subject.CreateConfig(ctx, configData)
 
 		// Then
-		s.Equal(entity.ErrConfigAlreadyExists, err, "Should return ErrConfigAlreadyExists")
+		s.Equal(sqlite3.ErrNo(sqlite3.ErrConstraintUnique), err, "Should return ErrConfigAlreadyExists")
 	})
 }
 
@@ -77,12 +73,13 @@ func (s *configsRepoSuite) TestConfigs_CreateConfig_ErrDB() {
 		// Given
 		ctx := context.TODO()
 		configData := test.BuildConfigData()
+		rowCfgValue, err := util.ConvertAnyValueToJsonString(configData.ConfigValues)
 		mockErr := testutil.ErrUnexpected
 
 		s.mock.ExpectQuery(regexp.QuoteMeta(configsRepo.CreateConfigQuery)).
 			WithArgs(
 				configData.Name,
-				configData.ConfigValues,
+				rowCfgValue,
 				configData.Version,
 				configData.CreatedAt,
 				configData.ActorId,
@@ -90,7 +87,7 @@ func (s *configsRepoSuite) TestConfigs_CreateConfig_ErrDB() {
 			WillReturnError(mockErr)
 
 		// When
-		err := s.subject.CreateConfig(ctx, configData)
+		err = s.subject.CreateConfig(ctx, configData)
 
 		// Then
 		s.EqualError(mockErr, err.Error(), "Error should be equal")

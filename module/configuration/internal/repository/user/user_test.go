@@ -1,6 +1,7 @@
 package user_test
 
 import (
+	"testing"
 	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
@@ -32,6 +33,18 @@ func (s *userRepoSuite) SetupTest() {
 
 	s.subject = repository
 	s.mock = mocks.DB
+}
+
+func (s *userRepoSuite) TearDownTest() {
+	s.ctrl.Finish()
+}
+
+func TestConfigsRecordSuite(t *testing.T) {
+	suite.Run(t, new(userRecordSuite))
+}
+
+func TestConfigsRepository(t *testing.T) {
+	suite.Run(t, new(userRepoSuite))
 }
 
 func (s *userRecordSuite) TestUser_UserToEntity_AllDataProvided() {

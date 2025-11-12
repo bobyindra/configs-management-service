@@ -1,4 +1,4 @@
-GO_PACKAGES ?= $(shell go list ./... | grep -v 'examples\|qtest\|mock')
+GO_PACKAGES ?= $(shell go list ./... | grep -v 'examples\|qtest\|mock\|cmd\|test')
 
 create-migrations:
 	migrate create -ext sql -dir ./module/configuration/db/migration -seq $(name)
@@ -21,3 +21,6 @@ test:
 coverage:
 	go test -race -cover -coverprofile=coverage.out -json ${GO_PACKAGES} > ./UT-report_coverage.json
 	go tool cover -func=coverage.out
+
+cover:
+	go tool cover -html=coverage.out

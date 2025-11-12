@@ -2,6 +2,7 @@ package configsusecase
 
 import (
 	"context"
+	"time"
 
 	"github.com/bobyindra/configs-management-service/internal/util"
 	"github.com/bobyindra/configs-management-service/module/configuration/entity"
@@ -31,6 +32,7 @@ func (u *configsUsecase) UpdateConfigByConfigName(ctx context.Context, params *e
 		Name:         params.Name,
 		ConfigValues: params.ConfigValues,
 		ActorId:      params.ActorId,
+		CreatedAt:    time.Now().UTC(),
 	}
 
 	err = u.configsRepo.UpdateConfigByConfigName(ctx, configs)

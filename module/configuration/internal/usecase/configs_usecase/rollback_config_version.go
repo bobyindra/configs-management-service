@@ -3,6 +3,7 @@ package configsusecase
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/bobyindra/configs-management-service/module/configuration/entity"
 )
@@ -29,9 +30,10 @@ func (u *configsUsecase) RollbackConfigVersionByConfigName(ctx context.Context, 
 
 	// Execute Rollback
 	configs := &entity.Config{
-		Name:    params.Name,
-		Version: params.Version,
-		ActorId: params.ActorId,
+		Name:      params.Name,
+		Version:   params.Version,
+		ActorId:   params.ActorId,
+		CreatedAt: time.Now().UTC(),
 	}
 
 	err = u.configsRepo.RollbackConfigVersionByConfigName(ctx, configs)

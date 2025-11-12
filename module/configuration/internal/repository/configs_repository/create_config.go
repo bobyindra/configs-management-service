@@ -2,9 +2,8 @@ package configs_repository
 
 import (
 	"context"
-	"encoding/json"
-	"time"
 
+	"github.com/bobyindra/configs-management-service/internal/util"
 	"github.com/bobyindra/configs-management-service/module/configuration/entity"
 	"github.com/mattn/go-sqlite3"
 )
@@ -14,16 +13,13 @@ var CreateConfigQuery = "INSERT INTO configs (name, config_values, version, crea
 func (r *configsRepository) CreateConfig(ctx context.Context, obj *entity.Config) error {
 	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
-	now := time.Now().UTC()
-	obj.CreatedAt = now
 	obj.Version = 1
 
 	// convert the data to json string
-	jsonData, err := json.Marshal(obj.ConfigValues)
+	jsonString, err := util.ConvertAnyValueToJsonString(obj.ConfigValues)
 	if err != nil {
 		return err
 	}
-	jsonString := string(jsonData)
 
 	err = r.db.QueryRowContext(ctx, CreateConfigQuery, obj.Name, jsonString, obj.Version, obj.CreatedAt, obj.ActorId).Scan(&obj.Id)
 	if err != nil {

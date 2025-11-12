@@ -12,20 +12,26 @@ import (
 	"github.com/bobyindra/configs-management-service/module/configuration/entity"
 )
 
+var (
+	GetConfigQuery               = fmt.Sprintf("SELECT %s FROM configs WHERE name = ?", strings.Join(ConfigsRepositoryColumns, ", "))
+	GetConfigSpecifyVersionQuery = " AND version = ?"
+	GetConfigOrderByVersionQuery = " ORDER BY version DESC LIMIT 1"
+)
+
 func (r *configsRepository) GetConfigByConfigName(ctx context.Context, obj *entity.GetConfigRequest) (*entity.ConfigResponse, error) {
 	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 
 	var args []any
 
-	query := fmt.Sprintf("SELECT %s FROM configs WHERE name = ?", strings.Join(ConfigsRepositoryColumns, ", "))
+	query := GetConfigQuery
 	args = append(args, obj.Name)
 
 	if obj.Version > 0 {
-		query += " AND version = ?"
+		query += GetConfigSpecifyVersionQuery
 		args = append(args, obj.Version)
 	} else {
-		query += " ORDER BY version DESC LIMIT 1"
+		query += GetConfigOrderByVersionQuery
 	}
 
 	var cfgRes ConfigRecord
