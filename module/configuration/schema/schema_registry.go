@@ -33,6 +33,6 @@ func GetSchemaByConfigName(cfgName string) ([]byte, error) {
 	case WORDING_CONFIG:
 		return os.ReadFile("./module/configuration/schema/wording_config.json")
 	default:
-		return nil, entity.ErrConfigNotFound
+		return nil, entity.ErrConfigSchemaNotFound
 	}
 }

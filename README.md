@@ -210,8 +210,5 @@ At the moment, the service architecture contains a simple relation between servi
 - Support client call/internal endpoint (service to service communication)
 - Support both gRPC and REST API
 
-## Testing
-Testing Documentation can be found [here]()
-
 ## Author
 - [@bobyindra](https://github.com/bobyindra)

@@ -21,7 +21,7 @@ func (r *userRepo) GetByUsername(ctx context.Context, username string) (*entity.
 	err := r.db.QueryRowContext(ctx, GetUserByUsernameQuery, username).Scan(&user.Id, &user.Username, &user.CryptedPassword, &user.Role, &user.CreatedAt, &user.UpdatedAt)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, entity.ErrNotFound(username)
+			return nil, entity.ErrInvalidLogin
 		}
 		return nil, err
 	}

@@ -16,9 +16,9 @@ func (e *ErrorDetail) Error() string {
 }
 
 var (
-	ErrConfigNotFound = &ErrorDetail{
-		Message:  "Configuration not found",
-		Code:     "CONFIG_NOT_FOUND",
+	ErrConfigSchemaNotFound = &ErrorDetail{
+		Message:  "Configuration schema not found",
+		Code:     "CONFIG_SCHEMA_NOT_FOUND",
 		HttpCode: http.StatusNotFound,
 	}
 
