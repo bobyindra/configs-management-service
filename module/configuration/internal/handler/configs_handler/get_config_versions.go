@@ -23,11 +23,7 @@ func (h *ConfigsHandler) GetConfigVersions(c *gin.Context) {
 
 	if claim.Role == "rw" || claim.Role == "ro" {
 		name := c.Param("name")
-		listConfigsParam, err := h.normalizeGetListConfigRequest(r.URL.Query())
-		if err != nil {
-			util.BuildFailedResponse(w, err)
-			return
-		}
+		listConfigsParam := h.normalizeGetListConfigRequest(r.URL.Query())
 		listConfigsParam.Name = name
 
 		resp, pagination, err := h.configsUscs.GetListVersionsByConfigName(ctx, listConfigsParam)
@@ -46,14 +42,14 @@ func (h *ConfigsHandler) GetConfigVersions(c *gin.Context) {
 	}
 }
 
-func (h *ConfigsHandler) normalizeGetListConfigRequest(query url.Values) (*entity.GetListConfigVersionsRequest, error) {
+func (h *ConfigsHandler) normalizeGetListConfigRequest(query url.Values) *entity.GetListConfigVersionsRequest {
 	param := &entity.GetListConfigVersionsRequest{}
 
 	if l := query.Get("limit"); l != "" {
 		if v, err := strconv.Atoi(l); err == nil {
 			param.Limit = uint32(v)
 		} else {
-			return nil, entity.WrapError(err)
+			param.Limit = 0
 		}
 	}
 
@@ -61,9 +57,9 @@ func (h *ConfigsHandler) normalizeGetListConfigRequest(query url.Values) (*entit
 		if v, err := strconv.Atoi(o); err == nil {
 			param.Offset = uint32(v)
 		} else {
-			return nil, entity.WrapError(err)
+			param.Offset = 0
 		}
 	}
 
-	return param, nil
+	return param
 }
