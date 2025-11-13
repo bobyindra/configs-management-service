@@ -15,12 +15,12 @@ import (
 	"github.com/golang/mock/gomock"
 )
 
-func (s *configsHandlerSuite) TestCreateConfig_Success() {
-	s.Run("Test Create Config - Success", func() {
+func (s *configsHandlerSuite) TestRollbackConfig_Success() {
+	s.Run("Test Rollback Config - Success", func() {
 		// Given
 		params := &entity.Config{
-			Name:         "wording-config",
-			ConfigValues: "test values",
+			Name:    "wording-config",
+			Version: 1,
 		}
 
 		jwtResponse := &auth.ConfigsJWTClaim{
@@ -34,38 +34,29 @@ func (s *configsHandlerSuite) TestCreateConfig_Success() {
 		configResponse := &entity.ConfigResponse{
 			Id:           1,
 			Name:         params.Name,
-			ConfigValues: params.ConfigValues,
+			ConfigValues: "test config",
 			Version:      1,
 			CreatedAt:    time.Now().UTC(),
 			ActorId:      jwtResponse.UserID,
 		}
 
-		schemaJSON := []byte(`{
-			"type": "string",
-			"minLength": 5,
-			"maxLength": 100
-			}`)
-
 		// mock
 		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(jwtResponse, nil)
-		s.schemaRegistry.EXPECT().GetSchemaByConfigName(gomock.Any()).Return(schemaJSON, nil)
-		s.configsUsecase.EXPECT().CreateConfig(gomock.Any(), gomock.AssignableToTypeOf(params)).Return(configResponse, nil)
+		s.configsUsecase.EXPECT().RollbackConfigVersionByConfigName(gomock.Any(), gomock.AssignableToTypeOf(params)).Return(configResponse, nil)
 
 		// When
-		w := s.createConfig(params)
+		w := s.rollbackConfig(params)
 
 		// Then
-		s.Equal(http.StatusCreated, w.Code, "Status code should be equal")
+		s.Equal(http.StatusOK, w.Code, "Status code should be equal")
 		s.Contains(w.Body.String(), configResponse.ConfigValues, "Should contains correct config value")
 	})
 }
 
-func (s *configsHandlerSuite) TestCreateConfig_Error() {
-	s.Run("Test Create Config - Claim Error", func() {
+func (s *configsHandlerSuite) TestRollbackConfig_Error() {
+	s.Run("Test Rollback Config - Claim Error", func() {
 		// Given
-		params := &entity.Config{
-			Name: "wording-config",
-		}
+		params := "{invalid json"
 
 		expectedErrorCode := "INTERNAL_ERROR"
 
@@ -73,14 +64,14 @@ func (s *configsHandlerSuite) TestCreateConfig_Error() {
 		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(nil, testutil.ErrUnexpected)
 
 		// When
-		w := s.createConfig(params)
+		w := s.rollbackConfig(params)
 
 		// Then
 		s.Equal(http.StatusInternalServerError, w.Code, "Status code should be equal")
 		s.Contains(w.Body.String(), expectedErrorCode, "Should contain error")
 	})
 
-	s.Run("Test Create Config - Permission Denied", func() {
+	s.Run("Test Rollback Config - Permission Denied", func() {
 		// Given
 		params := &entity.Config{
 			Name: "wording-config",
@@ -98,14 +89,14 @@ func (s *configsHandlerSuite) TestCreateConfig_Error() {
 		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(jwtResponse, nil)
 
 		// When
-		w := s.createConfig(params)
+		w := s.rollbackConfig(params)
 
 		// Then
 		s.Equal(http.StatusForbidden, w.Code, "Status code should be equal")
 		s.Contains(w.Body.String(), entity.ErrForbidden.Code, "Should contain error")
 	})
 
-	s.Run("Test Create Config - Body Invalid", func() {
+	s.Run("Test Rollback Config - Body Invalid", func() {
 		// Given
 		params := "{invalid json"
 
@@ -123,14 +114,14 @@ func (s *configsHandlerSuite) TestCreateConfig_Error() {
 		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(jwtResponse, nil)
 
 		// When
-		w := s.createConfig(params)
+		w := s.rollbackConfig(params)
 
 		// Then
 		s.Equal(http.StatusInternalServerError, w.Code, "Status code should be equal")
 		s.Contains(w.Body.String(), expectedErrorCode, "Should contain error")
 	})
 
-	s.Run("Test Create Config - Normalize Request config-value empty Error", func() {
+	s.Run("Test Rollback Config - Normalize Version Empty Error", func() {
 		// Given
 		params := &entity.Config{
 			Name: "wording-config",
@@ -150,17 +141,18 @@ func (s *configsHandlerSuite) TestCreateConfig_Error() {
 		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(jwtResponse, nil)
 
 		// When
-		w := s.createConfig(params)
+		w := s.rollbackConfig(params)
 
 		// Then
 		s.Equal(http.StatusBadRequest, w.Code, "Status code should be equal")
 		s.Contains(w.Body.String(), expectedErrorCode, "Should contain error")
 	})
 
-	s.Run("Test Create Config - Normalize Request name empty Error", func() {
+	s.Run("Test Rollback Config - Normalize Name Empty Error", func() {
 		// Given
 		params := &entity.Config{
-			ConfigValues: "test values",
+			Name:    "wording-config",
+			Version: 1,
 		}
 
 		jwtResponse := &auth.ConfigsJWTClaim{
@@ -180,24 +172,24 @@ func (s *configsHandlerSuite) TestCreateConfig_Error() {
 		gin.SetMode(gin.TestMode)
 		var buf bytes.Buffer
 		json.NewEncoder(&buf).Encode(params)
-		req, _ := http.NewRequest(http.MethodPost, "/api/v1/configs/:name", &buf)
+		req, _ := http.NewRequest(http.MethodPost, "/api/v1/configs/:name/rollback", &buf)
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
 		c.Request = req
 
 		// When
-		s.subject.CreateConfigs(c)
+		s.subject.RollbackConfigVersion(c)
 
 		// Then
 		s.Equal(http.StatusBadRequest, w.Code, "Status code should be equal")
 		s.Contains(w.Body.String(), expectedErrorCode, "Should contain error")
 	})
 
-	s.Run("Test Create Config - Invalid Predefined Schema", func() {
+	s.Run("Test Rollback Config - Error", func() {
 		// Given
 		params := &entity.Config{
-			Name:         "wording-config",
-			ConfigValues: "test values",
+			Name:    "wording-config",
+			Version: 1,
 		}
 
 		jwtResponse := &auth.ConfigsJWTClaim{
@@ -210,110 +202,12 @@ func (s *configsHandlerSuite) TestCreateConfig_Error() {
 
 		expectedErrorCode := "INTERNAL_ERROR"
 
-		schemaJSON := []byte(`{invalid schema`)
-
 		// mock
 		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(jwtResponse, nil)
-		s.schemaRegistry.EXPECT().GetSchemaByConfigName(gomock.Any()).Return(schemaJSON, nil)
+		s.configsUsecase.EXPECT().RollbackConfigVersionByConfigName(gomock.Any(), gomock.AssignableToTypeOf(params)).Return(nil, testutil.ErrUnexpected)
 
 		// When
-		w := s.createConfig(params)
-
-		// Then
-		s.Equal(http.StatusInternalServerError, w.Code, "Status code should be equal")
-		s.Contains(w.Body.String(), expectedErrorCode, "Should contain error")
-	})
-
-	s.Run("Test Create Config - Invalid object type", func() {
-		// Given
-		params := &entity.Config{
-			Name:         "wording-config",
-			ConfigValues: "test values",
-		}
-
-		jwtResponse := &auth.ConfigsJWTClaim{
-			RegisteredClaims: jwt.RegisteredClaims{},
-			AdditionalClaim: auth.AdditionalClaim{
-				UserID: 1,
-				Role:   "rw",
-			},
-		}
-
-		schemaJSON := []byte(`{
-			"type": "integer",
-			"minimum": 0,
-			"maximum": 10000
-		}`)
-
-		// mock
-		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(jwtResponse, nil)
-		s.schemaRegistry.EXPECT().GetSchemaByConfigName(gomock.Any()).Return(schemaJSON, nil)
-
-		// When
-		w := s.createConfig(params)
-
-		// Then
-		s.Equal(http.StatusBadRequest, w.Code, "Status code should be equal")
-		s.Contains(w.Body.String(), entity.ErrInvalidSchema.Message, "Should contain error")
-	})
-
-	s.Run("Test Create Config - Schema Not Found", func() {
-		// Given
-		params := &entity.Config{
-			Name:         "wording-config",
-			ConfigValues: "test values",
-		}
-
-		jwtResponse := &auth.ConfigsJWTClaim{
-			RegisteredClaims: jwt.RegisteredClaims{},
-			AdditionalClaim: auth.AdditionalClaim{
-				UserID: 1,
-				Role:   "rw",
-			},
-		}
-
-		// mock
-		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(jwtResponse, nil)
-		s.schemaRegistry.EXPECT().GetSchemaByConfigName(gomock.Any()).Return(nil, entity.ErrConfigSchemaNotFound)
-
-		// When
-		w := s.createConfig(params)
-
-		// Then
-		s.Equal(http.StatusNotFound, w.Code, "Status code should be equal")
-		s.Contains(w.Body.String(), entity.ErrConfigSchemaNotFound.Message, "Should contain error")
-	})
-
-	s.Run("Test Create Config - Error", func() {
-		// Given
-		params := &entity.Config{
-			Name:         "wording-config",
-			ConfigValues: "test values",
-		}
-
-		jwtResponse := &auth.ConfigsJWTClaim{
-			RegisteredClaims: jwt.RegisteredClaims{},
-			AdditionalClaim: auth.AdditionalClaim{
-				UserID: 1,
-				Role:   "rw",
-			},
-		}
-
-		schemaJSON := []byte(`{
-			"type": "string",
-			"minLength": 5,
-			"maxLength": 100
-		}`)
-
-		expectedErrorCode := "INTERNAL_ERROR"
-
-		// mock
-		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(jwtResponse, nil)
-		s.schemaRegistry.EXPECT().GetSchemaByConfigName(gomock.Any()).Return(schemaJSON, nil)
-		s.configsUsecase.EXPECT().CreateConfig(gomock.Any(), gomock.AssignableToTypeOf(params)).Return(nil, testutil.ErrUnexpected)
-
-		// When
-		w := s.createConfig(params)
+		w := s.rollbackConfig(params)
 
 		// Then
 		s.Equal(http.StatusInternalServerError, w.Code, "Status code should be equal")
@@ -321,19 +215,19 @@ func (s *configsHandlerSuite) TestCreateConfig_Error() {
 	})
 }
 
-func (s *configsHandlerSuite) createConfig(body any) *httptest.ResponseRecorder {
+func (s *configsHandlerSuite) rollbackConfig(body any) *httptest.ResponseRecorder {
 	gin.SetMode(gin.TestMode)
 	var buf bytes.Buffer
 	if body != nil {
 		json.NewEncoder(&buf).Encode(body)
 	}
-	req, _ := http.NewRequest(http.MethodPost, "/api/v1/configs/:name", &buf)
+	req, _ := http.NewRequest(http.MethodPost, "/api/v1/configs/:name/rollback", &buf)
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
 	c.Request = req
 	c.Params = gin.Params{
 		gin.Param{Key: "name", Value: "wording-config"},
 	}
-	s.subject.CreateConfigs(c)
+	s.subject.RollbackConfigVersion(c)
 	return w
 }
