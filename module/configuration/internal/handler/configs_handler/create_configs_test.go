@@ -130,7 +130,7 @@ func (s *configsHandlerSuite) TestCreateConfig_Error() {
 		s.Contains(w.Body.String(), expectedErrorCode, "Should contain error")
 	})
 
-	s.Run("Test Create Config - Normalize Request Error", func() {
+	s.Run("Test Create Config - Normalize Request config-value empty Error", func() {
 		// Given
 		params := &entity.Config{
 			Name: "wording-config",
@@ -157,7 +157,76 @@ func (s *configsHandlerSuite) TestCreateConfig_Error() {
 		s.Contains(w.Body.String(), expectedErrorCode, "Should contain error")
 	})
 
-	s.Run("Test Create Config - Invalid Schema", func() {
+	s.Run("Test Create Config - Normalize Request name empty Error", func() {
+		// Given
+		params := &entity.Config{
+			ConfigValues: "test values",
+		}
+
+		jwtResponse := &auth.ConfigsJWTClaim{
+			RegisteredClaims: jwt.RegisteredClaims{},
+			AdditionalClaim: auth.AdditionalClaim{
+				UserID: 1,
+				Role:   "rw",
+			},
+		}
+
+		expectedErrorCode := "EMPTY_FIELD"
+
+		// mock
+		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(jwtResponse, nil)
+
+		// Set request data without giving :name value on the path
+		gin.SetMode(gin.TestMode)
+		var buf bytes.Buffer
+		if params != nil {
+			json.NewEncoder(&buf).Encode(params)
+		}
+		req, _ := http.NewRequest(http.MethodPost, "/api/v1/configs/:name", &buf)
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		c.Request = req
+
+		// When
+		s.subject.CreateConfigs(c)
+
+		// Then
+		s.Equal(http.StatusBadRequest, w.Code, "Status code should be equal")
+		s.Contains(w.Body.String(), expectedErrorCode, "Should contain error")
+	})
+
+	s.Run("Test Create Config - Invalid Predefined Schema", func() {
+		// Given
+		params := &entity.Config{
+			Name:         "wording-config",
+			ConfigValues: "test values",
+		}
+
+		jwtResponse := &auth.ConfigsJWTClaim{
+			RegisteredClaims: jwt.RegisteredClaims{},
+			AdditionalClaim: auth.AdditionalClaim{
+				UserID: 1,
+				Role:   "rw",
+			},
+		}
+
+		expectedErrorCode := "INTERNAL_ERROR"
+
+		schemaJSON := []byte(`{invalid schema`)
+
+		// mock
+		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(jwtResponse, nil)
+		s.schemaRegistry.EXPECT().GetSchemaByConfigName(gomock.Any()).Return(schemaJSON, nil)
+
+		// When
+		w := s.createConfig(params)
+
+		// Then
+		s.Equal(http.StatusInternalServerError, w.Code, "Status code should be equal")
+		s.Contains(w.Body.String(), expectedErrorCode, "Should contain error")
+	})
+
+	s.Run("Test Create Config - Invalid object type", func() {
 		// Given
 		params := &entity.Config{
 			Name:         "wording-config",
@@ -188,6 +257,33 @@ func (s *configsHandlerSuite) TestCreateConfig_Error() {
 		// Then
 		s.Equal(http.StatusBadRequest, w.Code, "Status code should be equal")
 		s.Contains(w.Body.String(), entity.ErrInvalidSchema.Message, "Should contain error")
+	})
+
+	s.Run("Test Create Config - Schema Not Found", func() {
+		// Given
+		params := &entity.Config{
+			Name:         "wording-config",
+			ConfigValues: "test values",
+		}
+
+		jwtResponse := &auth.ConfigsJWTClaim{
+			RegisteredClaims: jwt.RegisteredClaims{},
+			AdditionalClaim: auth.AdditionalClaim{
+				UserID: 1,
+				Role:   "rw",
+			},
+		}
+
+		// mock
+		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(jwtResponse, nil)
+		s.schemaRegistry.EXPECT().GetSchemaByConfigName(gomock.Any()).Return(nil, entity.ErrConfigSchemaNotFound)
+
+		// When
+		w := s.createConfig(params)
+
+		// Then
+		s.Equal(http.StatusNotFound, w.Code, "Status code should be equal")
+		s.Contains(w.Body.String(), entity.ErrConfigSchemaNotFound.Message, "Should contain error")
 	})
 
 	s.Run("Test Create Config - Error", func() {
