@@ -210,7 +210,7 @@ func (s *configsHandlerSuite) GetListConfigVersions(customURL string) *httptest.
 		url = customURL
 	}
 
-	req, _ := http.NewRequest(http.MethodPost, url, nil)
+	req, _ := http.NewRequest(http.MethodGet, url, nil)
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
 	c.Request = req
