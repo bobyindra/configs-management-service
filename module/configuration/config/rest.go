@@ -6,6 +6,7 @@ import (
 	configsHandler "github.com/bobyindra/configs-management-service/module/configuration/internal/handler/configs_handler"
 	"github.com/bobyindra/configs-management-service/module/configuration/internal/repository"
 	"github.com/bobyindra/configs-management-service/module/configuration/internal/usecase"
+	"github.com/bobyindra/configs-management-service/module/configuration/schema"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,9 +14,10 @@ func RegisterCmsHandler(cfg CmsConfig) error {
 	repoList := repository.NewRepositoryList(cfg.Database)
 	uscsList := usecase.NewUsecaseList(repoList)
 	authUtil := auth.NewAuth([]byte(cfg.JWTSecret), cfg.JWTExpiryDuration)
+	schemaRegistry := schema.NewSchemaRegistry()
 
 	registerSessionHandler(cfg.Router, authUtil, uscsList)
-	registerConfigsHandler(cfg.Router, authUtil, uscsList)
+	registerConfigsHandler(cfg.Router, authUtil, uscsList, schemaRegistry)
 
 	return nil
 }
@@ -28,8 +30,8 @@ func registerSessionHandler(router *gin.Engine, auth auth.Auth, uscsList usecase
 	}
 }
 
-func registerConfigsHandler(router *gin.Engine, auth auth.Auth, uscsList usecase.UsecaseList) {
-	ch := configsHandler.NewConfigsHandler(auth, uscsList.ConfigsManagement)
+func registerConfigsHandler(router *gin.Engine, auth auth.Auth, uscsList usecase.UsecaseList, schemaReg schema.SchemaRegistry) {
+	ch := configsHandler.NewConfigsHandler(auth, uscsList.ConfigsManagement, schemaReg)
 	v1 := router.Group("/api/v1/configs")
 	{
 		v1.POST("/:name", ch.CreateConfigs)

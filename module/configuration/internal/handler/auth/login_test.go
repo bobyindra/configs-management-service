@@ -12,8 +12,8 @@ import (
 	"github.com/golang/mock/gomock"
 )
 
-func (h *authHandlerSuite) TestAuthLogin_Success() {
-	h.Run("Test Login - Success", func() {
+func (s *authHandlerSuite) TestAuthLogin_Success() {
+	s.Run("Test Login - Success", func() {
 		// Given
 		params := &entity.LoginRequest{
 			Username: "testuser",
@@ -28,33 +28,33 @@ func (h *authHandlerSuite) TestAuthLogin_Success() {
 		mockToken := "mocktoken"
 
 		// mock
-		h.sessionUsecase.EXPECT().Login(gomock.Any(), gomock.Any()).Return(userResponse, nil)
-		h.auth.EXPECT().GenerateToken(gomock.Any(), gomock.Any()).Return(mockToken, nil)
+		s.sessionUsecase.EXPECT().Login(gomock.Any(), gomock.Any()).Return(userResponse, nil)
+		s.auth.EXPECT().GenerateToken(gomock.Any(), gomock.Any()).Return(mockToken, nil)
 
 		// When
-		w := h.doLogin(params)
+		w := s.doLogin(params)
 
 		// Then
-		h.Equal(http.StatusOK, w.Code, "Status code should be equal")
-		h.Contains(w.Body.String(), mockToken, "Should contains token")
+		s.Equal(http.StatusOK, w.Code, "Status code should be equal")
+		s.Contains(w.Body.String(), mockToken, "Should contains token")
 	})
 }
 
-func (h *authHandlerSuite) TestAuthLogin_Error() {
-	h.Run("Test Login - decode body Err", func() {
+func (s *authHandlerSuite) TestAuthLogin_Error() {
+	s.Run("Test Login - decode body Err", func() {
 		// Given
 		params := "{invalid json"
 		expectedErrorCode := "INTERNAL_ERROR"
 
 		// When
-		w := h.doLogin(params)
+		w := s.doLogin(params)
 
 		// Then
-		h.Equal(http.StatusInternalServerError, w.Code, "Status code should be equal")
-		h.Contains(w.Body.String(), expectedErrorCode, "Should contains expected error message")
+		s.Equal(http.StatusInternalServerError, w.Code, "Status code should be equal")
+		s.Contains(w.Body.String(), expectedErrorCode, "Should contains expected error message")
 	})
 
-	h.Run("Test Login - normalize request password Err", func() {
+	s.Run("Test Login - normalize request password Err", func() {
 		// Given
 		params := &entity.LoginRequest{
 			Username: "testuser",
@@ -62,14 +62,14 @@ func (h *authHandlerSuite) TestAuthLogin_Error() {
 		expectedErrorCode := "EMPTY_FIELD"
 
 		// When
-		w := h.doLogin(params)
+		w := s.doLogin(params)
 
 		// Then
-		h.Equal(http.StatusBadRequest, w.Code, "Status code should be equal")
-		h.Contains(w.Body.String(), expectedErrorCode, "Should contain error")
+		s.Equal(http.StatusBadRequest, w.Code, "Status code should be equal")
+		s.Contains(w.Body.String(), expectedErrorCode, "Should contain error")
 	})
 
-	h.Run("Test Login - normalize request username Err", func() {
+	s.Run("Test Login - normalize request username Err", func() {
 		// Given
 		params := &entity.LoginRequest{
 			Password: "testpassword",
@@ -77,14 +77,14 @@ func (h *authHandlerSuite) TestAuthLogin_Error() {
 		expectedErrorCode := "EMPTY_FIELD"
 
 		// When
-		w := h.doLogin(params)
+		w := s.doLogin(params)
 
 		// Then
-		h.Equal(http.StatusBadRequest, w.Code, "Status code should be equal")
-		h.Contains(w.Body.String(), expectedErrorCode, "Should contain error")
+		s.Equal(http.StatusBadRequest, w.Code, "Status code should be equal")
+		s.Contains(w.Body.String(), expectedErrorCode, "Should contain error")
 	})
 
-	h.Run("Test Login - login Err", func() {
+	s.Run("Test Login - login Err", func() {
 		// Given
 		params := &entity.LoginRequest{
 			Username: "testuser",
@@ -93,17 +93,17 @@ func (h *authHandlerSuite) TestAuthLogin_Error() {
 		expectedErrorCode := "INTERNAL_ERROR"
 
 		// mock
-		h.sessionUsecase.EXPECT().Login(gomock.Any(), gomock.Any()).Return(nil, testutil.ErrUnexpected)
+		s.sessionUsecase.EXPECT().Login(gomock.Any(), gomock.Any()).Return(nil, testutil.ErrUnexpected)
 
 		// When
-		w := h.doLogin(params)
+		w := s.doLogin(params)
 
 		// Then
-		h.Equal(http.StatusInternalServerError, w.Code, "Status code should be equal")
-		h.Contains(w.Body.String(), expectedErrorCode, "Should contain error")
+		s.Equal(http.StatusInternalServerError, w.Code, "Status code should be equal")
+		s.Contains(w.Body.String(), expectedErrorCode, "Should contain error")
 	})
 
-	h.Run("Test Login - generate token Err", func() {
+	s.Run("Test Login - generate token Err", func() {
 		// Given
 		params := &entity.LoginRequest{
 			Username: "testuser",
@@ -116,27 +116,28 @@ func (h *authHandlerSuite) TestAuthLogin_Error() {
 		}
 
 		// mock
-		h.sessionUsecase.EXPECT().Login(gomock.Any(), gomock.Any()).Return(userResponse, nil)
-		h.auth.EXPECT().GenerateToken(gomock.Any(), gomock.Any()).Return("", testutil.ErrUnexpected)
+		s.sessionUsecase.EXPECT().Login(gomock.Any(), gomock.Any()).Return(userResponse, nil)
+		s.auth.EXPECT().GenerateToken(gomock.Any(), gomock.Any()).Return("", testutil.ErrUnexpected)
 
 		// When
-		w := h.doLogin(params)
+		w := s.doLogin(params)
 
 		// Then
-		h.Equal(http.StatusInternalServerError, w.Code, "Status code should be equal")
-		h.Contains(w.Body.String(), expectedErrorCode, "Should contain error")
+		s.Equal(http.StatusInternalServerError, w.Code, "Status code should be equal")
+		s.Contains(w.Body.String(), expectedErrorCode, "Should contain error")
 	})
 }
 
-func (h *authHandlerSuite) doLogin(body any) *httptest.ResponseRecorder {
+func (s *authHandlerSuite) doLogin(body any) *httptest.ResponseRecorder {
+	gin.SetMode(gin.TestMode)
 	var buf bytes.Buffer
 	if body != nil {
 		json.NewEncoder(&buf).Encode(body)
 	}
-	req, _ := http.NewRequest(http.MethodPost, "/login", &buf)
+	req, _ := http.NewRequest(http.MethodPost, "/api/v1/login", &buf)
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
 	c.Request = req
-	h.subject.Login(c)
+	s.subject.Login(c)
 	return w
 }

@@ -9,6 +9,7 @@ import (
 	authMock "github.com/bobyindra/configs-management-service/module/configuration/internal/auth/mock"
 	configsHandler "github.com/bobyindra/configs-management-service/module/configuration/internal/handler/configs_handler"
 	usecaseMock "github.com/bobyindra/configs-management-service/module/configuration/internal/usecase/mock"
+	schemaMock "github.com/bobyindra/configs-management-service/module/configuration/schema/mock"
 )
 
 type configsHandlerSuite struct {
@@ -19,19 +20,21 @@ type configsHandlerSuite struct {
 
 	auth           *authMock.MockAuth
 	configsUsecase *usecaseMock.MockConfigsManagementUsecase
+	schemaRegistry *schemaMock.MockSchemaRegistry
 }
 
-func (h *configsHandlerSuite) SetupTest() {
-	ctrl := gomock.NewController(h.T())
+func (s *configsHandlerSuite) SetupTest() {
+	ctrl := gomock.NewController(s.T())
 
-	h.ctrl = ctrl
-	h.auth = authMock.NewMockAuth(ctrl)
-	h.configsUsecase = usecaseMock.NewMockConfigsManagementUsecase(ctrl)
-	h.subject = configsHandler.NewConfigsHandler(h.auth, h.configsUsecase)
+	s.ctrl = ctrl
+	s.auth = authMock.NewMockAuth(ctrl)
+	s.configsUsecase = usecaseMock.NewMockConfigsManagementUsecase(ctrl)
+	s.schemaRegistry = schemaMock.NewMockSchemaRegistry(ctrl)
+	s.subject = configsHandler.NewConfigsHandler(s.auth, s.configsUsecase, s.schemaRegistry)
 }
 
-func (h *configsHandlerSuite) TearDownTest() {
-	h.ctrl.Finish()
+func (s *configsHandlerSuite) TearDownTest() {
+	s.ctrl.Finish()
 }
 
 func TestConfigsHandlerSuite(t *testing.T) {

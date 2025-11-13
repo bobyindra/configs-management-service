@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/bobyindra/configs-management-service/module/configuration/entity"
-	"github.com/bobyindra/configs-management-service/module/configuration/schema"
 	"github.com/bobyindra/configs-management-service/module/configuration/util"
 	"github.com/gin-gonic/gin"
 	"github.com/kaptinlin/jsonschema"
@@ -72,7 +71,7 @@ func (h *ConfigsHandler) normalizeCreateConfigRequest(param entity.Config) (*ent
 }
 
 func (h *ConfigsHandler) validateConfigSchema(param entity.Config) error {
-	fileSchema, err := schema.GetSchemaByConfigName(param.Name)
+	fileSchema, err := h.schemaRegistry.GetSchemaByConfigName(param.Name)
 	if err != nil {
 		return err
 	}

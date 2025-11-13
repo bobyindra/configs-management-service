@@ -22,17 +22,17 @@ type authHandlerSuite struct {
 	sessionUsecase *usecaseMock.MockSessionUsecase
 }
 
-func (h *authHandlerSuite) SetupTest() {
-	ctrl := gomock.NewController(h.T())
+func (s *authHandlerSuite) SetupTest() {
+	ctrl := gomock.NewController(s.T())
 
-	h.ctrl = ctrl
-	h.auth = authMock.NewMockAuth(ctrl)
-	h.sessionUsecase = usecaseMock.NewMockSessionUsecase(ctrl)
-	h.subject = sessionHandler.NewSession(h.auth, h.sessionUsecase)
+	s.ctrl = ctrl
+	s.auth = authMock.NewMockAuth(ctrl)
+	s.sessionUsecase = usecaseMock.NewMockSessionUsecase(ctrl)
+	s.subject = sessionHandler.NewSession(s.auth, s.sessionUsecase)
 }
 
-func (h *authHandlerSuite) TearDownTest() {
-	h.ctrl.Finish()
+func (s *authHandlerSuite) TearDownTest() {
+	s.ctrl.Finish()
 }
 
 func TestSessionHandlerSuite(t *testing.T) {

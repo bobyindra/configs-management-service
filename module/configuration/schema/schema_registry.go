@@ -16,7 +16,17 @@ const (
 	WORDING_CONFIG  = "wording-config"
 )
 
-func GetSchemaByConfigName(cfgName string) ([]byte, error) {
+type schemaRegistry struct{}
+
+func NewSchemaRegistry() *schemaRegistry {
+	return &schemaRegistry{}
+}
+
+type SchemaRegistry interface {
+	GetSchemaByConfigName(configName string) ([]byte, error)
+}
+
+func (sr *schemaRegistry) GetSchemaByConfigName(cfgName string) ([]byte, error) {
 	switch cfgName {
 	case PAYMENT_CONFIG:
 		return os.ReadFile("./module/configuration/schema/payment_config.json")
