@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (h *configs) GetConfigVersions(c *gin.Context) {
+func (h *ConfigsHandler) GetConfigVersions(c *gin.Context) {
 	r := c.Request
 	w := c.Writer
 	ctx := r.Context()
@@ -46,7 +46,7 @@ func (h *configs) GetConfigVersions(c *gin.Context) {
 	}
 }
 
-func (h *configs) normalizeGetListConfigRequest(query url.Values) (*entity.GetListConfigVersionsRequest, error) {
+func (h *ConfigsHandler) normalizeGetListConfigRequest(query url.Values) (*entity.GetListConfigVersionsRequest, error) {
 	param := &entity.GetListConfigVersionsRequest{}
 
 	if l := query.Get("limit"); l != "" {

@@ -12,7 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (h *session) Login(c *gin.Context) {
+func (h *SessionHandler) Login(c *gin.Context) {
 	r := c.Request
 	w := c.Writer
 	ctx := r.Context()
@@ -47,7 +47,7 @@ func (h *session) Login(c *gin.Context) {
 	})
 }
 
-func (h *session) normalizeLoginRequest(param entity.LoginRequest) (*entity.LoginRequest, error) {
+func (h *SessionHandler) normalizeLoginRequest(param entity.LoginRequest) (*entity.LoginRequest, error) {
 	if param.Username == "" {
 		return nil, entity.ErrEmptyField("username")
 	}

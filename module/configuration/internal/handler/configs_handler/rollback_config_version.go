@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (h *configs) RollbackConfigVersion(c *gin.Context) {
+func (h *ConfigsHandler) RollbackConfigVersion(c *gin.Context) {
 	r := c.Request
 	w := c.Writer
 	ctx := r.Context()
@@ -51,7 +51,7 @@ func (h *configs) RollbackConfigVersion(c *gin.Context) {
 	})
 }
 
-func (h *configs) normalizeRollbackConfigRequest(param entity.Config) (*entity.Config, error) {
+func (h *ConfigsHandler) normalizeRollbackConfigRequest(param entity.Config) (*entity.Config, error) {
 	if param.Name == "" {
 		return nil, entity.ErrEmptyField("name")
 	}

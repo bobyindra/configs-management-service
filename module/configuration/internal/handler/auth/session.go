@@ -5,13 +5,13 @@ import (
 	"github.com/bobyindra/configs-management-service/module/configuration/internal/usecase"
 )
 
-type session struct {
+type SessionHandler struct {
 	auth        auth.Auth
 	sessionUscs usecase.SessionUsecase
 }
 
-func NewSession(auth auth.Auth, sessionUscs usecase.SessionUsecase) *session {
-	return &session{
+func NewSession(auth auth.Auth, sessionUscs usecase.SessionUsecase) *SessionHandler {
+	return &SessionHandler{
 		auth:        auth,
 		sessionUscs: sessionUscs,
 	}

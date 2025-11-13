@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (h *configs) UpdateConfig(c *gin.Context) {
+func (h *ConfigsHandler) UpdateConfig(c *gin.Context) {
 	r := c.Request
 	w := c.Writer
 	ctx := r.Context()

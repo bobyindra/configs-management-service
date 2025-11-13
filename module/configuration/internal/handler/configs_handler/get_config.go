@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (h *configs) GetConfig(c *gin.Context) {
+func (h *ConfigsHandler) GetConfig(c *gin.Context) {
 	r := c.Request
 	w := c.Writer
 	ctx := r.Context()
@@ -46,7 +46,7 @@ func (h *configs) GetConfig(c *gin.Context) {
 	}
 }
 
-func (h *configs) normalizeGetConfigRequest(query url.Values) (*entity.GetConfigRequest, error) {
+func (h *ConfigsHandler) normalizeGetConfigRequest(query url.Values) (*entity.GetConfigRequest, error) {
 	param := &entity.GetConfigRequest{}
 
 	if ver := query.Get("version"); ver != "" {

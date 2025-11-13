@@ -11,7 +11,7 @@ import (
 	"github.com/kaptinlin/jsonschema"
 )
 
-func (h *configs) CreateConfigs(c *gin.Context) {
+func (h *ConfigsHandler) CreateConfigs(c *gin.Context) {
 	r := c.Request
 	w := c.Writer
 	ctx := r.Context()
@@ -60,7 +60,7 @@ func (h *configs) CreateConfigs(c *gin.Context) {
 	})
 }
 
-func (h *configs) normalizeCreateConfigRequest(param entity.Config) (*entity.Config, error) {
+func (h *ConfigsHandler) normalizeCreateConfigRequest(param entity.Config) (*entity.Config, error) {
 	if param.Name == "" {
 		return nil, entity.ErrEmptyField("name")
 	}
@@ -71,7 +71,7 @@ func (h *configs) normalizeCreateConfigRequest(param entity.Config) (*entity.Con
 	return &param, nil
 }
 
-func (h *configs) validateConfigSchema(param entity.Config) error {
+func (h *ConfigsHandler) validateConfigSchema(param entity.Config) error {
 	fileSchema, err := schema.GetSchemaByConfigName(param.Name)
 	if err != nil {
 		return err
