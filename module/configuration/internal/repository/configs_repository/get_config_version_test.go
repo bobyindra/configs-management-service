@@ -12,8 +12,8 @@ import (
 	"github.com/bobyindra/configs-management-service/module/configuration/internal/test"
 )
 
-func (s *configsRepoSuite) TestConfigs_GetListVersion_Success() {
-	s.Run("Test Get Config List Version by config-name return success", func() {
+func (s *configsRepoSuite) TestConfigs_GetListVersionWithLimit_Success() {
+	s.Run("Test Get Config List Version by config-name with defined limit return success", func() {
 		// Given
 		ctx := context.TODO()
 		configData := test.BuildConfigData()
@@ -60,8 +60,54 @@ func (s *configsRepoSuite) TestConfigs_GetListVersion_Success() {
 	})
 }
 
-func (s *configsRepoSuite) TestConfigs_GetListVersion_ErrNotFound() {
-	s.Run("Test Get Config List Version by config-name return Err Not Found", func() {
+func (s *configsRepoSuite) TestConfigs_GetListVersionWithoutLimit_Success() {
+	s.Run("Test Get Config List Version by config-name without defined limit return success", func() {
+		// Given
+		ctx := context.TODO()
+		configData := test.BuildConfigData()
+		totalRowValue := 2
+
+		params := &entity.GetListConfigVersionsRequest{
+			Name: configData.Name,
+		}
+
+		expectedResponse := ConfigEntityToConfigResponse(configData)
+
+		expectedPagination := &entity.PaginationResponse{
+			OffsetPagination: &entity.OffsetPagination{
+				Limit:  10,
+				Offset: 0,
+				Total:  uint32(totalRowValue),
+			},
+		}
+
+		rows := BuildConfigResponseRows(configData, 2)
+
+		s.mock.ExpectQuery(regexp.QuoteMeta(configsRepo.GetListVersionsConfigQuery)).
+			WithArgs(configData.Name, sqlmock.AnyArg(), sqlmock.AnyArg()).
+			WillReturnRows(rows)
+
+		countColumn := []string{"count(*)"}
+		totalRows := sqlmock.NewRows(countColumn)
+		totalRows.AddRow(totalRowValue)
+
+		s.mock.ExpectQuery(regexp.QuoteMeta(configsRepo.GetConfigVersionsTotalCountQuery)).
+			WithArgs(configData.Name).
+			WillReturnRows(totalRows)
+
+		// When
+		result, pagination, err := s.subject.GetListVersionsByConfigName(ctx, params)
+
+		// Then
+		s.Nil(err)
+		s.Equal(expectedResponse, result[0], "Result should be equal")
+		s.LessOrEqual(int(params.Limit), len(result), "Result data should be less or equal as limit")
+		s.Equal(expectedPagination, pagination, "Pagination should be equal")
+	})
+}
+
+func (s *configsRepoSuite) TestConfigs_GetListVersionNoRow_Error() {
+	s.Run("Test Get Config List Version by config-name return Err No Rows", func() {
 		// Given
 		ctx := context.TODO()
 		params := &entity.GetListConfigVersionsRequest{
@@ -84,7 +130,7 @@ func (s *configsRepoSuite) TestConfigs_GetListVersion_ErrNotFound() {
 	})
 }
 
-func (s *configsRepoSuite) TestConfigs_GetListVersion_ErrDB() {
+func (s *configsRepoSuite) TestConfigs_GetListVersion_ErrorDB() {
 	s.Run("Test Get Config List Version by config-name return Err DB", func() {
 		// Given
 		ctx := context.TODO()
@@ -109,7 +155,7 @@ func (s *configsRepoSuite) TestConfigs_GetListVersion_ErrDB() {
 	})
 }
 
-func (s *configsRepoSuite) TestConfigs_GetListVersionTotalRows_ErrDB() {
+func (s *configsRepoSuite) TestConfigs_GetListTotalRow_ErrorDB() {
 	s.Run("Test Get Config List Total Rows by config-name return Err DB", func() {
 		// Given
 		ctx := context.TODO()

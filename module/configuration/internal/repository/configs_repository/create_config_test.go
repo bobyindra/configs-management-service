@@ -7,13 +7,14 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/bobyindra/configs-management-service/internal/testutil"
 	"github.com/bobyindra/configs-management-service/internal/util"
+	"github.com/bobyindra/configs-management-service/module/configuration/entity"
 	configsRepo "github.com/bobyindra/configs-management-service/module/configuration/internal/repository/configs_repository"
 	"github.com/bobyindra/configs-management-service/module/configuration/internal/test"
 	"github.com/mattn/go-sqlite3"
 )
 
 func (s *configsRepoSuite) TestConfigs_CreateConfig_Success() {
-	s.Run("Test Create Config by config-name return success", func() {
+	s.Run("Test Create Config - Success", func() {
 		// Given
 		ctx := context.TODO()
 		configData := test.BuildConfigData()
@@ -43,12 +44,14 @@ func (s *configsRepoSuite) TestConfigs_CreateConfig_Success() {
 	})
 }
 
-func (s *configsRepoSuite) TestConfigs_CreateConfig_ErrConstraintUnique() {
-	s.Run("Test Create Config by config-name return Err Constraint Unique", func() {
+func (s *configsRepoSuite) TestConfigs_CreateConfig_Error() {
+	s.Run("Test Create Config - Config Exist Err", func() {
 		// Given
 		ctx := context.TODO()
 		configData := test.BuildConfigData()
 		rowCfgValue, err := util.ConvertAnyValueToJsonString(configData.ConfigValues)
+
+		sqliteErr := sqlite3.Error{ExtendedCode: sqlite3.ErrConstraintUnique}
 
 		s.mock.ExpectQuery(regexp.QuoteMeta(configsRepo.CreateConfigQuery)).
 			WithArgs(
@@ -58,23 +61,21 @@ func (s *configsRepoSuite) TestConfigs_CreateConfig_ErrConstraintUnique() {
 				configData.CreatedAt,
 				configData.ActorId,
 			).
-			WillReturnError(sqlite3.ErrNo(sqlite3.ErrConstraintUnique))
+			WillReturnError(sqliteErr)
 
 		// When
 		err = s.subject.CreateConfig(ctx, configData)
 
 		// Then
-		s.Equal(sqlite3.ErrNo(sqlite3.ErrConstraintUnique), err, "Should return ErrConfigAlreadyExists")
+		s.ErrorIs(err, entity.ErrConfigAlreadyExists, "Should return err config already exists")
 	})
-}
 
-func (s *configsRepoSuite) TestConfigs_CreateConfig_ErrDB() {
-	s.Run("Test Create Config by config-name return Err DB", func() {
+	s.Run("Test Create Config - Err DB", func() {
 		// Given
 		ctx := context.TODO()
 		configData := test.BuildConfigData()
 		rowCfgValue, err := util.ConvertAnyValueToJsonString(configData.ConfigValues)
-		mockErr := testutil.ErrUnexpected
+		mockErr := testutil.ErrDB
 
 		s.mock.ExpectQuery(regexp.QuoteMeta(configsRepo.CreateConfigQuery)).
 			WithArgs(
