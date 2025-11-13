@@ -18,17 +18,17 @@ type UsecaseList struct {
 
 func NewUsecaseList(repoList repository.RepositoryList) UsecaseList {
 	return UsecaseList{
-		AuthUsecase:       NewAuthUsecase(repoList),
-		ConfigsManagement: NewConfigsManagementUsecase(repoList),
+		AuthUsecase:       newAuthUsecase(repoList),
+		ConfigsManagement: newConfigsManagementUsecase(repoList),
 	}
 }
 
-func NewAuthUsecase(repoList repository.RepositoryList) SessionUsecase {
+func newAuthUsecase(repoList repository.RepositoryList) SessionUsecase {
 	encryption := util.NewEncryption()
 	return authUscs.NewSessionUscs(encryption, repoList.UserRepo)
 }
 
-func NewConfigsManagementUsecase(repoList repository.RepositoryList) ConfigsManagementUsecase {
+func newConfigsManagementUsecase(repoList repository.RepositoryList) ConfigsManagementUsecase {
 	return configsUscs.NewConfigsUsecase(repoList.ConfigsRepo)
 }
 

@@ -16,16 +16,16 @@ type RepositoryList struct {
 
 func NewRepositoryList(db *sql.DB) RepositoryList {
 	return RepositoryList{
-		ConfigsRepo: NewConfigsManagementRepository(db),
-		UserRepo:    NewUserRepository(db),
+		ConfigsRepo: newConfigsManagementRepository(db),
+		UserRepo:    newUserRepository(db),
 	}
 }
 
-func NewConfigsManagementRepository(db *sql.DB) ConfigsManagementRepository {
+func newConfigsManagementRepository(db *sql.DB) ConfigsManagementRepository {
 	return configsRepository.NewConfigsRepository(db)
 }
 
-func NewUserRepository(db *sql.DB) UserRepository {
+func newUserRepository(db *sql.DB) UserRepository {
 	return userRepository.NewUserRepository(db)
 }
 
