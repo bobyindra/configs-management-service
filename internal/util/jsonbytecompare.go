@@ -10,7 +10,7 @@ This function is to compare 2 set of any data type
 and converted to json data to check the values are identical or not
 */
 func JsonByteEqual(a, b any) (bool, error) {
-	var j, j2 interface{}
+	var v1, v2 interface{}
 
 	aJson, err := json.Marshal(a)
 	if err != nil {
@@ -22,11 +22,11 @@ func JsonByteEqual(a, b any) (bool, error) {
 		return false, err
 	}
 
-	if err := json.Unmarshal(aJson, &j); err != nil {
+	if err := json.Unmarshal(aJson, &v1); err != nil {
 		return false, err
 	}
-	if err := json.Unmarshal(bJson, &j2); err != nil {
+	if err := json.Unmarshal(bJson, &v2); err != nil {
 		return false, err
 	}
-	return reflect.DeepEqual(j2, j), nil
+	return reflect.DeepEqual(v2, v1), nil
 }

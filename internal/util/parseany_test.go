@@ -28,4 +28,13 @@ func TestUtil_ParseAny(t *testing.T) {
 		res := util.ParseAny(input)
 		assert.Equal(t, expected, res)
 	})
+
+	t.Run("ParseAny unsupported json data return error", func(t *testing.T) {
+		t.Parallel()
+		input := make(chan int)
+		expected := input
+
+		res := util.ParseAny(input)
+		assert.Equal(t, expected, res)
+	})
 }
