@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/bobyindra/configs-management-service/module/configuration/entity"
+	"github.com/bobyindra/configs-management-service/module/configuration/internal/encryption"
 	"github.com/bobyindra/configs-management-service/module/configuration/internal/repository"
-	"github.com/bobyindra/configs-management-service/module/configuration/util"
 
 	authUscs "github.com/bobyindra/configs-management-service/module/configuration/internal/usecase/auth"
 	configsUscs "github.com/bobyindra/configs-management-service/module/configuration/internal/usecase/configs_usecase"
@@ -24,7 +24,7 @@ func NewUsecaseList(repoList repository.RepositoryList) UsecaseList {
 }
 
 func newAuthUsecase(repoList repository.RepositoryList) SessionUsecase {
-	encryption := util.NewEncryption()
+	encryption := encryption.NewEncryption()
 	return authUscs.NewSessionUscs(encryption, repoList.UserRepo)
 }
 

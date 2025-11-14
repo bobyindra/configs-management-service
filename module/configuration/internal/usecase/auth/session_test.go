@@ -7,9 +7,9 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/suite"
 
+	encryptMock "github.com/bobyindra/configs-management-service/module/configuration/internal/encryption/mock"
 	repoMock "github.com/bobyindra/configs-management-service/module/configuration/internal/repository/mock"
 	sessionUsecase "github.com/bobyindra/configs-management-service/module/configuration/internal/usecase/auth"
-	encryptMock "github.com/bobyindra/configs-management-service/module/configuration/util/mock"
 )
 
 type authUsecaseSuite struct {

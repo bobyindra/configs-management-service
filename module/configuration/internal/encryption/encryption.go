@@ -1,4 +1,4 @@
-package util
+package encryption
 
 import (
 	"github.com/bobyindra/configs-management-service/module/configuration/entity"
