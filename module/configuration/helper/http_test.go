@@ -1,4 +1,4 @@
-package util_test
+package helper_test
 
 import (
 	"net/http"
@@ -7,7 +7,7 @@ import (
 
 	"github.com/bobyindra/configs-management-service/internal/testutil"
 	"github.com/bobyindra/configs-management-service/module/configuration/entity"
-	"github.com/bobyindra/configs-management-service/module/configuration/util"
+	"github.com/bobyindra/configs-management-service/module/configuration/helper"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -23,14 +23,14 @@ func TestUtil_BuildSuccessResponse(t *testing.T) {
 			ConfigValues: "Test",
 		}
 		metaRes := entity.PaginationResponse{}
-		apiRes := util.APIResponse{
+		apiRes := helper.APIResponse{
 			Status: http.StatusOK,
 			Data:   dataRes,
 			Meta:   metaRes,
 		}
 
 		// When
-		util.BuildSuccessResponse(w, apiRes)
+		helper.BuildSuccessResponse(w, apiRes)
 
 		// Then
 		assert.Equal(t, apiRes.Status, w.Code, "Response httpStatus should be equal")
@@ -48,7 +48,7 @@ func TestUtil_BuildFailedResponse(t *testing.T) {
 		errorRes := entity.ErrConfigAlreadyExists
 
 		// When
-		util.BuildFailedResponse(w, errorRes)
+		helper.BuildFailedResponse(w, errorRes)
 
 		// Then
 		assert.Equal(t, errorRes.HttpCode, w.Code, "Response httpStatus should be equal")
@@ -63,7 +63,7 @@ func TestUtil_BuildFailedResponse(t *testing.T) {
 		errorRes := testutil.ErrUnexpected
 
 		// When
-		util.BuildFailedResponse(w, errorRes)
+		helper.BuildFailedResponse(w, errorRes)
 
 		// Then
 		assert.Equal(t, http.StatusInternalServerError, w.Code, "Response httpStatus should be equal")

@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"net/http"
 
-	generalUtil "github.com/bobyindra/configs-management-service/internal/util"
+	"github.com/bobyindra/configs-management-service/internal/util"
 	"github.com/bobyindra/configs-management-service/module/configuration/entity"
+	"github.com/bobyindra/configs-management-service/module/configuration/helper"
 	"github.com/bobyindra/configs-management-service/module/configuration/internal/auth"
-	"github.com/bobyindra/configs-management-service/module/configuration/util"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,29 +19,29 @@ func (h *SessionHandler) Login(c *gin.Context) {
 
 	var param entity.LoginRequest
 	if err := json.NewDecoder(r.Body).Decode(&param); err != nil {
-		util.BuildFailedResponse(w, err)
+		helper.BuildFailedResponse(w, err)
 		return
 	}
 
 	loginParam, err := h.normalizeLoginRequest(param)
 	if err != nil {
-		util.BuildFailedResponse(w, err)
+		helper.BuildFailedResponse(w, err)
 		return
 	}
 
 	resp, err := h.sessionUscs.Login(ctx, loginParam)
 	if err != nil {
-		util.BuildFailedResponse(w, err)
+		helper.BuildFailedResponse(w, err)
 		return
 	}
 
 	resp.Token, err = h.auth.GenerateToken(&auth.TokenParam{Subject: fmt.Sprint(resp.UserID)}, &auth.AdditionalClaim{UserID: resp.UserID, Role: resp.Role})
 	if err != nil {
-		util.BuildFailedResponse(w, entity.WrapError(err))
+		helper.BuildFailedResponse(w, entity.WrapError(err))
 		return
 	}
 
-	util.BuildSuccessResponse(w, util.APIResponse{
+	helper.BuildSuccessResponse(w, helper.APIResponse{
 		Status: http.StatusOK,
 		Data:   resp,
 	})
@@ -55,5 +55,5 @@ func (h *SessionHandler) normalizeLoginRequest(param entity.LoginRequest) (*enti
 		return nil, entity.ErrEmptyField("password")
 	}
 
-	return generalUtil.GeneralNullable(param), nil
+	return util.GeneralNullable(param), nil
 }

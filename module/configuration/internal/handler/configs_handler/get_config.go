@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/bobyindra/configs-management-service/module/configuration/entity"
-	"github.com/bobyindra/configs-management-service/module/configuration/util"
+	"github.com/bobyindra/configs-management-service/module/configuration/helper"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,7 +17,7 @@ func (h *ConfigsHandler) GetConfig(c *gin.Context) {
 
 	claim, err := h.auth.ValidateClaim(ctx, r)
 	if err != nil {
-		util.BuildFailedResponse(w, err)
+		helper.BuildFailedResponse(w, err)
 		return
 	}
 
@@ -25,7 +25,7 @@ func (h *ConfigsHandler) GetConfig(c *gin.Context) {
 		name := c.Param("name")
 		listConfigsParam, err := h.normalizeGetConfigRequest(r.URL.Query())
 		if err != nil {
-			util.BuildFailedResponse(w, err)
+			helper.BuildFailedResponse(w, err)
 			return
 		}
 
@@ -33,16 +33,16 @@ func (h *ConfigsHandler) GetConfig(c *gin.Context) {
 
 		resp, err := h.configsUscs.GetConfigByConfigName(ctx, listConfigsParam)
 		if err != nil {
-			util.BuildFailedResponse(w, err)
+			helper.BuildFailedResponse(w, err)
 			return
 		}
 
-		util.BuildSuccessResponse(w, util.APIResponse{
+		helper.BuildSuccessResponse(w, helper.APIResponse{
 			Status: http.StatusOK,
 			Data:   resp,
 		})
 	} else {
-		util.BuildFailedResponse(w, entity.ErrForbidden)
+		helper.BuildFailedResponse(w, entity.ErrForbidden)
 	}
 }
 
