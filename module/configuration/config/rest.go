@@ -10,11 +10,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var CONFIGS_SCHEMA_PATH = "./module/configuration/schema/"
+
 func RegisterCmsHandler(cfg CmsConfig) error {
 	repoList := repository.NewRepositoryList(cfg.Database)
 	uscsList := usecase.NewUsecaseList(repoList)
 	authUtil := auth.NewAuth([]byte(cfg.JWTSecret), cfg.JWTExpiryDuration)
-	schemaRegistry := schema.NewSchemaRegistry()
+	schemaRegistry := schema.NewSchemaRegistry(CONFIGS_SCHEMA_PATH)
 
 	registerSessionHandler(cfg.Router, authUtil, uscsList)
 	registerConfigsHandler(cfg.Router, authUtil, uscsList, schemaRegistry)

@@ -2,6 +2,7 @@ package schema
 
 import (
 	"os"
+	"path/filepath"
 
 	"github.com/bobyindra/configs-management-service/module/configuration/entity"
 )
@@ -16,10 +17,24 @@ const (
 	WORDING_CONFIG  = "wording-config"
 )
 
-type schemaRegistry struct{}
+var schemaFileMap = map[string]string{
+	PAYMENT_CONFIG:  "payment_config.json",
+	FEE_CONFIG:      "fee_config.json",
+	DISCOUNT_CONFIG: "discount_config.json",
+	BANNER_CONFIG:   "banner_config.json",
+	BCA_ENABLED:     "bca_enabled.json",
+	EMAIL_CONFIG:    "email_config.json",
+	WORDING_CONFIG:  "wording_config.json",
+}
 
-func NewSchemaRegistry() *schemaRegistry {
-	return &schemaRegistry{}
+type schemaRegistry struct {
+	basePath string
+}
+
+func NewSchemaRegistry(basePath string) *schemaRegistry {
+	return &schemaRegistry{
+		basePath: basePath,
+	}
 }
 
 type SchemaRegistry interface {
@@ -27,22 +42,11 @@ type SchemaRegistry interface {
 }
 
 func (sr *schemaRegistry) GetSchemaByConfigName(cfgName string) ([]byte, error) {
-	switch cfgName {
-	case PAYMENT_CONFIG:
-		return os.ReadFile("./module/configuration/schema/payment_config.json")
-	case FEE_CONFIG:
-		return os.ReadFile("./module/configuration/schema/fee_config.json")
-	case DISCOUNT_CONFIG:
-		return os.ReadFile("./module/configuration/schema/discount_config.json")
-	case BANNER_CONFIG:
-		return os.ReadFile("./module/configuration/schema/banner_config.json")
-	case BCA_ENABLED:
-		return os.ReadFile("./module/configuration/schema/bca_enabled.json")
-	case EMAIL_CONFIG:
-		return os.ReadFile("./module/configuration/schema/email_config.json")
-	case WORDING_CONFIG:
-		return os.ReadFile("./module/configuration/schema/wording_config.json")
-	default:
+	fileName, ok := schemaFileMap[cfgName]
+	if !ok {
 		return nil, entity.ErrConfigSchemaNotFound
 	}
+
+	fullPath := filepath.Join(sr.basePath, fileName)
+	return os.ReadFile(fullPath)
 }
