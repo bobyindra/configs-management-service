@@ -69,6 +69,11 @@ Run unit test with coverage report
   make coverage
 ```
 
+Run integration test
+```bash
+  make integration-test
+```
+
 ## Work with service
 ### API Documentation
 Before work with the endpoint, see the APIs Documentation [here](https://github.com/bobyindra/configs-management-service/blob/main/openapi.yaml) - Use [editor.swagger.io](https://editor.swagger.io/) to visualize it or VCS extension if you have
@@ -92,19 +97,12 @@ Want to add a new config schema? follow this instruction:
   )
 ```
 ```go
-  func GetSchemaByConfigName(cfgName string) ([]byte, error) {
-    switch cfgName {
-    case PAYMENT_CONFIG:
-      return os.ReadFile("./module/configuration/schema/payment_config.json")
-    ...
-    case WORDING_CONFIG:
-      return os.ReadFile("./module/configuration/schema/wording_config.json")
-    case [YOUR_NEW_CONFIG]: //<- Put your new config var here
-      return os.ReadFile("./module/configuration/schema/your_config.json") //<- Don't forget to update the path
-    default:
-      return nil, entity.ErrConfigNotFound
-    }
-  }
+  var schemaFileMap = map[string]string{
+	PAYMENT_CONFIG:  "payment_config.json",
+	...
+	WORDING_CONFIG:  "wording_config.json",
+    [YOUR_NEW_CONFIG]: "your_config.json", //<- Put your new config here
+  }  
 ```
 - Rerun the service. That's it, you're all set!
 

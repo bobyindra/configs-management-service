@@ -18,6 +18,9 @@ run:
 test:
 	go test -race -v ${GO_PACKAGES}
 
+integration-test:
+	go test ./module/configuration/test/integration -v
+
 coverage:
 	go test -race -cover -coverprofile=coverage.out -json ${GO_PACKAGES} > ./UT-report_coverage.json
 	go tool cover -func=coverage.out
