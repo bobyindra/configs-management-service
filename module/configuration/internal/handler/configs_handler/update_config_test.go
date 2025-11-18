@@ -10,8 +10,8 @@ import (
 	"github.com/bobyindra/configs-management-service/internal/testutil"
 	"github.com/bobyindra/configs-management-service/module/configuration/entity"
 	"github.com/bobyindra/configs-management-service/module/configuration/internal/auth"
+	"github.com/bobyindra/configs-management-service/module/configuration/internal/middleware"
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/golang/mock/gomock"
 )
 
@@ -23,21 +23,13 @@ func (s *configsHandlerSuite) TestUpdateConfig_Success() {
 			ConfigValues: "test values",
 		}
 
-		jwtResponse := &auth.ConfigsJWTClaim{
-			RegisteredClaims: jwt.RegisteredClaims{},
-			AdditionalClaim: auth.AdditionalClaim{
-				UserID: 1,
-				Role:   "rw",
-			},
-		}
-
 		configResponse := &entity.ConfigResponse{
 			Id:           1,
 			Name:         params.Name,
 			ConfigValues: params.ConfigValues,
 			Version:      1,
 			CreatedAt:    time.Now().UTC(),
-			ActorId:      jwtResponse.UserID,
+			ActorId:      1,
 		}
 
 		schemaJSON := []byte(`{
@@ -47,12 +39,11 @@ func (s *configsHandlerSuite) TestUpdateConfig_Success() {
 			}`)
 
 		// mock
-		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(jwtResponse, nil)
 		s.schemaRegistry.EXPECT().GetSchemaByConfigName(gomock.Any()).Return(schemaJSON, nil)
 		s.configsUsecase.EXPECT().UpdateConfigByConfigName(gomock.Any(), gomock.AssignableToTypeOf(params)).Return(configResponse, nil)
 
 		// When
-		w := s.updateConfig(params)
+		w := s.updateConfig(params, "rw")
 
 		// Then
 		s.Equal(http.StatusOK, w.Code, "Status code should be equal")
@@ -61,44 +52,15 @@ func (s *configsHandlerSuite) TestUpdateConfig_Success() {
 }
 
 func (s *configsHandlerSuite) TestUpdateConfig_Error() {
-	s.Run("Test Update Config - Claim Error", func() {
-		// Given
-		params := &entity.Config{
-			Name: "wording-config",
-		}
-
-		expectedErrorCode := "INTERNAL_ERROR"
-
-		// mock
-		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(nil, testutil.ErrUnexpected)
-
-		// When
-		w := s.updateConfig(params)
-
-		// Then
-		s.Equal(http.StatusInternalServerError, w.Code, "Status code should be equal")
-		s.Contains(w.Body.String(), expectedErrorCode, "Should contain error")
-	})
-
 	s.Run("Test Update Config - Permission Denied", func() {
 		// Given
 		params := &entity.Config{
 			Name: "wording-config",
 		}
-
-		jwtResponse := &auth.ConfigsJWTClaim{
-			RegisteredClaims: jwt.RegisteredClaims{},
-			AdditionalClaim: auth.AdditionalClaim{
-				UserID: 1,
-				Role:   "ro",
-			},
-		}
-
-		// mock
-		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(jwtResponse, nil)
+		invalidRole := "no"
 
 		// When
-		w := s.updateConfig(params)
+		w := s.updateConfig(params, invalidRole)
 
 		// Then
 		s.Equal(http.StatusForbidden, w.Code, "Status code should be equal")
@@ -108,22 +70,10 @@ func (s *configsHandlerSuite) TestUpdateConfig_Error() {
 	s.Run("Test Update Config - Body Invalid", func() {
 		// Given
 		params := "{invalid json"
-
-		jwtResponse := &auth.ConfigsJWTClaim{
-			RegisteredClaims: jwt.RegisteredClaims{},
-			AdditionalClaim: auth.AdditionalClaim{
-				UserID: 1,
-				Role:   "rw",
-			},
-		}
-
 		expectedErrorCode := "INTERNAL_ERROR"
 
-		// mock
-		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(jwtResponse, nil)
-
 		// When
-		w := s.updateConfig(params)
+		w := s.updateConfig(params, "rw")
 
 		// Then
 		s.Equal(http.StatusInternalServerError, w.Code, "Status code should be equal")
@@ -135,22 +85,10 @@ func (s *configsHandlerSuite) TestUpdateConfig_Error() {
 		params := &entity.Config{
 			Name: "wording-config",
 		}
-
-		jwtResponse := &auth.ConfigsJWTClaim{
-			RegisteredClaims: jwt.RegisteredClaims{},
-			AdditionalClaim: auth.AdditionalClaim{
-				UserID: 1,
-				Role:   "rw",
-			},
-		}
-
 		expectedErrorCode := "EMPTY_FIELD"
 
-		// mock
-		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(jwtResponse, nil)
-
 		// When
-		w := s.updateConfig(params)
+		w := s.updateConfig(params, "rw")
 
 		// Then
 		s.Equal(http.StatusBadRequest, w.Code, "Status code should be equal")
@@ -164,14 +102,6 @@ func (s *configsHandlerSuite) TestUpdateConfig_Error() {
 			ConfigValues: "test values",
 		}
 
-		jwtResponse := &auth.ConfigsJWTClaim{
-			RegisteredClaims: jwt.RegisteredClaims{},
-			AdditionalClaim: auth.AdditionalClaim{
-				UserID: 1,
-				Role:   "rw",
-			},
-		}
-
 		schemaJSON := []byte(`{
 			"type": "integer",
 			"minimum": 0,
@@ -179,11 +109,10 @@ func (s *configsHandlerSuite) TestUpdateConfig_Error() {
 		}`)
 
 		// mock
-		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(jwtResponse, nil)
 		s.schemaRegistry.EXPECT().GetSchemaByConfigName(gomock.Any()).Return(schemaJSON, nil)
 
 		// When
-		w := s.updateConfig(params)
+		w := s.updateConfig(params, "rw")
 
 		// Then
 		s.Equal(http.StatusBadRequest, w.Code, "Status code should be equal")
@@ -197,14 +126,6 @@ func (s *configsHandlerSuite) TestUpdateConfig_Error() {
 			ConfigValues: "test values",
 		}
 
-		jwtResponse := &auth.ConfigsJWTClaim{
-			RegisteredClaims: jwt.RegisteredClaims{},
-			AdditionalClaim: auth.AdditionalClaim{
-				UserID: 1,
-				Role:   "rw",
-			},
-		}
-
 		schemaJSON := []byte(`{
 			"type": "string",
 			"minLength": 5,
@@ -214,12 +135,11 @@ func (s *configsHandlerSuite) TestUpdateConfig_Error() {
 		expectedErrorCode := "INTERNAL_ERROR"
 
 		// mock
-		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(jwtResponse, nil)
 		s.schemaRegistry.EXPECT().GetSchemaByConfigName(gomock.Any()).Return(schemaJSON, nil)
 		s.configsUsecase.EXPECT().UpdateConfigByConfigName(gomock.Any(), gomock.AssignableToTypeOf(params)).Return(nil, testutil.ErrUnexpected)
 
 		// When
-		w := s.updateConfig(params)
+		w := s.updateConfig(params, "rw")
 
 		// Then
 		s.Equal(http.StatusInternalServerError, w.Code, "Status code should be equal")
@@ -227,7 +147,7 @@ func (s *configsHandlerSuite) TestUpdateConfig_Error() {
 	})
 }
 
-func (s *configsHandlerSuite) updateConfig(body any) *httptest.ResponseRecorder {
+func (s *configsHandlerSuite) updateConfig(body any, role string) *httptest.ResponseRecorder {
 	gin.SetMode(gin.TestMode)
 	var buf bytes.Buffer
 	if body != nil {
@@ -240,6 +160,11 @@ func (s *configsHandlerSuite) updateConfig(body any) *httptest.ResponseRecorder 
 	c.Params = gin.Params{
 		gin.Param{Key: "name", Value: "wording-config"},
 	}
+	addClaim := &auth.AdditionalClaim{
+		UserID: 1,
+		Role:   role,
+	}
+	c.Set(middleware.ContextKeyAdditionalClaim, addClaim)
 	s.subject.UpdateConfig(c)
 	return w
 }

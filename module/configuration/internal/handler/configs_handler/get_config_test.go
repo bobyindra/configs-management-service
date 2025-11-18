@@ -8,8 +8,8 @@ import (
 	"github.com/bobyindra/configs-management-service/internal/testutil"
 	"github.com/bobyindra/configs-management-service/module/configuration/entity"
 	"github.com/bobyindra/configs-management-service/module/configuration/internal/auth"
+	"github.com/bobyindra/configs-management-service/module/configuration/internal/middleware"
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/golang/mock/gomock"
 )
 
@@ -20,29 +20,20 @@ func (s *configsHandlerSuite) TestGetConfig_Success() {
 			Name: "wording-config",
 		}
 
-		jwtResponse := &auth.ConfigsJWTClaim{
-			RegisteredClaims: jwt.RegisteredClaims{},
-			AdditionalClaim: auth.AdditionalClaim{
-				UserID: 1,
-				Role:   "rw",
-			},
-		}
-
 		configResponse := &entity.ConfigResponse{
 			Id:           1,
 			Name:         params.Name,
 			ConfigValues: "test config",
 			Version:      1,
 			CreatedAt:    time.Now().UTC(),
-			ActorId:      jwtResponse.UserID,
+			ActorId:      1,
 		}
 
 		// mock
-		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(jwtResponse, nil)
 		s.configsUsecase.EXPECT().GetConfigByConfigName(gomock.Any(), params).Return(configResponse, nil)
 
 		// When
-		w := s.GetConfig("")
+		w := s.GetConfig("", "rw")
 
 		// Then
 		s.Equal(http.StatusOK, w.Code, "Status code should be equal")
@@ -56,29 +47,20 @@ func (s *configsHandlerSuite) TestGetConfig_Success() {
 			Version: 1,
 		}
 
-		jwtResponse := &auth.ConfigsJWTClaim{
-			RegisteredClaims: jwt.RegisteredClaims{},
-			AdditionalClaim: auth.AdditionalClaim{
-				UserID: 1,
-				Role:   "rw",
-			},
-		}
-
 		configResponse := &entity.ConfigResponse{
 			Id:           1,
 			Name:         params.Name,
 			ConfigValues: "test config ver 1",
 			Version:      1,
 			CreatedAt:    time.Now().UTC(),
-			ActorId:      jwtResponse.UserID,
+			ActorId:      1,
 		}
 
 		// mock
-		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(jwtResponse, nil)
 		s.configsUsecase.EXPECT().GetConfigByConfigName(gomock.Any(), gomock.AssignableToTypeOf(params)).Return(configResponse, nil)
 
 		// When
-		w := s.GetConfig("1")
+		w := s.GetConfig("1", "rw")
 
 		// Then
 		s.Equal(http.StatusOK, w.Code, "Status code should be equal")
@@ -87,36 +69,12 @@ func (s *configsHandlerSuite) TestGetConfig_Success() {
 }
 
 func (s *configsHandlerSuite) TestGetConfig_Error() {
-	s.Run("Test Get Config - Claim Error", func() {
-		// Given
-		expectedErrorCode := "INTERNAL_ERROR"
-
-		// mock
-		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(nil, testutil.ErrUnexpected)
-
-		// When
-		w := s.GetConfig("")
-
-		// Then
-		s.Equal(http.StatusInternalServerError, w.Code, "Status code should be equal")
-		s.Contains(w.Body.String(), expectedErrorCode, "Should contains correct config value")
-	})
-
 	s.Run("Test Get Config - Forbidden", func() {
 		// Given
-		jwtResponse := &auth.ConfigsJWTClaim{
-			RegisteredClaims: jwt.RegisteredClaims{},
-			AdditionalClaim: auth.AdditionalClaim{
-				UserID: 1,
-				Role:   "no",
-			},
-		}
-
-		// mock
-		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(jwtResponse, nil)
+		invalidRole := "no"
 
 		// When
-		w := s.GetConfig("")
+		w := s.GetConfig("", invalidRole)
 
 		// Then
 		s.Equal(http.StatusForbidden, w.Code, "Status code should be equal")
@@ -125,21 +83,10 @@ func (s *configsHandlerSuite) TestGetConfig_Error() {
 
 	s.Run("Test Get Config - Normalize Error", func() {
 		// Given
-		jwtResponse := &auth.ConfigsJWTClaim{
-			RegisteredClaims: jwt.RegisteredClaims{},
-			AdditionalClaim: auth.AdditionalClaim{
-				UserID: 1,
-				Role:   "rw",
-			},
-		}
-
 		expectedErrorCode := "INTERNAL_ERROR"
 
-		// mock
-		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(jwtResponse, nil)
-
 		// When
-		w := s.GetConfig("abc")
+		w := s.GetConfig("abc", "rw")
 
 		// Then
 		s.Equal(http.StatusInternalServerError, w.Code, "Status code should be equal")
@@ -152,22 +99,13 @@ func (s *configsHandlerSuite) TestGetConfig_Error() {
 			Name: "wording-config",
 		}
 
-		jwtResponse := &auth.ConfigsJWTClaim{
-			RegisteredClaims: jwt.RegisteredClaims{},
-			AdditionalClaim: auth.AdditionalClaim{
-				UserID: 1,
-				Role:   "rw",
-			},
-		}
-
 		expectedErrorCode := "INTERNAL_ERROR"
 
 		// mock
-		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(jwtResponse, nil)
 		s.configsUsecase.EXPECT().GetConfigByConfigName(gomock.Any(), params).Return(nil, testutil.ErrUnexpected)
 
 		// When
-		w := s.GetConfig("")
+		w := s.GetConfig("", "rw")
 
 		// Then
 		s.Equal(http.StatusInternalServerError, w.Code, "Status code should be equal")
@@ -175,7 +113,7 @@ func (s *configsHandlerSuite) TestGetConfig_Error() {
 	})
 }
 
-func (s *configsHandlerSuite) GetConfig(version string) *httptest.ResponseRecorder {
+func (s *configsHandlerSuite) GetConfig(version string, role string) *httptest.ResponseRecorder {
 	gin.SetMode(gin.TestMode)
 	url := "/api/v1/configs/:name"
 	if version != "" {
@@ -189,6 +127,11 @@ func (s *configsHandlerSuite) GetConfig(version string) *httptest.ResponseRecord
 	c.Params = gin.Params{
 		gin.Param{Key: "name", Value: "wording-config"},
 	}
+	addClaim := &auth.AdditionalClaim{
+		UserID: 1,
+		Role:   role,
+	}
+	c.Set(middleware.ContextKeyAdditionalClaim, addClaim)
 	s.subject.GetConfig(c)
 	return w
 }

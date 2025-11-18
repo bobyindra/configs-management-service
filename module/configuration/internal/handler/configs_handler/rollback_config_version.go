@@ -6,6 +6,8 @@ import (
 
 	"github.com/bobyindra/configs-management-service/module/configuration/entity"
 	"github.com/bobyindra/configs-management-service/module/configuration/helper"
+	"github.com/bobyindra/configs-management-service/module/configuration/internal/auth"
+	"github.com/bobyindra/configs-management-service/module/configuration/internal/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,11 +16,10 @@ func (h *ConfigsHandler) RollbackConfigVersion(c *gin.Context) {
 	w := c.Writer
 	ctx := r.Context()
 
-	claim, err := h.auth.ValidateClaim(ctx, r)
-	if err != nil {
-		helper.BuildFailedResponse(w, err)
-		return
-	}
+	// Get Claim data from Context
+	ctxClaim, _ := c.Get(middleware.ContextKeyAdditionalClaim)
+	claim, _ := ctxClaim.(*auth.AdditionalClaim)
+
 	if claim.Role != "rw" {
 		helper.BuildFailedResponse(w, entity.ErrForbidden)
 		return
