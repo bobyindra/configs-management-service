@@ -21,7 +21,7 @@ func RegisterCmsHandler(cfg CmsConfig) error {
 	schemaRegistry := schema.NewSchemaRegistry(CONFIGS_SCHEMA_PATH)
 
 	registerSessionHandler(cfg.Router, authUtil, uscsList)
-	registerConfigsHandler(cfg.Router, authUtil, middleware, uscsList, schemaRegistry)
+	registerConfigsHandler(cfg.Router, middleware, uscsList, schemaRegistry)
 
 	return nil
 }
@@ -34,8 +34,8 @@ func registerSessionHandler(router *gin.Engine, auth auth.Auth, uscsList usecase
 	}
 }
 
-func registerConfigsHandler(router *gin.Engine, auth auth.Auth, middleware middleware.MiddlewareInterface, uscsList usecase.UsecaseList, schemaReg schema.SchemaRegistry) {
-	ch := configsHandler.NewConfigsHandler(auth, uscsList.ConfigsManagement, schemaReg)
+func registerConfigsHandler(router *gin.Engine, middleware middleware.MiddlewareInterface, uscsList usecase.UsecaseList, schemaReg schema.SchemaRegistry) {
+	ch := configsHandler.NewConfigsHandler(uscsList.ConfigsManagement, schemaReg)
 	v1 := router.Group("/api/v1/configs")
 	v1.Use(middleware.ValidateSession)
 	{
