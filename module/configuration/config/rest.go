@@ -4,6 +4,7 @@ import (
 	"github.com/bobyindra/configs-management-service/module/configuration/internal/auth"
 	authHandler "github.com/bobyindra/configs-management-service/module/configuration/internal/handler/auth"
 	configsHandler "github.com/bobyindra/configs-management-service/module/configuration/internal/handler/configs_handler"
+	"github.com/bobyindra/configs-management-service/module/configuration/internal/middleware"
 	"github.com/bobyindra/configs-management-service/module/configuration/internal/repository"
 	"github.com/bobyindra/configs-management-service/module/configuration/internal/usecase"
 	"github.com/bobyindra/configs-management-service/module/configuration/schema"
@@ -16,10 +17,11 @@ func RegisterCmsHandler(cfg CmsConfig) error {
 	repoList := repository.NewRepositoryList(cfg.Database)
 	uscsList := usecase.NewUsecaseList(repoList)
 	authUtil := auth.NewAuth([]byte(cfg.JWTSecret), cfg.JWTExpiryDuration)
+	middleware := middleware.NewMiddleware(authUtil)
 	schemaRegistry := schema.NewSchemaRegistry(CONFIGS_SCHEMA_PATH)
 
 	registerSessionHandler(cfg.Router, authUtil, uscsList)
-	registerConfigsHandler(cfg.Router, authUtil, uscsList, schemaRegistry)
+	registerConfigsHandler(cfg.Router, authUtil, middleware, uscsList, schemaRegistry)
 
 	return nil
 }
@@ -32,9 +34,10 @@ func registerSessionHandler(router *gin.Engine, auth auth.Auth, uscsList usecase
 	}
 }
 
-func registerConfigsHandler(router *gin.Engine, auth auth.Auth, uscsList usecase.UsecaseList, schemaReg schema.SchemaRegistry) {
+func registerConfigsHandler(router *gin.Engine, auth auth.Auth, middleware middleware.MiddlewareInterface, uscsList usecase.UsecaseList, schemaReg schema.SchemaRegistry) {
 	ch := configsHandler.NewConfigsHandler(auth, uscsList.ConfigsManagement, schemaReg)
 	v1 := router.Group("/api/v1/configs")
+	v1.Use(middleware.ValidateSession)
 	{
 		v1.POST("/:name", ch.CreateConfigs)
 		v1.GET("/:name", ch.GetConfig)

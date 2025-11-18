@@ -10,8 +10,8 @@ import (
 	"github.com/bobyindra/configs-management-service/internal/testutil"
 	"github.com/bobyindra/configs-management-service/module/configuration/entity"
 	"github.com/bobyindra/configs-management-service/module/configuration/internal/auth"
+	"github.com/bobyindra/configs-management-service/module/configuration/internal/middleware"
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/golang/mock/gomock"
 )
 
@@ -23,29 +23,20 @@ func (s *configsHandlerSuite) TestRollbackConfig_Success() {
 			Version: 1,
 		}
 
-		jwtResponse := &auth.ConfigsJWTClaim{
-			RegisteredClaims: jwt.RegisteredClaims{},
-			AdditionalClaim: auth.AdditionalClaim{
-				UserID: 1,
-				Role:   "rw",
-			},
-		}
-
 		configResponse := &entity.ConfigResponse{
 			Id:           1,
 			Name:         params.Name,
 			ConfigValues: "test config",
 			Version:      1,
 			CreatedAt:    time.Now().UTC(),
-			ActorId:      jwtResponse.UserID,
+			ActorId:      1,
 		}
 
 		// mock
-		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(jwtResponse, nil)
 		s.configsUsecase.EXPECT().RollbackConfigVersionByConfigName(gomock.Any(), gomock.AssignableToTypeOf(params)).Return(configResponse, nil)
 
 		// When
-		w := s.rollbackConfig(params)
+		w := s.rollbackConfig(params, "rw")
 
 		// Then
 		s.Equal(http.StatusOK, w.Code, "Status code should be equal")
@@ -54,42 +45,15 @@ func (s *configsHandlerSuite) TestRollbackConfig_Success() {
 }
 
 func (s *configsHandlerSuite) TestRollbackConfig_Error() {
-	s.Run("Test Rollback Config - Claim Error", func() {
-		// Given
-		params := "{invalid json"
-
-		expectedErrorCode := "INTERNAL_ERROR"
-
-		// mock
-		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(nil, testutil.ErrUnexpected)
-
-		// When
-		w := s.rollbackConfig(params)
-
-		// Then
-		s.Equal(http.StatusInternalServerError, w.Code, "Status code should be equal")
-		s.Contains(w.Body.String(), expectedErrorCode, "Should contain error")
-	})
-
 	s.Run("Test Rollback Config - Permission Denied", func() {
 		// Given
 		params := &entity.Config{
 			Name: "wording-config",
 		}
-
-		jwtResponse := &auth.ConfigsJWTClaim{
-			RegisteredClaims: jwt.RegisteredClaims{},
-			AdditionalClaim: auth.AdditionalClaim{
-				UserID: 1,
-				Role:   "ro",
-			},
-		}
-
-		// mock
-		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(jwtResponse, nil)
+		invalidRole := "no"
 
 		// When
-		w := s.rollbackConfig(params)
+		w := s.rollbackConfig(params, invalidRole)
 
 		// Then
 		s.Equal(http.StatusForbidden, w.Code, "Status code should be equal")
@@ -99,22 +63,10 @@ func (s *configsHandlerSuite) TestRollbackConfig_Error() {
 	s.Run("Test Rollback Config - Body Invalid", func() {
 		// Given
 		params := "{invalid json"
-
-		jwtResponse := &auth.ConfigsJWTClaim{
-			RegisteredClaims: jwt.RegisteredClaims{},
-			AdditionalClaim: auth.AdditionalClaim{
-				UserID: 1,
-				Role:   "rw",
-			},
-		}
-
 		expectedErrorCode := "INTERNAL_ERROR"
 
-		// mock
-		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(jwtResponse, nil)
-
 		// When
-		w := s.rollbackConfig(params)
+		w := s.rollbackConfig(params, "rw")
 
 		// Then
 		s.Equal(http.StatusInternalServerError, w.Code, "Status code should be equal")
@@ -127,21 +79,10 @@ func (s *configsHandlerSuite) TestRollbackConfig_Error() {
 			Name: "wording-config",
 		}
 
-		jwtResponse := &auth.ConfigsJWTClaim{
-			RegisteredClaims: jwt.RegisteredClaims{},
-			AdditionalClaim: auth.AdditionalClaim{
-				UserID: 1,
-				Role:   "rw",
-			},
-		}
-
 		expectedErrorCode := "EMPTY_FIELD"
 
-		// mock
-		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(jwtResponse, nil)
-
 		// When
-		w := s.rollbackConfig(params)
+		w := s.rollbackConfig(params, "rw")
 
 		// Then
 		s.Equal(http.StatusBadRequest, w.Code, "Status code should be equal")
@@ -155,18 +96,7 @@ func (s *configsHandlerSuite) TestRollbackConfig_Error() {
 			Version: 1,
 		}
 
-		jwtResponse := &auth.ConfigsJWTClaim{
-			RegisteredClaims: jwt.RegisteredClaims{},
-			AdditionalClaim: auth.AdditionalClaim{
-				UserID: 1,
-				Role:   "rw",
-			},
-		}
-
 		expectedErrorCode := "EMPTY_FIELD"
-
-		// mock
-		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(jwtResponse, nil)
 
 		// Set request data without giving :name value on the path
 		gin.SetMode(gin.TestMode)
@@ -176,6 +106,11 @@ func (s *configsHandlerSuite) TestRollbackConfig_Error() {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
 		c.Request = req
+		addClaim := &auth.AdditionalClaim{
+			UserID: 1,
+			Role:   "rw",
+		}
+		c.Set(middleware.ContextKeyAdditionalClaim, addClaim)
 
 		// When
 		s.subject.RollbackConfigVersion(c)
@@ -192,22 +127,13 @@ func (s *configsHandlerSuite) TestRollbackConfig_Error() {
 			Version: 1,
 		}
 
-		jwtResponse := &auth.ConfigsJWTClaim{
-			RegisteredClaims: jwt.RegisteredClaims{},
-			AdditionalClaim: auth.AdditionalClaim{
-				UserID: 1,
-				Role:   "rw",
-			},
-		}
-
 		expectedErrorCode := "INTERNAL_ERROR"
 
 		// mock
-		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(jwtResponse, nil)
 		s.configsUsecase.EXPECT().RollbackConfigVersionByConfigName(gomock.Any(), gomock.AssignableToTypeOf(params)).Return(nil, testutil.ErrUnexpected)
 
 		// When
-		w := s.rollbackConfig(params)
+		w := s.rollbackConfig(params, "rw")
 
 		// Then
 		s.Equal(http.StatusInternalServerError, w.Code, "Status code should be equal")
@@ -215,7 +141,7 @@ func (s *configsHandlerSuite) TestRollbackConfig_Error() {
 	})
 }
 
-func (s *configsHandlerSuite) rollbackConfig(body any) *httptest.ResponseRecorder {
+func (s *configsHandlerSuite) rollbackConfig(body any, role string) *httptest.ResponseRecorder {
 	gin.SetMode(gin.TestMode)
 	var buf bytes.Buffer
 	if body != nil {
@@ -228,6 +154,11 @@ func (s *configsHandlerSuite) rollbackConfig(body any) *httptest.ResponseRecorde
 	c.Params = gin.Params{
 		gin.Param{Key: "name", Value: "wording-config"},
 	}
+	addClaim := &auth.AdditionalClaim{
+		UserID: 1,
+		Role:   role,
+	}
+	c.Set(middleware.ContextKeyAdditionalClaim, addClaim)
 	s.subject.RollbackConfigVersion(c)
 	return w
 }

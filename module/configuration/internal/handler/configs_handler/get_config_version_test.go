@@ -8,8 +8,8 @@ import (
 	"github.com/bobyindra/configs-management-service/internal/testutil"
 	"github.com/bobyindra/configs-management-service/module/configuration/entity"
 	"github.com/bobyindra/configs-management-service/module/configuration/internal/auth"
+	"github.com/bobyindra/configs-management-service/module/configuration/internal/middleware"
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/golang/mock/gomock"
 )
 
@@ -21,14 +21,6 @@ func (s *configsHandlerSuite) TestGetListConfigVersion_Success() {
 			Offset: 0,
 		}
 
-		jwtResponse := &auth.ConfigsJWTClaim{
-			RegisteredClaims: jwt.RegisteredClaims{},
-			AdditionalClaim: auth.AdditionalClaim{
-				UserID: 1,
-				Role:   "rw",
-			},
-		}
-
 		configResponses := []*entity.ConfigResponse{}
 		configResponse := &entity.ConfigResponse{
 			Id:           1,
@@ -36,18 +28,17 @@ func (s *configsHandlerSuite) TestGetListConfigVersion_Success() {
 			ConfigValues: "test config",
 			Version:      1,
 			CreatedAt:    time.Now().UTC(),
-			ActorId:      jwtResponse.UserID,
+			ActorId:      1,
 		}
 		configResponses = append(configResponses, configResponse)
 
 		pagination := &entity.PaginationResponse{}
 
 		// mock
-		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(jwtResponse, nil)
 		s.configsUsecase.EXPECT().GetListVersionsByConfigName(gomock.Any(), params).Return(configResponses, pagination, nil)
 
 		// When
-		w := s.GetListConfigVersions("")
+		w := s.GetListConfigVersions("", "rw")
 
 		// Then
 		s.Equal(http.StatusOK, w.Code, "Status code should be equal")
@@ -59,14 +50,6 @@ func (s *configsHandlerSuite) TestGetListConfigVersion_Success() {
 			Name: "wording-config",
 		}
 
-		jwtResponse := &auth.ConfigsJWTClaim{
-			RegisteredClaims: jwt.RegisteredClaims{},
-			AdditionalClaim: auth.AdditionalClaim{
-				UserID: 1,
-				Role:   "rw",
-			},
-		}
-
 		configResponses := []*entity.ConfigResponse{}
 		configResponse := &entity.ConfigResponse{
 			Id:           1,
@@ -74,7 +57,7 @@ func (s *configsHandlerSuite) TestGetListConfigVersion_Success() {
 			ConfigValues: "test config",
 			Version:      1,
 			CreatedAt:    time.Now().UTC(),
-			ActorId:      jwtResponse.UserID,
+			ActorId:      1,
 		}
 		configResponses = append(configResponses, configResponse)
 
@@ -83,11 +66,10 @@ func (s *configsHandlerSuite) TestGetListConfigVersion_Success() {
 		url := "/api/v1/configs/:name/versions?limit=abcd&offset=0"
 
 		// mock
-		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(jwtResponse, nil)
 		s.configsUsecase.EXPECT().GetListVersionsByConfigName(gomock.Any(), gomock.AssignableToTypeOf(params)).Return(configResponses, pagination, nil)
 
 		// When
-		w := s.GetListConfigVersions(url)
+		w := s.GetListConfigVersions(url, "rw")
 
 		// Then
 		s.Equal(http.StatusOK, w.Code, "Status code should be equal")
@@ -99,14 +81,6 @@ func (s *configsHandlerSuite) TestGetListConfigVersion_Success() {
 			Name: "wording-config",
 		}
 
-		jwtResponse := &auth.ConfigsJWTClaim{
-			RegisteredClaims: jwt.RegisteredClaims{},
-			AdditionalClaim: auth.AdditionalClaim{
-				UserID: 1,
-				Role:   "rw",
-			},
-		}
-
 		configResponses := []*entity.ConfigResponse{}
 		configResponse := &entity.ConfigResponse{
 			Id:           1,
@@ -114,7 +88,7 @@ func (s *configsHandlerSuite) TestGetListConfigVersion_Success() {
 			ConfigValues: "test config",
 			Version:      1,
 			CreatedAt:    time.Now().UTC(),
-			ActorId:      jwtResponse.UserID,
+			ActorId:      1,
 		}
 		configResponses = append(configResponses, configResponse)
 
@@ -123,11 +97,10 @@ func (s *configsHandlerSuite) TestGetListConfigVersion_Success() {
 		url := "/api/v1/configs/:name/versions?limit=2&offset=abcd"
 
 		// mock
-		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(jwtResponse, nil)
 		s.configsUsecase.EXPECT().GetListVersionsByConfigName(gomock.Any(), gomock.AssignableToTypeOf(params)).Return(configResponses, pagination, nil)
 
 		// When
-		w := s.GetListConfigVersions(url)
+		w := s.GetListConfigVersions(url, "rw")
 
 		// Then
 		s.Equal(http.StatusOK, w.Code, "Status code should be equal")
@@ -136,36 +109,12 @@ func (s *configsHandlerSuite) TestGetListConfigVersion_Success() {
 }
 
 func (s *configsHandlerSuite) TestGetListConfigVersion_Error() {
-	s.Run("Test Get List Config Version - Claim Error", func() {
-		// Given
-		expectedErrorCode := "INTERNAL_ERROR"
-
-		// mock
-		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(nil, testutil.ErrUnexpected)
-
-		// When
-		w := s.GetListConfigVersions("")
-
-		// Then
-		s.Equal(http.StatusInternalServerError, w.Code, "Status code should be equal")
-		s.Contains(w.Body.String(), expectedErrorCode, "Should contain error")
-	})
-
 	s.Run("Test Get List Config Version - Permission Denied", func() {
 		// Given
-		jwtResponse := &auth.ConfigsJWTClaim{
-			RegisteredClaims: jwt.RegisteredClaims{},
-			AdditionalClaim: auth.AdditionalClaim{
-				UserID: 1,
-				Role:   "no",
-			},
-		}
-
-		// mock
-		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(jwtResponse, nil)
+		invalidRole := "no"
 
 		// When
-		w := s.GetListConfigVersions("")
+		w := s.GetListConfigVersions("", invalidRole)
 
 		// Then
 		s.Equal(http.StatusForbidden, w.Code, "Status code should be equal")
@@ -180,22 +129,13 @@ func (s *configsHandlerSuite) TestGetListConfigVersion_Error() {
 			Offset: 0,
 		}
 
-		jwtResponse := &auth.ConfigsJWTClaim{
-			RegisteredClaims: jwt.RegisteredClaims{},
-			AdditionalClaim: auth.AdditionalClaim{
-				UserID: 1,
-				Role:   "rw",
-			},
-		}
-
 		expectedErrorCode := "INTERNAL_ERROR"
 
 		// mock
-		s.auth.EXPECT().ValidateClaim(gomock.Any(), gomock.Any()).Return(jwtResponse, nil)
 		s.configsUsecase.EXPECT().GetListVersionsByConfigName(gomock.Any(), params).Return(nil, nil, testutil.ErrUnexpected)
 
 		// When
-		w := s.GetListConfigVersions("")
+		w := s.GetListConfigVersions("", "rw")
 
 		// Then
 		s.Equal(http.StatusInternalServerError, w.Code, "Status code should be equal")
@@ -203,7 +143,7 @@ func (s *configsHandlerSuite) TestGetListConfigVersion_Error() {
 	})
 }
 
-func (s *configsHandlerSuite) GetListConfigVersions(customURL string) *httptest.ResponseRecorder {
+func (s *configsHandlerSuite) GetListConfigVersions(customURL string, role string) *httptest.ResponseRecorder {
 	gin.SetMode(gin.TestMode)
 	url := "/api/v1/configs/:name/versions?limit=2&offset=0"
 	if customURL != "" {
@@ -217,6 +157,11 @@ func (s *configsHandlerSuite) GetListConfigVersions(customURL string) *httptest.
 	c.Params = gin.Params{
 		gin.Param{Key: "name", Value: "wording-config"},
 	}
+	addClaim := &auth.AdditionalClaim{
+		UserID: 1,
+		Role:   role,
+	}
+	c.Set(middleware.ContextKeyAdditionalClaim, addClaim)
 	s.subject.GetConfigVersions(c)
 	return w
 }
