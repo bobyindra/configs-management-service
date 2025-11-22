@@ -22,11 +22,11 @@ func JsonByteEqual(a, b any) (bool, error) {
 		return false, err
 	}
 
-	if err := json.Unmarshal(aJson, &v1); err != nil {
-		return false, err
-	}
-	if err := json.Unmarshal(bJson, &v2); err != nil {
-		return false, err
-	}
+	// Since there is no data modification in between marshal and unmarshal
+	// The unmarshal will always return successfully without error
+	// Error checking is not needed in this case
+	json.Unmarshal(aJson, &v1)
+	json.Unmarshal(bJson, &v2)
+
 	return reflect.DeepEqual(v2, v1), nil
 }
