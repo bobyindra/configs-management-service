@@ -27,3 +27,9 @@ coverage:
 
 cover:
 	go tool cover -html=coverage.out
+
+build-image:
+	docker build -f build/rest/Dockerfile -t configs-service .
+
+run-image:
+	docker run -d --name configs-service-app -p 8080:8080 configs-service
