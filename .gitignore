@@ -21,6 +21,10 @@ UT-report_coverage.json
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
+# Temporary files created by go build
+*.log
+tmp/
+
 # Go workspace file
 go.work
 go.work.sum
