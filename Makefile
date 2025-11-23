@@ -34,8 +34,11 @@ build-image:
 run-image:
 	docker run -d --name configs-service-app -p 8080:8080 configs-service
 
+air:
+	air -c ./build/rest/.air.toml
+
 compose-up:
-	docker-compose -f dev/docker-compose.yml --env-file .env up -d
+	docker-compose -p configs-management-dev -f dev/docker-compose.yml --env-file .env up -d
 
 compose-down:
-	docker-compose -f dev/docker-compose.yml down
+	docker-compose -p configs-management-dev -f dev/docker-compose.yml down

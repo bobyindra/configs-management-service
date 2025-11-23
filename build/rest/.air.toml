@@ -1,15 +1,17 @@
-root = "../../"
+root = "."
 testdata_dir = "testdata"
 tmp_dir = "tmp"
 
 [build]
   # Array of commands to run before each build
   pre_cmd = []  
-  cmd = "go build -o ./tmp/main ../../cmd/rest"
+  cmd = "go build -o ./tmp/main ./cmd/rest"
   # Array of commands to run after ^C
-  post_cmd = []
+  post_cmd = ["rm -rf ./tmp"]
+  # Binary file yields from 'cmd', will be deprecated soon, recommend using entrypoint.
+  bin = "tmp/main"
   # Entrypoint binary relative to root. First item is the executable, more items are default arguments.
-  entrypoint = ["./tmp/main"]  
+  entrypoint = ["./tmp/main"]
   # Customize binary, can setup environment variables when run your app.
   full_bin = ""  
   # Add additional arguments when running binary (bin/full_bin).
