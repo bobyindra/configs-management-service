@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
 	"github.com/rs/cors"
 
 	cmsConfig "github.com/bobyindra/configs-management-service/module/configuration/config"
@@ -23,6 +24,7 @@ type CmsRestApp struct {
 
 	// Dependencies
 	Database *sql.DB
+	Redis    *redis.Client
 }
 
 func NewCmsRest() (*CmsRestApp, error) {
@@ -33,6 +35,8 @@ func NewCmsRest() (*CmsRestApp, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	app.Redis = app.svcCfg.BuildRedis()
 
 	app.Database, err = app.svcCfg.BuildDatabase()
 	if err != nil {
