@@ -1,6 +1,18 @@
-version: "3.8"
-
 services:
+  app:
+    image: cosmtrek/air:latest
+    container_name: "configs-management-app"
+    working_dir: /app
+    ports:
+      - "8080:8080"
+    entrypoint: air -c ./build/rest/.air.toml
+    volumes:
+      - ../:/app
+    depends_on:
+      - redis
+    networks:
+      - configs_net
+    
   redis:
     image: "redis:alpine"
     container_name: "configs-management-redis"
@@ -9,12 +21,12 @@ services:
     volumes:
       - redis-data:/data
     networks:
-      - dev-network
+      - configs_net
 
 volumes:
   redis-data:
     name: "configs-management-redis-data"
 
 networks:
-  dev-network:
-    name: "dev-network"
+  configs_net:
+    name: configs_net
