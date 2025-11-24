@@ -149,6 +149,8 @@ curl --location '127.0.0.1:8080/api/v1/auth/login' \
 Please follow the API documentation above to access the endpoint, don't forget to put the Authorization Token. (**Postman Collection is provided if needed [here](#postman-collection)**)
 
 ## Architecture Overview
+![Project Architecture](https://drive.google.com/thumbnail?id=1X5hE3gBOUMYjwBJoU7MvwfVqfW3EPshb&sz=w350)
+
 At the moment, the service architecture contains a simple relation between service, sql database, and redis. In the future, the service will have more comprehensive architecture to support real world usage. See the future development plans [here](#future-development)
 
 ### Project Structure
