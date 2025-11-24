@@ -185,7 +185,7 @@ At the moment, the service architecture contains a simple relation between servi
 - Module: different domain should be separated from a module. The purpose is if we need to take out the module outside of this project, it can be taked out easily. No dependency between module! To communicate between module, threat it as service to service communication.
 
 ### Database Schema
-[Database Schema Diagram](https://drive.google.com/file/d/1u1tUgl4KVZK9uByMoLkVE8KSbIshjD8H/view?usp=sharing)
+![Database Schema Diagram](https://drive.google.com/thumbnail?id=1u1tUgl4KVZK9uByMoLkVE8KSbIshjD8H&sz=w500)
 
 **Configs Table**
 | Column Name   | Data Type     | Property                                          | Description                                           |
