@@ -11,6 +11,7 @@ import (
 	configRepo "github.com/bobyindra/configs-management-service/module/configuration/internal/repository/configs_repository"
 	configsRepo "github.com/bobyindra/configs-management-service/module/configuration/internal/repository/configs_repository"
 	"github.com/bobyindra/configs-management-service/module/configuration/internal/test"
+	"github.com/go-redis/redismock/v9"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/suite"
 )
@@ -22,9 +23,10 @@ type configsRecordSuite struct {
 type configsRepoSuite struct {
 	suite.Suite
 
-	ctrl    *gomock.Controller
-	subject repository.ConfigsManagementRepository
-	mock    sqlmock.Sqlmock
+	ctrl      *gomock.Controller
+	subject   repository.ConfigsManagementRepository
+	sqlMock   sqlmock.Sqlmock
+	cacheMock redismock.ClientMock
 }
 
 func (s *configsRepoSuite) SetupTest() {
@@ -34,7 +36,8 @@ func (s *configsRepoSuite) SetupTest() {
 	mocks, repository := test.NewMockConfigsRepository(s.ctrl)
 
 	s.subject = repository
-	s.mock = mocks.DB
+	s.sqlMock = mocks.DB
+	s.cacheMock = mocks.Cache
 }
 
 func (s *configsRepoSuite) TearDownTest() {

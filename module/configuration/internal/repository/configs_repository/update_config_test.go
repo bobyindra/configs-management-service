@@ -22,7 +22,7 @@ func (s *configsRepoSuite) TestConfigs_UpdateConfig_Success() {
 		rows.AddRow(configData.Id, configData.Version)
 		rowCfgValue, err := util.ConvertAnyValueToJsonString(configData.ConfigValues)
 
-		s.mock.ExpectQuery(regexp.QuoteMeta(configsRepo.UpdateConfigQuery)).
+		s.sqlMock.ExpectQuery(regexp.QuoteMeta(configsRepo.UpdateConfigQuery)).
 			WithArgs(
 				configData.Name,
 				rowCfgValue,
@@ -36,7 +36,7 @@ func (s *configsRepoSuite) TestConfigs_UpdateConfig_Success() {
 
 		// Then
 		s.Nil(err)
-		sqlMockErr := s.mock.ExpectationsWereMet()
+		sqlMockErr := s.sqlMock.ExpectationsWereMet()
 		s.Nil(sqlMockErr, "All DB expectations should be met")
 	})
 }
@@ -49,7 +49,7 @@ func (s *configsRepoSuite) TestConfigs_UpdateConfig_ErrDB() {
 		rowCfgValue, err := util.ConvertAnyValueToJsonString(configData.ConfigValues)
 		mockErr := testutil.ErrUnexpected
 
-		s.mock.ExpectQuery(regexp.QuoteMeta(configsRepo.UpdateConfigQuery)).
+		s.sqlMock.ExpectQuery(regexp.QuoteMeta(configsRepo.UpdateConfigQuery)).
 			WithArgs(
 				configData.Name,
 				rowCfgValue,
