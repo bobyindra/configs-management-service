@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/bobyindra/configs-management-service/module/configuration/entity"
+	"github.com/redis/go-redis/v9"
 )
 
 var (
@@ -23,11 +24,15 @@ const (
 	timeout      = 3 * time.Second
 )
 
-type configsRepository struct{ db *sql.DB }
+type configsRepository struct {
+	db    *sql.DB
+	cache *redis.Client
+}
 
-func NewConfigsRepository(db *sql.DB) *configsRepository {
+func NewConfigsRepository(db *sql.DB, cache *redis.Client) *configsRepository {
 	return &configsRepository{
-		db: db,
+		db:    db,
+		cache: cache,
 	}
 }
 
