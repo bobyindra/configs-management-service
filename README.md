@@ -1,12 +1,14 @@
 # Configs Management Service Documentation
 This is a service to manage configuration
 
-## Setup
-### Prerequisite
+## Prerequisite
 - Go 1.25
-- SQLite
+- SQLite3
+- Redis
+- Docker
+- Docker-compose
 
-## Installation
+## Setup
 ### Setup Project
 Clone the project
 ```bash
@@ -50,9 +52,29 @@ Inject Users (For testing purpose because the API for registering an user is not
   make inject-user
 ```
 
-### Run the Application
-Run the server
+## Run the Application
+### Run the server via docker compose - (Recommended)
+**To start all of the servers (App and Redis)**
+```bash
+  make compose-up
+```
+*Notes:* Please wait around 1 minutes (for download dependencies and build the project), and then it can be accessed on 127.0.0.1:8080
 
+**To stop the servers**
+```bash
+  make compose-down
+```
+
+### Run the server standalone
+1. Run Redis
+```bash
+  sudo service redis-server start
+  # or
+  sudo systemctl start redis-server
+  # or (macOS)
+  brew services start redis
+```
+2. Run the App
 ```bash
   make run
 ```
@@ -127,32 +149,36 @@ curl --location '127.0.0.1:8080/api/v1/auth/login' \
 Please follow the API documentation above to access the endpoint, don't forget to put the Authorization Token. (**Postman Collection is provided if needed [here](#postman-collection)**)
 
 ## Architecture Overview
-[Project Architecture](https://drive.google.com/file/d/1nh7A1qAGtn6eAnqhDCeBu20iHd6DL3sa/view)
-
-At the moment, the service architecture contains a simple relation between service and sql database. In the future, the service will have more comprehensive architecture to support real world usage. See the future development plans [here](#future-development)
+At the moment, the service architecture contains a simple relation between service, sql database, and redis. In the future, the service will have more comprehensive architecture to support real world usage. See the future development plans [here](#future-development)
 
 ### Project Structure
 ```
   └── config-management-service
+    ├── build
+    │ └── rest   <- contains Dockerfile
     ├── cmd
     │ ├── inject   <- temporary for testing purpose
     │ ├── migrate   <- SQLite migration library
     │ └── rest
     ├── db    <- SQLite db for this project
     ├── internal    <- store all global config and util for all module
-    └──  module
+    └── module
       └── configuration  <- the application logic is here
         ├── config
         ├── db
-        │ └──  migrations  <- contains all migrations schema
+        │ └── migrations  <- contains all migrations schema
         ├── entity
+        ├── helper
         ├── internal
         │ ├── auth
+        │ ├── encryption
         │ ├── handler
+        │ ├── middleware
         │ ├── repository
-        │ └──  usecase
+        │ └── usecase
         ├── schema
-        └──  util
+        └── test
+          └── integration  <- all integration tests for this module are stored here
 
 ```
 *Notes:*
@@ -201,13 +227,11 @@ At the moment, the service architecture contains a simple relation between servi
 - At the moment, this service is only supported predefined config schema. I will add support for both predefined config schema and undefined config schema, as it will support the majority of the use cases.
 - This service covered the basic role permission for accessing the config management. For the sake of simplicity, currently, I put the role inside the user table since this is not the main focus on this yet. For the real case or future development, we should implement a proper RBAC mechanism following with permissions, roles, roles permissions, and users’ roles tables.
 - For the authentication, this service is already supported login endpoint to get the user's JWT access token. For the testing purpose, I put the user login inside the configs management module. It's should be separated from this module since users management has a different purpose from configs management. For real world scenario, this service can be accessed from other services through internal call (service to service communication) and gRPC to increase the performance because configs service is the heavy read load on the real scenario.
-- This service is not implement any cache database such as Redis yet. So this service is not ready for heavy traffic. Storing frequent accessed configs to cache are indeed needed for the real scenario.
-- At the moment, this service is only supported SQLite (just for the simplicity). Next, I will update this service to support PosgreSQL or MySQL database for better performance.
+- At the moment, this service is only supported SQLite (just for the simplicity). Next, I will update this service to support PosgreSQL or MySQL or MongoDB database for better performance.
 
 ### Future Development
 - Support both Predefined and Undefined schema
-- Implement Redis
-- Implement PostgreSQL or MySQL
+- Implement PostgreSQL or MySQL or MongoDB
 - Implement proper RBAC mechanism
 - Separate this service from User Management service
 - Support client call/internal endpoint (service to service communication)
