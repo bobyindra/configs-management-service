@@ -5,6 +5,11 @@ services:
     working_dir: /app
     ports:
       - "8080:8080"
+    env_file:
+      - ../.env
+    environment:
+      - REST_API_HOST=0.0.0.0 # Set to 0.0.0.0 to be accessible from outside the container
+      - REDIS_HOST=redis:6379 # Point to the Redis service defined below since both are in the same Docker network
     entrypoint: air -c ./build/rest/.air.toml
     volumes:
       - ../:/app
@@ -15,7 +20,7 @@ services:
     
   redis:
     image: "redis:alpine"
-    container_name: "configs-management-redis"
+    container_name: "redis"
     ports:
       - "6379:6379"
     volumes:
@@ -25,7 +30,7 @@ services:
 
 volumes:
   redis-data:
-    name: "configs-management-redis-data"
+    name: "redis-data"
 
 networks:
   configs_net:

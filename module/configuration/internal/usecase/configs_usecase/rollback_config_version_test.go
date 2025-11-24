@@ -26,6 +26,7 @@ func (s *configsUsecaseSuite) TestConfigs_RollbackConfig_Success() {
 		// mock
 		s.configRepo.EXPECT().GetConfigByConfigName(ctx, getParam).Return(cfgResponse, nil)
 		s.configRepo.EXPECT().RollbackConfigVersionByConfigName(ctx, gomock.AssignableToTypeOf(config)).Return(nil)
+		s.configRepo.EXPECT().CreateConfigCache(ctx, gomock.AssignableToTypeOf(config)).Return(nil)
 
 		// When
 		resp, err := s.subject.RollbackConfigVersionByConfigName(ctx, config)
@@ -131,6 +132,31 @@ func (s *configsUsecaseSuite) TestConfigs_RollbackConfig_Err() {
 		// Then
 		s.Nil(resp, "Response should be nil")
 		s.EqualError(mockErr, err.Error(), "Error should be equal")
+	})
+
+	s.Run("Rollback Config - Set Cache Err", func() {
+		// Given
+		ctx := context.TODO()
+		config := &entity.Config{
+			Name:    "test",
+			Version: 1,
+		}
+		getParam := &entity.GetConfigRequest{
+			Name: config.Name,
+		}
+		cfgResponse := BuildConfigResponse(getParam)
+
+		// mock
+		s.configRepo.EXPECT().GetConfigByConfigName(ctx, getParam).Return(cfgResponse, nil)
+		s.configRepo.EXPECT().RollbackConfigVersionByConfigName(ctx, gomock.AssignableToTypeOf(config)).Return(nil)
+		s.configRepo.EXPECT().CreateConfigCache(ctx, gomock.AssignableToTypeOf(config)).Return(testutil.ErrUnexpected)
+
+		// When
+		resp, err := s.subject.RollbackConfigVersionByConfigName(ctx, config)
+
+		// Then
+		s.Nil(err, "Error should be nil")
+		s.NotNil(resp, "Response should in place")
 	})
 }
 
