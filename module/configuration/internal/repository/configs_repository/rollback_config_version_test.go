@@ -20,7 +20,7 @@ func (s *configsRepoSuite) TestConfigs_RollbackConfig_Success() {
 		rows := sqlmock.NewRows(scanColumn)
 		rows.AddRow(configData.Id, configData.ConfigValues, configData.Version)
 
-		s.mock.ExpectQuery(regexp.QuoteMeta(configsRepo.RollbackConfigVersionQuery)).
+		s.sqlMock.ExpectQuery(regexp.QuoteMeta(configsRepo.RollbackConfigVersionQuery)).
 			WithArgs(
 				configData.Name,
 				configData.CreatedAt,
@@ -34,7 +34,7 @@ func (s *configsRepoSuite) TestConfigs_RollbackConfig_Success() {
 
 		// Then
 		s.Nil(err)
-		sqlMockErr := s.mock.ExpectationsWereMet()
+		sqlMockErr := s.sqlMock.ExpectationsWereMet()
 		s.Nil(sqlMockErr, "All DB expectations should be met")
 	})
 }
@@ -46,7 +46,7 @@ func (s *configsRepoSuite) TestConfigs_RollbackConfig_ErrDB() {
 		configData := test.BuildConfigData()
 		mockErr := testutil.ErrUnexpected
 
-		s.mock.ExpectQuery(regexp.QuoteMeta(configsRepo.RollbackConfigVersionQuery)).
+		s.sqlMock.ExpectQuery(regexp.QuoteMeta(configsRepo.RollbackConfigVersionQuery)).
 			WithArgs(
 				configData.Name,
 				configData.CreatedAt,

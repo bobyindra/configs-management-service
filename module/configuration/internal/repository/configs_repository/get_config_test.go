@@ -29,7 +29,7 @@ func (s *configsRepoSuite) TestConfigs_GetConfig_Success() {
 		query := buildQuery(params)
 		query = sqlx.Rebind(sqlx.DOLLAR, query)
 
-		s.mock.ExpectQuery(regexp.QuoteMeta(query)).
+		s.sqlMock.ExpectQuery(regexp.QuoteMeta(query)).
 			WithArgs(params.Name).
 			WillReturnRows(rows)
 
@@ -57,7 +57,7 @@ func (s *configsRepoSuite) TestConfigs_GetConfig_Success() {
 		query := buildQuery(params)
 
 		query = sqlx.Rebind(sqlx.DOLLAR, query)
-		s.mock.ExpectQuery(regexp.QuoteMeta(query)).
+		s.sqlMock.ExpectQuery(regexp.QuoteMeta(query)).
 			WithArgs(params.Name, params.Version).
 			WillReturnRows(rows)
 
@@ -84,7 +84,7 @@ func (s *configsRepoSuite) TestConfigs_GetConfig_ErrNotFound() {
 		query := buildQuery(params)
 
 		query = sqlx.Rebind(sqlx.DOLLAR, query)
-		s.mock.ExpectQuery(regexp.QuoteMeta(query)).
+		s.sqlMock.ExpectQuery(regexp.QuoteMeta(query)).
 			WithArgs(params.Name).
 			WillReturnError(sql.ErrNoRows)
 
@@ -109,7 +109,7 @@ func (s *configsRepoSuite) TestConfigs_GetConfig_ErrNotFound() {
 		query := buildQuery(params)
 
 		query = sqlx.Rebind(sqlx.DOLLAR, query)
-		s.mock.ExpectQuery(regexp.QuoteMeta(query)).
+		s.sqlMock.ExpectQuery(regexp.QuoteMeta(query)).
 			WithArgs(params.Name, params.Version).
 			WillReturnError(sql.ErrNoRows)
 
@@ -136,7 +136,7 @@ func (s *configsRepoSuite) TestConfigs_GetConfig_ErrDB() {
 		query := buildQuery(params)
 
 		query = sqlx.Rebind(sqlx.DOLLAR, query)
-		s.mock.ExpectQuery(regexp.QuoteMeta(query)).
+		s.sqlMock.ExpectQuery(regexp.QuoteMeta(query)).
 			WithArgs(params.Name).
 			WillReturnError(mockErr)
 
@@ -162,7 +162,7 @@ func (s *configsRepoSuite) TestConfigs_GetConfig_ErrDB() {
 		query := buildQuery(params)
 
 		query = sqlx.Rebind(sqlx.DOLLAR, query)
-		s.mock.ExpectQuery(regexp.QuoteMeta(query)).
+		s.sqlMock.ExpectQuery(regexp.QuoteMeta(query)).
 			WithArgs(params.Name, params.Version).
 			WillReturnError(mockErr)
 

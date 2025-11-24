@@ -13,7 +13,7 @@ import (
 
 type MockRepository struct {
 	DB    sqlmock.Sqlmock
-	cache redismock.ClientMock
+	Cache redismock.ClientMock
 }
 
 func NewMockUserRepository(ctrl *gomock.Controller) (*MockRepository, repository.UserRepository) {
@@ -40,7 +40,7 @@ func NewMockConfigsRepository(ctrl *gomock.Controller) (*MockRepository, reposit
 
 	mock := &MockRepository{
 		DB:    sqlMock,
-		cache: cacheMock,
+		Cache: cacheMock,
 	}
 
 	return mock, configsRepo.NewConfigsRepository(

@@ -37,7 +37,7 @@ func (s *configsRepoSuite) TestConfigs_GetListVersionWithLimit_Success() {
 
 		rows := BuildConfigResponseRows(configData, 2)
 
-		s.mock.ExpectQuery(regexp.QuoteMeta(configsRepo.GetListVersionsConfigQuery)).
+		s.sqlMock.ExpectQuery(regexp.QuoteMeta(configsRepo.GetListVersionsConfigQuery)).
 			WithArgs(configData.Name, params.Limit, params.Offset).
 			WillReturnRows(rows)
 
@@ -45,7 +45,7 @@ func (s *configsRepoSuite) TestConfigs_GetListVersionWithLimit_Success() {
 		totalRows := sqlmock.NewRows(countColumn)
 		totalRows.AddRow(totalRowValue)
 
-		s.mock.ExpectQuery(regexp.QuoteMeta(configsRepo.GetConfigVersionsTotalCountQuery)).
+		s.sqlMock.ExpectQuery(regexp.QuoteMeta(configsRepo.GetConfigVersionsTotalCountQuery)).
 			WithArgs(configData.Name).
 			WillReturnRows(totalRows)
 
@@ -83,7 +83,7 @@ func (s *configsRepoSuite) TestConfigs_GetListVersionWithoutLimit_Success() {
 
 		rows := BuildConfigResponseRows(configData, 2)
 
-		s.mock.ExpectQuery(regexp.QuoteMeta(configsRepo.GetListVersionsConfigQuery)).
+		s.sqlMock.ExpectQuery(regexp.QuoteMeta(configsRepo.GetListVersionsConfigQuery)).
 			WithArgs(configData.Name, sqlmock.AnyArg(), sqlmock.AnyArg()).
 			WillReturnRows(rows)
 
@@ -91,7 +91,7 @@ func (s *configsRepoSuite) TestConfigs_GetListVersionWithoutLimit_Success() {
 		totalRows := sqlmock.NewRows(countColumn)
 		totalRows.AddRow(totalRowValue)
 
-		s.mock.ExpectQuery(regexp.QuoteMeta(configsRepo.GetConfigVersionsTotalCountQuery)).
+		s.sqlMock.ExpectQuery(regexp.QuoteMeta(configsRepo.GetConfigVersionsTotalCountQuery)).
 			WithArgs(configData.Name).
 			WillReturnRows(totalRows)
 
@@ -116,7 +116,7 @@ func (s *configsRepoSuite) TestConfigs_GetListVersionNoRow_Error() {
 			Offset: 0,
 		}
 
-		s.mock.ExpectQuery(regexp.QuoteMeta(configsRepo.GetListVersionsConfigQuery)).
+		s.sqlMock.ExpectQuery(regexp.QuoteMeta(configsRepo.GetListVersionsConfigQuery)).
 			WithArgs(params.Name, params.Limit, params.Offset).
 			WillReturnError(sql.ErrNoRows)
 
@@ -141,7 +141,7 @@ func (s *configsRepoSuite) TestConfigs_GetListVersion_ErrorDB() {
 		}
 		mockErr := testutil.ErrUnexpected
 
-		s.mock.ExpectQuery(regexp.QuoteMeta(configsRepo.GetListVersionsConfigQuery)).
+		s.sqlMock.ExpectQuery(regexp.QuoteMeta(configsRepo.GetListVersionsConfigQuery)).
 			WithArgs(params.Name, params.Limit, params.Offset).
 			WillReturnError(mockErr)
 
@@ -166,11 +166,11 @@ func (s *configsRepoSuite) TestConfigs_GetListTotalRow_ErrorDB() {
 		}
 		mockErr := testutil.ErrUnexpected
 
-		s.mock.ExpectQuery(regexp.QuoteMeta(configsRepo.GetListVersionsConfigQuery)).
+		s.sqlMock.ExpectQuery(regexp.QuoteMeta(configsRepo.GetListVersionsConfigQuery)).
 			WithArgs(params.Name, params.Limit, params.Offset).
 			WillReturnError(mockErr)
 
-		s.mock.ExpectQuery(regexp.QuoteMeta(configsRepo.GetConfigVersionsTotalCountQuery)).
+		s.sqlMock.ExpectQuery(regexp.QuoteMeta(configsRepo.GetConfigVersionsTotalCountQuery)).
 			WithArgs(params.Name).
 			WillReturnError(mockErr)
 

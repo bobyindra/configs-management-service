@@ -24,7 +24,7 @@ func (s *configsRepoSuite) TestConfigs_CreateConfig_Success() {
 		rows.AddRow(configData.Id)
 		rowCfgValue, err := util.ConvertAnyValueToJsonString(configData.ConfigValues)
 
-		s.mock.ExpectQuery(regexp.QuoteMeta(configsRepo.CreateConfigQuery)).
+		s.sqlMock.ExpectQuery(regexp.QuoteMeta(configsRepo.CreateConfigQuery)).
 			WithArgs(
 				configData.Name,
 				rowCfgValue,
@@ -39,7 +39,7 @@ func (s *configsRepoSuite) TestConfigs_CreateConfig_Success() {
 
 		// Then
 		s.Nil(err)
-		sqlMockErr := s.mock.ExpectationsWereMet()
+		sqlMockErr := s.sqlMock.ExpectationsWereMet()
 		s.Nil(sqlMockErr, "All DB expectations should be met")
 	})
 }
@@ -53,7 +53,7 @@ func (s *configsRepoSuite) TestConfigs_CreateConfig_Error() {
 
 		sqliteErr := sqlite3.Error{ExtendedCode: sqlite3.ErrConstraintUnique}
 
-		s.mock.ExpectQuery(regexp.QuoteMeta(configsRepo.CreateConfigQuery)).
+		s.sqlMock.ExpectQuery(regexp.QuoteMeta(configsRepo.CreateConfigQuery)).
 			WithArgs(
 				configData.Name,
 				rowCfgValue,
@@ -77,7 +77,7 @@ func (s *configsRepoSuite) TestConfigs_CreateConfig_Error() {
 		rowCfgValue, err := util.ConvertAnyValueToJsonString(configData.ConfigValues)
 		mockErr := testutil.ErrDB
 
-		s.mock.ExpectQuery(regexp.QuoteMeta(configsRepo.CreateConfigQuery)).
+		s.sqlMock.ExpectQuery(regexp.QuoteMeta(configsRepo.CreateConfigQuery)).
 			WithArgs(
 				configData.Name,
 				rowCfgValue,
