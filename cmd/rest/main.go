@@ -17,6 +17,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer app.Redis.Close()
 	defer app.Database.Close()
 
 	restServer := config.NewRestServer(app)

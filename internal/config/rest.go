@@ -51,6 +51,7 @@ func NewRestServer(app *CmsRestApp) *RestServer {
 
 	cmsCfg := cmsConfig.CmsConfig{
 		Database:          app.Database,
+		Redis:             app.Redis,
 		Router:            r,
 		JWTSecret:         app.svcCfg.JWTSecret,
 		JWTExpiryDuration: app.svcCfg.JWTExpiryDuration,

@@ -7,11 +7,13 @@ import (
 	"github.com/bobyindra/configs-management-service/module/configuration/internal/repository"
 	configsRepo "github.com/bobyindra/configs-management-service/module/configuration/internal/repository/configs_repository"
 	userRepo "github.com/bobyindra/configs-management-service/module/configuration/internal/repository/user"
+	"github.com/go-redis/redismock/v9"
 	"github.com/golang/mock/gomock"
 )
 
 type MockRepository struct {
-	DB sqlmock.Sqlmock
+	DB    sqlmock.Sqlmock
+	cache redismock.ClientMock
 }
 
 func NewMockUserRepository(ctrl *gomock.Controller) (*MockRepository, repository.UserRepository) {
@@ -31,15 +33,18 @@ func NewMockUserRepository(ctrl *gomock.Controller) (*MockRepository, repository
 
 func NewMockConfigsRepository(ctrl *gomock.Controller) (*MockRepository, repository.ConfigsManagementRepository) {
 	db, sqlMock, err := sqlmock.New()
+	cache, cacheMock := redismock.NewClientMock()
 	if err != nil {
 		log.Println(err)
 	}
 
 	mock := &MockRepository{
-		DB: sqlMock,
+		DB:    sqlMock,
+		cache: cacheMock,
 	}
 
 	return mock, configsRepo.NewConfigsRepository(
 		db,
+		cache,
 	)
 }

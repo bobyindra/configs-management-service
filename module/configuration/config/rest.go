@@ -14,7 +14,7 @@ import (
 var CONFIGS_SCHEMA_PATH = "./module/configuration/schema/"
 
 func RegisterCmsHandler(cfg CmsConfig) error {
-	repoList := repository.NewRepositoryList(cfg.Database)
+	repoList := repository.NewRepositoryList(cfg.Database, cfg.Redis)
 	uscsList := usecase.NewUsecaseList(repoList)
 	authUtil := auth.NewAuth([]byte(cfg.JWTSecret), cfg.JWTExpiryDuration)
 	middleware := middleware.NewMiddleware(authUtil)
