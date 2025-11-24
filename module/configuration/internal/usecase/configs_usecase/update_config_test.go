@@ -24,6 +24,7 @@ func (s *configsUsecaseSuite) TestConfigs_UpdateConfig_Success() {
 		// mock
 		s.configRepo.EXPECT().GetConfigByConfigName(ctx, getParam).Return(cfgResponse, nil)
 		s.configRepo.EXPECT().UpdateConfigByConfigName(ctx, gomock.AssignableToTypeOf(config)).Return(nil)
+		s.configRepo.EXPECT().CreateConfigCache(ctx, gomock.AssignableToTypeOf(config)).Return(nil)
 
 		// When
 		resp, err := s.subject.UpdateConfigByConfigName(ctx, config)
@@ -129,5 +130,30 @@ func (s *configsUsecaseSuite) TestConfigs_UpdateConfig_Err() {
 		// Then
 		s.Nil(resp, "Response should be nil")
 		s.EqualError(mockErr, err.Error(), "Error should be equal")
+	})
+
+	s.Run("Update Config - Set Cache Err", func() {
+		ctx := context.TODO()
+		config := &entity.Config{
+			Name:         "test",
+			ConfigValues: "value",
+			ActorId:      1,
+		}
+		getParam := &entity.GetConfigRequest{
+			Name: config.Name,
+		}
+		cfgResponse := BuildConfigResponse(getParam)
+
+		// mock
+		s.configRepo.EXPECT().GetConfigByConfigName(ctx, getParam).Return(cfgResponse, nil)
+		s.configRepo.EXPECT().UpdateConfigByConfigName(ctx, gomock.AssignableToTypeOf(config)).Return(nil)
+		s.configRepo.EXPECT().CreateConfigCache(ctx, gomock.AssignableToTypeOf(config)).Return(testutil.ErrUnexpected)
+
+		// When
+		resp, err := s.subject.UpdateConfigByConfigName(ctx, config)
+
+		// Then
+		s.Nil(err, "Error should be nil")
+		s.NotNil(resp, "Response should in place")
 	})
 }

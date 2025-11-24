@@ -2,6 +2,7 @@ package configs_repository_test
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -14,14 +15,15 @@ func (s *configsRepoSuite) TestConfigs_CreateConfigCache_Success() {
 		// Given
 		ctx := context.TODO()
 		configData := test.BuildConfigData()
+		jsonData, err := json.Marshal(configData)
 		key := fmt.Sprintf("configs-%s", configData.Name)
 		ttl := 12 * time.Hour
 
 		// mock
-		s.cacheMock.ExpectSet(key, configData, ttl).SetVal("OK")
+		s.cacheMock.ExpectSet(key, jsonData, ttl).SetVal("OK")
 
 		// When
-		err := s.subject.CreateConfigCache(ctx, configData)
+		err = s.subject.CreateConfigCache(ctx, configData)
 
 		// Then
 		s.Nil(err, "Error should be nil")
@@ -35,15 +37,16 @@ func (s *configsRepoSuite) TestConfigs_CreateConfigCache_Error() {
 		// Given
 		ctx := context.TODO()
 		configData := test.BuildConfigData()
+		jsonData, err := json.Marshal(configData)
 		key := fmt.Sprintf("configs-%s", configData.Name)
 		ttl := 12 * time.Hour
 		mockErr := testutil.ErrUnexpected
 
 		// mock
-		s.cacheMock.ExpectSet(key, configData, ttl).SetErr(mockErr)
+		s.cacheMock.ExpectSet(key, jsonData, ttl).SetErr(mockErr)
 
 		// When
-		err := s.subject.CreateConfigCache(ctx, configData)
+		err = s.subject.CreateConfigCache(ctx, configData)
 
 		// Then
 		s.Equal(mockErr, err, "Error should be equal to mockErr")
