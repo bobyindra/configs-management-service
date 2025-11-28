@@ -12,7 +12,7 @@ import (
 	"github.com/bobyindra/configs-management-service/module/configuration/internal/test"
 )
 
-func (s *configsRepoSuite) TestConfigs_GetListVersionWithLimit_Success() {
+func (s *configsDBRepoSuite) TestConfigs_GetListVersionWithLimit_Success() {
 	s.Run("Test Get Config List Version by config-name with defined limit return success", func() {
 		// Given
 		ctx := context.TODO()
@@ -60,7 +60,7 @@ func (s *configsRepoSuite) TestConfigs_GetListVersionWithLimit_Success() {
 	})
 }
 
-func (s *configsRepoSuite) TestConfigs_GetListVersionWithoutLimit_Success() {
+func (s *configsDBRepoSuite) TestConfigs_GetListVersionWithoutLimit_Success() {
 	s.Run("Test Get Config List Version by config-name without defined limit return success", func() {
 		// Given
 		ctx := context.TODO()
@@ -106,7 +106,7 @@ func (s *configsRepoSuite) TestConfigs_GetListVersionWithoutLimit_Success() {
 	})
 }
 
-func (s *configsRepoSuite) TestConfigs_GetListVersionNoRow_Error() {
+func (s *configsDBRepoSuite) TestConfigs_GetListVersionNoRow_Error() {
 	s.Run("Test Get Config List Version by config-name return Err No Rows", func() {
 		// Given
 		ctx := context.TODO()
@@ -130,7 +130,7 @@ func (s *configsRepoSuite) TestConfigs_GetListVersionNoRow_Error() {
 	})
 }
 
-func (s *configsRepoSuite) TestConfigs_GetListVersion_ErrorDB() {
+func (s *configsDBRepoSuite) TestConfigs_GetListVersion_ErrorDB() {
 	s.Run("Test Get Config List Version by config-name return Err DB", func() {
 		// Given
 		ctx := context.TODO()
@@ -155,7 +155,7 @@ func (s *configsRepoSuite) TestConfigs_GetListVersion_ErrorDB() {
 	})
 }
 
-func (s *configsRepoSuite) TestConfigs_GetListTotalRow_ErrorDB() {
+func (s *configsDBRepoSuite) TestConfigs_GetListTotalRow_ErrorDB() {
 	s.Run("Test Get Config List Total Rows by config-name return Err DB", func() {
 		// Given
 		ctx := context.TODO()

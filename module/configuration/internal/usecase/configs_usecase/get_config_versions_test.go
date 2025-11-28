@@ -21,7 +21,7 @@ func (s *configsUsecaseSuite) TestConfigs_GetConfigVersionList_Success() {
 		pagination := &entity.PaginationResponse{}
 
 		// mock
-		s.configRepo.EXPECT().GetListVersionsByConfigName(ctx, params).Return(configs, pagination, nil)
+		s.configsDBRepo.EXPECT().GetListVersionsByConfigName(ctx, params).Return(configs, pagination, nil)
 
 		// When
 		resp, pg, err := s.subject.GetListVersionsByConfigName(ctx, params)
@@ -45,7 +45,7 @@ func (s *configsUsecaseSuite) TestConfigs_GetConfigVersionList_Err() {
 		mockErr := testutil.ErrUnexpected
 
 		// mock
-		s.configRepo.EXPECT().GetListVersionsByConfigName(ctx, params).Return(nil, nil, mockErr)
+		s.configsDBRepo.EXPECT().GetListVersionsByConfigName(ctx, params).Return(nil, nil, mockErr)
 
 		// When
 		resp, pg, err := s.subject.GetListVersionsByConfigName(ctx, params)

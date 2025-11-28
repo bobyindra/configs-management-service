@@ -9,7 +9,7 @@ import (
 
 var UpdateConfigQuery = "INSERT INTO configs (name, config_values, version, created_at, actor_id) VALUES ($1, $2, (SELECT COALESCE(MAX(version), 0) + 1 FROM configs WHERE name = $1), $3, $4) RETURNING id, version"
 
-func (r *configsRepository) UpdateConfigByConfigName(ctx context.Context, obj *entity.Config) error {
+func (r *configsDBRepository) UpdateConfigByConfigName(ctx context.Context, obj *entity.Config) error {
 	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 

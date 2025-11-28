@@ -24,14 +24,22 @@ const (
 	timeout      = 3 * time.Second
 )
 
-type configsRepository struct {
-	db    *sql.DB
+type configsDBRepository struct {
+	db *sql.DB
+}
+
+type configsCacheRepository struct {
 	cache *redis.Client
 }
 
-func NewConfigsRepository(db *sql.DB, cache *redis.Client) *configsRepository {
-	return &configsRepository{
-		db:    db,
+func NewConfigsDBRepository(db *sql.DB) *configsDBRepository {
+	return &configsDBRepository{
+		db: db,
+	}
+}
+
+func NewConfigsCacheRepository(cache *redis.Client) *configsCacheRepository {
+	return &configsCacheRepository{
 		cache: cache,
 	}
 }

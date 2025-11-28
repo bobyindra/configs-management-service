@@ -10,18 +10,17 @@ import (
 )
 
 func (s *configsUsecaseSuite) TestConfigs_GetConfigByConfigName_Success() {
-	s.Run("Get Config by Config Name - Success from Cache", func() {
+	s.Run("Get Config by Config Name Only - Success from Cache", func() {
 		// Given
 		ctx := context.TODO()
 		params := &entity.GetConfigRequest{
-			Name:    "test",
-			Version: 1,
+			Name: "test",
 		}
 
 		config := test.BuildConfigData()
 
 		// mock
-		s.configRepo.EXPECT().GetConfigCache(ctx, params.Name).Return(config, nil)
+		s.configsCacheRepo.EXPECT().GetConfigCache(ctx, params.Name).Return(config, nil)
 
 		// When
 		resp, err := s.subject.GetConfigByConfigName(ctx, params)
@@ -31,7 +30,29 @@ func (s *configsUsecaseSuite) TestConfigs_GetConfigByConfigName_Success() {
 		s.NotNil(resp, "Response should in place")
 	})
 
-	s.Run("Get Config by Config Name - Success from Database", func() {
+	s.Run("Get Config by Config Name Only - Success from Database", func() {
+		// Given
+		ctx := context.TODO()
+		params := &entity.GetConfigRequest{
+			Name: "test",
+		}
+
+		config := &entity.ConfigResponse{}
+
+		// mock
+		s.configsCacheRepo.EXPECT().GetConfigCache(ctx, params.Name).Return(nil, testutil.ErrUnexpected)
+		s.configsDBRepo.EXPECT().GetConfigByConfigName(ctx, params).Return(config, nil)
+		s.configsCacheRepo.EXPECT().CreateConfigCache(ctx, gomock.AssignableToTypeOf(&entity.Config{})).Return(nil)
+
+		// When
+		resp, err := s.subject.GetConfigByConfigName(ctx, params)
+
+		// Then
+		s.Nil(err, "Error should be nil")
+		s.NotNil(resp, "Response should in place")
+	})
+
+	s.Run("Get Config by Config Name And Version - Success from Database", func() {
 		// Given
 		ctx := context.TODO()
 		params := &entity.GetConfigRequest{
@@ -42,9 +63,7 @@ func (s *configsUsecaseSuite) TestConfigs_GetConfigByConfigName_Success() {
 		config := &entity.ConfigResponse{}
 
 		// mock
-		s.configRepo.EXPECT().GetConfigCache(ctx, params.Name).Return(nil, testutil.ErrUnexpected)
-		s.configRepo.EXPECT().GetConfigByConfigName(ctx, params).Return(config, nil)
-		s.configRepo.EXPECT().CreateConfigCache(ctx, gomock.AssignableToTypeOf(&entity.Config{})).Return(nil)
+		s.configsDBRepo.EXPECT().GetConfigByConfigName(ctx, params).Return(config, nil)
 
 		// When
 		resp, err := s.subject.GetConfigByConfigName(ctx, params)
@@ -56,18 +75,17 @@ func (s *configsUsecaseSuite) TestConfigs_GetConfigByConfigName_Success() {
 }
 
 func (s *configsUsecaseSuite) TestConfigs_GetConfigByConfigName_Err() {
-	s.Run("Get Config by Config Name - Err", func() {
+	s.Run("Get Config by Config Name Only - Err", func() {
 		// Given
 		ctx := context.TODO()
 		params := &entity.GetConfigRequest{
-			Name:    "test",
-			Version: 1,
+			Name: "test",
 		}
 		mockErr := testutil.ErrUnexpected
 
 		// mock
-		s.configRepo.EXPECT().GetConfigCache(ctx, params.Name).Return(nil, testutil.ErrUnexpected)
-		s.configRepo.EXPECT().GetConfigByConfigName(ctx, params).Return(nil, mockErr)
+		s.configsCacheRepo.EXPECT().GetConfigCache(ctx, params.Name).Return(nil, testutil.ErrUnexpected)
+		s.configsDBRepo.EXPECT().GetConfigByConfigName(ctx, params).Return(nil, mockErr)
 
 		// When
 		resp, err := s.subject.GetConfigByConfigName(ctx, params)
@@ -77,20 +95,39 @@ func (s *configsUsecaseSuite) TestConfigs_GetConfigByConfigName_Err() {
 		s.EqualError(mockErr, err.Error(), "Error should be equal")
 	})
 
-	s.Run("Get Config by Config Name - Set Cache Err", func() {
+	s.Run("Get Config by Config Name And Version - Err", func() {
 		// Given
 		ctx := context.TODO()
 		params := &entity.GetConfigRequest{
 			Name:    "test",
 			Version: 1,
 		}
+		mockErr := testutil.ErrUnexpected
+
+		// mock
+		s.configsDBRepo.EXPECT().GetConfigByConfigName(ctx, params).Return(nil, mockErr)
+
+		// When
+		resp, err := s.subject.GetConfigByConfigName(ctx, params)
+
+		// Then
+		s.Nil(resp, "Response should be nil")
+		s.EqualError(mockErr, err.Error(), "Error should be equal")
+	})
+
+	s.Run("Get Config by Config Name Only - Set Cache Err", func() {
+		// Given
+		ctx := context.TODO()
+		params := &entity.GetConfigRequest{
+			Name: "test",
+		}
 
 		config := &entity.ConfigResponse{}
 
 		// mock
-		s.configRepo.EXPECT().GetConfigCache(ctx, params.Name).Return(nil, testutil.ErrUnexpected)
-		s.configRepo.EXPECT().GetConfigByConfigName(ctx, params).Return(config, nil)
-		s.configRepo.EXPECT().CreateConfigCache(ctx, gomock.AssignableToTypeOf(&entity.Config{})).Return(testutil.ErrUnexpected)
+		s.configsCacheRepo.EXPECT().GetConfigCache(ctx, params.Name).Return(nil, testutil.ErrUnexpected)
+		s.configsDBRepo.EXPECT().GetConfigByConfigName(ctx, params).Return(config, nil)
+		s.configsCacheRepo.EXPECT().CreateConfigCache(ctx, gomock.AssignableToTypeOf(&entity.Config{})).Return(testutil.ErrUnexpected)
 
 		// When
 		resp, err := s.subject.GetConfigByConfigName(ctx, params)

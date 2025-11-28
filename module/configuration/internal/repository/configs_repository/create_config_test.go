@@ -13,7 +13,7 @@ import (
 	"github.com/mattn/go-sqlite3"
 )
 
-func (s *configsRepoSuite) TestConfigs_CreateConfig_Success() {
+func (s *configsDBRepoSuite) TestConfigs_CreateConfig_Success() {
 	s.Run("Test Create Config - Success", func() {
 		// Given
 		ctx := context.TODO()
@@ -44,7 +44,7 @@ func (s *configsRepoSuite) TestConfigs_CreateConfig_Success() {
 	})
 }
 
-func (s *configsRepoSuite) TestConfigs_CreateConfig_Error() {
+func (s *configsDBRepoSuite) TestConfigs_CreateConfig_Error() {
 	s.Run("Test Create Config - Config Exist Err", func() {
 		// Given
 		ctx := context.TODO()

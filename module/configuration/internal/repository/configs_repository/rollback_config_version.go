@@ -9,7 +9,7 @@ import (
 
 var RollbackConfigVersionQuery = "INSERT INTO configs (name, config_values, version, created_at, actor_id) SELECT name, config_values, (SELECT COALESCE(MAX(version), 0) + 1 FROM configs WHERE name = $1), $2, $3 FROM configs WHERE name=$1 AND version=$4 RETURNING id, config_values, version"
 
-func (r *configsRepository) RollbackConfigVersionByConfigName(ctx context.Context, obj *entity.Config) error {
+func (r *configsDBRepository) RollbackConfigVersionByConfigName(ctx context.Context, obj *entity.Config) error {
 	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 

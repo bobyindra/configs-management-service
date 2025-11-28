@@ -14,7 +14,7 @@ func (u *configsUsecase) UpdateConfigByConfigName(ctx context.Context, params *e
 	getParams := &entity.GetConfigRequest{
 		Name: params.Name,
 	}
-	resp, err := u.configsRepo.GetConfigByConfigName(ctx, getParams)
+	resp, err := u.configsDBRepo.GetConfigByConfigName(ctx, getParams)
 	if err != nil {
 		return nil, err
 	}
@@ -36,13 +36,13 @@ func (u *configsUsecase) UpdateConfigByConfigName(ctx context.Context, params *e
 		CreatedAt:    time.Now().UTC(),
 	}
 
-	err = u.configsRepo.UpdateConfigByConfigName(ctx, configs)
+	err = u.configsDBRepo.UpdateConfigByConfigName(ctx, configs)
 	if err != nil {
 		return nil, err
 	}
 
 	// Update cache
-	err = u.configsRepo.CreateConfigCache(ctx, configs)
+	err = u.configsCacheRepo.CreateConfigCache(ctx, configs)
 	if err != nil {
 		log.Printf("Failed to create config cache: %v", err)
 	}

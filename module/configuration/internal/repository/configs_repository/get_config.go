@@ -18,7 +18,7 @@ var (
 	GetConfigOrderByVersionQuery = " ORDER BY version DESC LIMIT 1"
 )
 
-func (r *configsRepository) GetConfigByConfigName(ctx context.Context, obj *entity.GetConfigRequest) (*entity.ConfigResponse, error) {
+func (r *configsDBRepository) GetConfigByConfigName(ctx context.Context, obj *entity.GetConfigRequest) (*entity.ConfigResponse, error) {
 	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 

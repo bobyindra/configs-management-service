@@ -22,9 +22,9 @@ func (s *configsUsecaseSuite) TestConfigs_UpdateConfig_Success() {
 		cfgResponse := BuildConfigResponse(getParam)
 
 		// mock
-		s.configRepo.EXPECT().GetConfigByConfigName(ctx, getParam).Return(cfgResponse, nil)
-		s.configRepo.EXPECT().UpdateConfigByConfigName(ctx, gomock.AssignableToTypeOf(config)).Return(nil)
-		s.configRepo.EXPECT().CreateConfigCache(ctx, gomock.AssignableToTypeOf(config)).Return(nil)
+		s.configsDBRepo.EXPECT().GetConfigByConfigName(ctx, getParam).Return(cfgResponse, nil)
+		s.configsDBRepo.EXPECT().UpdateConfigByConfigName(ctx, gomock.AssignableToTypeOf(config)).Return(nil)
+		s.configsCacheRepo.EXPECT().CreateConfigCache(ctx, gomock.AssignableToTypeOf(config)).Return(nil)
 
 		// When
 		resp, err := s.subject.UpdateConfigByConfigName(ctx, config)
@@ -49,7 +49,7 @@ func (s *configsUsecaseSuite) TestConfigs_UpdateConfig_Err() {
 		mockErr := testutil.ErrUnexpected
 
 		// mock
-		s.configRepo.EXPECT().GetConfigByConfigName(ctx, getParam).Return(nil, mockErr)
+		s.configsDBRepo.EXPECT().GetConfigByConfigName(ctx, getParam).Return(nil, mockErr)
 
 		// When
 		resp, err := s.subject.UpdateConfigByConfigName(ctx, config)
@@ -73,7 +73,7 @@ func (s *configsUsecaseSuite) TestConfigs_UpdateConfig_Err() {
 		mockErr := testutil.ErrJsonUnsupportedType
 
 		// mock
-		s.configRepo.EXPECT().GetConfigByConfigName(ctx, getParam).Return(cfgResponse, nil)
+		s.configsDBRepo.EXPECT().GetConfigByConfigName(ctx, getParam).Return(cfgResponse, nil)
 
 		// When
 		resp, err := s.subject.UpdateConfigByConfigName(ctx, config)
@@ -97,7 +97,7 @@ func (s *configsUsecaseSuite) TestConfigs_UpdateConfig_Err() {
 		expectedErr := entity.ErrNoChangesFound
 
 		// mock
-		s.configRepo.EXPECT().GetConfigByConfigName(ctx, getParam).Return(cfgResponse, nil)
+		s.configsDBRepo.EXPECT().GetConfigByConfigName(ctx, getParam).Return(cfgResponse, nil)
 
 		// When
 		resp, err := s.subject.UpdateConfigByConfigName(ctx, config)
@@ -121,8 +121,8 @@ func (s *configsUsecaseSuite) TestConfigs_UpdateConfig_Err() {
 		mockErr := testutil.ErrUnexpected
 
 		// mock
-		s.configRepo.EXPECT().GetConfigByConfigName(ctx, getParam).Return(cfgResponse, nil)
-		s.configRepo.EXPECT().UpdateConfigByConfigName(ctx, gomock.AssignableToTypeOf(config)).Return(mockErr)
+		s.configsDBRepo.EXPECT().GetConfigByConfigName(ctx, getParam).Return(cfgResponse, nil)
+		s.configsDBRepo.EXPECT().UpdateConfigByConfigName(ctx, gomock.AssignableToTypeOf(config)).Return(mockErr)
 
 		// When
 		resp, err := s.subject.UpdateConfigByConfigName(ctx, config)
@@ -145,9 +145,9 @@ func (s *configsUsecaseSuite) TestConfigs_UpdateConfig_Err() {
 		cfgResponse := BuildConfigResponse(getParam)
 
 		// mock
-		s.configRepo.EXPECT().GetConfigByConfigName(ctx, getParam).Return(cfgResponse, nil)
-		s.configRepo.EXPECT().UpdateConfigByConfigName(ctx, gomock.AssignableToTypeOf(config)).Return(nil)
-		s.configRepo.EXPECT().CreateConfigCache(ctx, gomock.AssignableToTypeOf(config)).Return(testutil.ErrUnexpected)
+		s.configsDBRepo.EXPECT().GetConfigByConfigName(ctx, getParam).Return(cfgResponse, nil)
+		s.configsDBRepo.EXPECT().UpdateConfigByConfigName(ctx, gomock.AssignableToTypeOf(config)).Return(nil)
+		s.configsCacheRepo.EXPECT().CreateConfigCache(ctx, gomock.AssignableToTypeOf(config)).Return(testutil.ErrUnexpected)
 
 		// When
 		resp, err := s.subject.UpdateConfigByConfigName(ctx, config)

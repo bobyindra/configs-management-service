@@ -10,7 +10,7 @@ import (
 
 var CreateConfigQuery = "INSERT INTO configs (name, config_values, version, created_at, actor_id) VALUES ($1, $2, $3, $4, $5) RETURNING id"
 
-func (r *configsRepository) CreateConfig(ctx context.Context, obj *entity.Config) error {
+func (r *configsDBRepository) CreateConfig(ctx context.Context, obj *entity.Config) error {
 	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 	obj.Version = 1

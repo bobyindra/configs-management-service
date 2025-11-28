@@ -10,7 +10,7 @@ import (
 	"github.com/bobyindra/configs-management-service/module/configuration/internal/test"
 )
 
-func (s *configsRepoSuite) TestConfigs_CreateConfigCache_Success() {
+func (s *configsCacheRepoSuite) TestConfigs_CreateConfigCache_Success() {
 	s.Run("Create Config Cache - Success", func() {
 		// Given
 		ctx := context.TODO()
@@ -32,7 +32,7 @@ func (s *configsRepoSuite) TestConfigs_CreateConfigCache_Success() {
 	})
 }
 
-func (s *configsRepoSuite) TestConfigs_CreateConfigCache_Error() {
+func (s *configsCacheRepoSuite) TestConfigs_CreateConfigCache_Error() {
 	s.Run("Create Config Cache - Error", func() {
 		// Given
 		ctx := context.TODO()

@@ -12,7 +12,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func (s *configsRepoSuite) TestConfigs_GetConfig_Success() {
+func (s *configsDBRepoSuite) TestConfigs_GetConfig_Success() {
 	s.Run("Test Get Config by config-name without spesific version return success", func() {
 		// Given
 		ctx := context.TODO()
@@ -71,7 +71,7 @@ func (s *configsRepoSuite) TestConfigs_GetConfig_Success() {
 	})
 }
 
-func (s *configsRepoSuite) TestConfigs_GetConfig_ErrNotFound() {
+func (s *configsDBRepoSuite) TestConfigs_GetConfig_ErrNotFound() {
 	s.Run("Test Get Config by config-name without spesific version return err not found", func() {
 		// Given
 		ctx := context.TODO()
@@ -122,7 +122,7 @@ func (s *configsRepoSuite) TestConfigs_GetConfig_ErrNotFound() {
 	})
 }
 
-func (s *configsRepoSuite) TestConfigs_GetConfig_ErrDB() {
+func (s *configsDBRepoSuite) TestConfigs_GetConfig_ErrDB() {
 	s.Run("Test Get Config by config-name without spesific version return err DB", func() {
 		// Given
 		ctx := context.TODO()

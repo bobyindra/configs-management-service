@@ -20,27 +20,43 @@ type configsRecordSuite struct {
 	suite.Suite
 }
 
-type configsRepoSuite struct {
+type configsDBRepoSuite struct {
+	suite.Suite
+
+	ctrl    *gomock.Controller
+	subject repository.ConfigsManagementDBRepository
+	sqlMock sqlmock.Sqlmock
+}
+
+type configsCacheRepoSuite struct {
 	suite.Suite
 
 	ctrl      *gomock.Controller
-	subject   repository.ConfigsManagementRepository
-	sqlMock   sqlmock.Sqlmock
+	subject   repository.ConfigsManagementCacheRepository
 	cacheMock redismock.ClientMock
 }
 
-func (s *configsRepoSuite) SetupTest() {
+func (s *configsDBRepoSuite) SetupTest() {
 	s.ctrl = gomock.NewController(s.T())
 	defer s.ctrl.Finish()
 
-	mocks, repository := test.NewMockConfigsRepository(s.ctrl)
+	mocks, repository := test.NewMockConfigsDBRepository(s.ctrl)
 
 	s.subject = repository
 	s.sqlMock = mocks.DB
+}
+
+func (s *configsCacheRepoSuite) SetupTest() {
+	s.ctrl = gomock.NewController(s.T())
+	defer s.ctrl.Finish()
+
+	mocks, repository := test.NewMockConfigsCacheRepository(s.ctrl)
+
+	s.subject = repository
 	s.cacheMock = mocks.Cache
 }
 
-func (s *configsRepoSuite) TearDownTest() {
+func (s *configsDBRepoSuite) TearDownTest() {
 	s.ctrl.Finish()
 }
 
@@ -48,8 +64,12 @@ func TestConfigsRecordSuite(t *testing.T) {
 	suite.Run(t, new(configsRecordSuite))
 }
 
-func TestConfigsRepository(t *testing.T) {
-	suite.Run(t, new(configsRepoSuite))
+func TestConfigsDBRepository(t *testing.T) {
+	suite.Run(t, new(configsDBRepoSuite))
+}
+
+func TestConfigsCacheRepository(t *testing.T) {
+	suite.Run(t, new(configsCacheRepoSuite))
 }
 
 func (s *configsRecordSuite) TestConfigs_ConfigToEntity_AllDataProvided() {

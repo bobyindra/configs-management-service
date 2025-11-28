@@ -15,8 +15,8 @@ func (s *configsUsecaseSuite) TestConfigs_CreateConfig_Success() {
 		config := &entity.Config{}
 
 		// mock
-		s.configRepo.EXPECT().CreateConfig(ctx, gomock.AssignableToTypeOf(config)).Return(nil)
-		s.configRepo.EXPECT().CreateConfigCache(ctx, gomock.AssignableToTypeOf(config)).Return(nil)
+		s.configsDBRepo.EXPECT().CreateConfig(ctx, gomock.AssignableToTypeOf(config)).Return(nil)
+		s.configsCacheRepo.EXPECT().CreateConfigCache(ctx, gomock.AssignableToTypeOf(config)).Return(nil)
 
 		// When
 		resp, err := s.subject.CreateConfig(ctx, config)
@@ -35,7 +35,7 @@ func (s *configsUsecaseSuite) TestConfigs_CreateConfig_Err() {
 		mockErr := testutil.ErrUnexpected
 
 		// mock
-		s.configRepo.EXPECT().CreateConfig(ctx, gomock.Any()).Return(mockErr)
+		s.configsDBRepo.EXPECT().CreateConfig(ctx, gomock.Any()).Return(mockErr)
 
 		// When
 		resp, err := s.subject.CreateConfig(ctx, config)
@@ -51,8 +51,8 @@ func (s *configsUsecaseSuite) TestConfigs_CreateConfig_Err() {
 		config := &entity.Config{}
 
 		// mock
-		s.configRepo.EXPECT().CreateConfig(ctx, gomock.AssignableToTypeOf(config)).Return(nil)
-		s.configRepo.EXPECT().CreateConfigCache(ctx, gomock.AssignableToTypeOf(config)).Return(testutil.ErrUnexpected)
+		s.configsDBRepo.EXPECT().CreateConfig(ctx, gomock.AssignableToTypeOf(config)).Return(nil)
+		s.configsCacheRepo.EXPECT().CreateConfigCache(ctx, gomock.AssignableToTypeOf(config)).Return(testutil.ErrUnexpected)
 
 		// When
 		resp, err := s.subject.CreateConfig(ctx, config)
