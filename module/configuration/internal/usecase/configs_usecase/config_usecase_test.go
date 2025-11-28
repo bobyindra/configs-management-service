@@ -16,15 +16,17 @@ type configsUsecaseSuite struct {
 	ctrl    *gomock.Controller
 	subject usecase.ConfigsManagementUsecase
 
-	configRepo *repoMock.MockConfigsManagementRepository
+	configsDBRepo    *repoMock.MockConfigsManagementDBRepository
+	configsCacheRepo *repoMock.MockConfigsManagementCacheRepository
 }
 
 func (s *configsUsecaseSuite) SetupTest() {
 	ctrl := gomock.NewController(s.T())
 
 	s.ctrl = ctrl
-	s.configRepo = repoMock.NewMockConfigsManagementRepository(ctrl)
-	s.subject = configUsecase.NewConfigsUsecase(s.configRepo)
+	s.configsDBRepo = repoMock.NewMockConfigsManagementDBRepository(ctrl)
+	s.configsCacheRepo = repoMock.NewMockConfigsManagementCacheRepository(ctrl)
+	s.subject = configUsecase.NewConfigsUsecase(s.configsDBRepo, s.configsCacheRepo)
 }
 
 func (s *configsUsecaseSuite) TearDownTest() {

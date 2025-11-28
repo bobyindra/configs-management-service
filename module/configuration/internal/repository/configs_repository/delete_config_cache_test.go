@@ -7,7 +7,7 @@ import (
 	"github.com/bobyindra/configs-management-service/internal/testutil"
 )
 
-func (s *configsRepoSuite) TestConfigs_DeleteConfigCache_Success() {
+func (s *configsCacheRepoSuite) TestConfigs_DeleteConfigCache_Success() {
 	s.Run("Delete Config Cache - Success", func() {
 		// Given
 		ctx := context.TODO()
@@ -27,7 +27,7 @@ func (s *configsRepoSuite) TestConfigs_DeleteConfigCache_Success() {
 	})
 }
 
-func (s *configsRepoSuite) TestConfigs_DeleteConfigCache_Error() {
+func (s *configsCacheRepoSuite) TestConfigs_DeleteConfigCache_Error() {
 	s.Run("Delete Config Cache - Error", func() {
 		// Given
 		ctx := context.TODO()

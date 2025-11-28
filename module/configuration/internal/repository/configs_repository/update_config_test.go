@@ -11,7 +11,7 @@ import (
 	"github.com/bobyindra/configs-management-service/module/configuration/internal/test"
 )
 
-func (s *configsRepoSuite) TestConfigs_UpdateConfig_Success() {
+func (s *configsDBRepoSuite) TestConfigs_UpdateConfig_Success() {
 	s.Run("Test Update Config version return success", func() {
 		// Given
 		ctx := context.TODO()
@@ -41,7 +41,7 @@ func (s *configsRepoSuite) TestConfigs_UpdateConfig_Success() {
 	})
 }
 
-func (s *configsRepoSuite) TestConfigs_UpdateConfig_ErrDB() {
+func (s *configsDBRepoSuite) TestConfigs_UpdateConfig_ErrDB() {
 	s.Run("Test Update Config version return err db", func() {
 		// Given
 		ctx := context.TODO()

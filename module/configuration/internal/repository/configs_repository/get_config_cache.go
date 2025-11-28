@@ -10,7 +10,7 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-func (r *configsRepository) GetConfigCache(ctx context.Context, key string) (*entity.Config, error) {
+func (r *configsCacheRepository) GetConfigCache(ctx context.Context, key string) (*entity.Config, error) {
 	key = fmt.Sprintf("configs-%s", key)
 	resp, err := r.cache.Get(ctx, key).Result()
 	if err != nil {

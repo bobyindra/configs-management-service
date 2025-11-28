@@ -3,11 +3,16 @@ package configsusecase
 import "github.com/bobyindra/configs-management-service/module/configuration/internal/repository"
 
 type configsUsecase struct {
-	configsRepo repository.ConfigsManagementRepository
+	configsDBRepo    repository.ConfigsManagementDBRepository
+	configsCacheRepo repository.ConfigsManagementCacheRepository
 }
 
-func NewConfigsUsecase(configsRepo repository.ConfigsManagementRepository) *configsUsecase {
+func NewConfigsUsecase(
+	configsDBRepo repository.ConfigsManagementDBRepository,
+	configsCacheRepo repository.ConfigsManagementCacheRepository,
+) *configsUsecase {
 	return &configsUsecase{
-		configsRepo: configsRepo,
+		configsDBRepo:    configsDBRepo,
+		configsCacheRepo: configsCacheRepo,
 	}
 }

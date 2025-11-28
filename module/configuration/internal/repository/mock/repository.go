@@ -12,31 +12,31 @@ import (
 	gomock "github.com/golang/mock/gomock"
 )
 
-// MockConfigsManagementRepository is a mock of ConfigsManagementRepository interface.
-type MockConfigsManagementRepository struct {
+// MockConfigsManagementDBRepository is a mock of ConfigsManagementDBRepository interface.
+type MockConfigsManagementDBRepository struct {
 	ctrl     *gomock.Controller
-	recorder *MockConfigsManagementRepositoryMockRecorder
+	recorder *MockConfigsManagementDBRepositoryMockRecorder
 }
 
-// MockConfigsManagementRepositoryMockRecorder is the mock recorder for MockConfigsManagementRepository.
-type MockConfigsManagementRepositoryMockRecorder struct {
-	mock *MockConfigsManagementRepository
+// MockConfigsManagementDBRepositoryMockRecorder is the mock recorder for MockConfigsManagementDBRepository.
+type MockConfigsManagementDBRepositoryMockRecorder struct {
+	mock *MockConfigsManagementDBRepository
 }
 
-// NewMockConfigsManagementRepository creates a new mock instance.
-func NewMockConfigsManagementRepository(ctrl *gomock.Controller) *MockConfigsManagementRepository {
-	mock := &MockConfigsManagementRepository{ctrl: ctrl}
-	mock.recorder = &MockConfigsManagementRepositoryMockRecorder{mock}
+// NewMockConfigsManagementDBRepository creates a new mock instance.
+func NewMockConfigsManagementDBRepository(ctrl *gomock.Controller) *MockConfigsManagementDBRepository {
+	mock := &MockConfigsManagementDBRepository{ctrl: ctrl}
+	mock.recorder = &MockConfigsManagementDBRepositoryMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockConfigsManagementRepository) EXPECT() *MockConfigsManagementRepositoryMockRecorder {
+func (m *MockConfigsManagementDBRepository) EXPECT() *MockConfigsManagementDBRepositoryMockRecorder {
 	return m.recorder
 }
 
 // CreateConfig mocks base method.
-func (m *MockConfigsManagementRepository) CreateConfig(ctx context.Context, obj *entity.Config) error {
+func (m *MockConfigsManagementDBRepository) CreateConfig(ctx context.Context, obj *entity.Config) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateConfig", ctx, obj)
 	ret0, _ := ret[0].(error)
@@ -44,41 +44,13 @@ func (m *MockConfigsManagementRepository) CreateConfig(ctx context.Context, obj 
 }
 
 // CreateConfig indicates an expected call of CreateConfig.
-func (mr *MockConfigsManagementRepositoryMockRecorder) CreateConfig(ctx, obj interface{}) *gomock.Call {
+func (mr *MockConfigsManagementDBRepositoryMockRecorder) CreateConfig(ctx, obj interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateConfig", reflect.TypeOf((*MockConfigsManagementRepository)(nil).CreateConfig), ctx, obj)
-}
-
-// CreateConfigCache mocks base method.
-func (m *MockConfigsManagementRepository) CreateConfigCache(ctx context.Context, obj *entity.Config) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateConfigCache", ctx, obj)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// CreateConfigCache indicates an expected call of CreateConfigCache.
-func (mr *MockConfigsManagementRepositoryMockRecorder) CreateConfigCache(ctx, obj interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateConfigCache", reflect.TypeOf((*MockConfigsManagementRepository)(nil).CreateConfigCache), ctx, obj)
-}
-
-// DeleteConfigCache mocks base method.
-func (m *MockConfigsManagementRepository) DeleteConfigCache(ctx context.Context, key string) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteConfigCache", ctx, key)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// DeleteConfigCache indicates an expected call of DeleteConfigCache.
-func (mr *MockConfigsManagementRepositoryMockRecorder) DeleteConfigCache(ctx, key interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteConfigCache", reflect.TypeOf((*MockConfigsManagementRepository)(nil).DeleteConfigCache), ctx, key)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateConfig", reflect.TypeOf((*MockConfigsManagementDBRepository)(nil).CreateConfig), ctx, obj)
 }
 
 // GetConfigByConfigName mocks base method.
-func (m *MockConfigsManagementRepository) GetConfigByConfigName(ctx context.Context, obj *entity.GetConfigRequest) (*entity.ConfigResponse, error) {
+func (m *MockConfigsManagementDBRepository) GetConfigByConfigName(ctx context.Context, obj *entity.GetConfigRequest) (*entity.ConfigResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetConfigByConfigName", ctx, obj)
 	ret0, _ := ret[0].(*entity.ConfigResponse)
@@ -87,28 +59,13 @@ func (m *MockConfigsManagementRepository) GetConfigByConfigName(ctx context.Cont
 }
 
 // GetConfigByConfigName indicates an expected call of GetConfigByConfigName.
-func (mr *MockConfigsManagementRepositoryMockRecorder) GetConfigByConfigName(ctx, obj interface{}) *gomock.Call {
+func (mr *MockConfigsManagementDBRepositoryMockRecorder) GetConfigByConfigName(ctx, obj interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetConfigByConfigName", reflect.TypeOf((*MockConfigsManagementRepository)(nil).GetConfigByConfigName), ctx, obj)
-}
-
-// GetConfigCache mocks base method.
-func (m *MockConfigsManagementRepository) GetConfigCache(ctx context.Context, key string) (*entity.Config, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetConfigCache", ctx, key)
-	ret0, _ := ret[0].(*entity.Config)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetConfigCache indicates an expected call of GetConfigCache.
-func (mr *MockConfigsManagementRepositoryMockRecorder) GetConfigCache(ctx, key interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetConfigCache", reflect.TypeOf((*MockConfigsManagementRepository)(nil).GetConfigCache), ctx, key)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetConfigByConfigName", reflect.TypeOf((*MockConfigsManagementDBRepository)(nil).GetConfigByConfigName), ctx, obj)
 }
 
 // GetListVersionsByConfigName mocks base method.
-func (m *MockConfigsManagementRepository) GetListVersionsByConfigName(ctx context.Context, obj *entity.GetListConfigVersionsRequest) ([]*entity.ConfigResponse, *entity.PaginationResponse, error) {
+func (m *MockConfigsManagementDBRepository) GetListVersionsByConfigName(ctx context.Context, obj *entity.GetListConfigVersionsRequest) ([]*entity.ConfigResponse, *entity.PaginationResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetListVersionsByConfigName", ctx, obj)
 	ret0, _ := ret[0].([]*entity.ConfigResponse)
@@ -118,13 +75,13 @@ func (m *MockConfigsManagementRepository) GetListVersionsByConfigName(ctx contex
 }
 
 // GetListVersionsByConfigName indicates an expected call of GetListVersionsByConfigName.
-func (mr *MockConfigsManagementRepositoryMockRecorder) GetListVersionsByConfigName(ctx, obj interface{}) *gomock.Call {
+func (mr *MockConfigsManagementDBRepositoryMockRecorder) GetListVersionsByConfigName(ctx, obj interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetListVersionsByConfigName", reflect.TypeOf((*MockConfigsManagementRepository)(nil).GetListVersionsByConfigName), ctx, obj)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetListVersionsByConfigName", reflect.TypeOf((*MockConfigsManagementDBRepository)(nil).GetListVersionsByConfigName), ctx, obj)
 }
 
 // RollbackConfigVersionByConfigName mocks base method.
-func (m *MockConfigsManagementRepository) RollbackConfigVersionByConfigName(ctx context.Context, obj *entity.Config) error {
+func (m *MockConfigsManagementDBRepository) RollbackConfigVersionByConfigName(ctx context.Context, obj *entity.Config) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "RollbackConfigVersionByConfigName", ctx, obj)
 	ret0, _ := ret[0].(error)
@@ -132,13 +89,13 @@ func (m *MockConfigsManagementRepository) RollbackConfigVersionByConfigName(ctx 
 }
 
 // RollbackConfigVersionByConfigName indicates an expected call of RollbackConfigVersionByConfigName.
-func (mr *MockConfigsManagementRepositoryMockRecorder) RollbackConfigVersionByConfigName(ctx, obj interface{}) *gomock.Call {
+func (mr *MockConfigsManagementDBRepositoryMockRecorder) RollbackConfigVersionByConfigName(ctx, obj interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RollbackConfigVersionByConfigName", reflect.TypeOf((*MockConfigsManagementRepository)(nil).RollbackConfigVersionByConfigName), ctx, obj)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RollbackConfigVersionByConfigName", reflect.TypeOf((*MockConfigsManagementDBRepository)(nil).RollbackConfigVersionByConfigName), ctx, obj)
 }
 
 // UpdateConfigByConfigName mocks base method.
-func (m *MockConfigsManagementRepository) UpdateConfigByConfigName(ctx context.Context, obj *entity.Config) error {
+func (m *MockConfigsManagementDBRepository) UpdateConfigByConfigName(ctx context.Context, obj *entity.Config) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateConfigByConfigName", ctx, obj)
 	ret0, _ := ret[0].(error)
@@ -146,9 +103,75 @@ func (m *MockConfigsManagementRepository) UpdateConfigByConfigName(ctx context.C
 }
 
 // UpdateConfigByConfigName indicates an expected call of UpdateConfigByConfigName.
-func (mr *MockConfigsManagementRepositoryMockRecorder) UpdateConfigByConfigName(ctx, obj interface{}) *gomock.Call {
+func (mr *MockConfigsManagementDBRepositoryMockRecorder) UpdateConfigByConfigName(ctx, obj interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateConfigByConfigName", reflect.TypeOf((*MockConfigsManagementRepository)(nil).UpdateConfigByConfigName), ctx, obj)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateConfigByConfigName", reflect.TypeOf((*MockConfigsManagementDBRepository)(nil).UpdateConfigByConfigName), ctx, obj)
+}
+
+// MockConfigsManagementCacheRepository is a mock of ConfigsManagementCacheRepository interface.
+type MockConfigsManagementCacheRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockConfigsManagementCacheRepositoryMockRecorder
+}
+
+// MockConfigsManagementCacheRepositoryMockRecorder is the mock recorder for MockConfigsManagementCacheRepository.
+type MockConfigsManagementCacheRepositoryMockRecorder struct {
+	mock *MockConfigsManagementCacheRepository
+}
+
+// NewMockConfigsManagementCacheRepository creates a new mock instance.
+func NewMockConfigsManagementCacheRepository(ctrl *gomock.Controller) *MockConfigsManagementCacheRepository {
+	mock := &MockConfigsManagementCacheRepository{ctrl: ctrl}
+	mock.recorder = &MockConfigsManagementCacheRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockConfigsManagementCacheRepository) EXPECT() *MockConfigsManagementCacheRepositoryMockRecorder {
+	return m.recorder
+}
+
+// CreateConfigCache mocks base method.
+func (m *MockConfigsManagementCacheRepository) CreateConfigCache(ctx context.Context, obj *entity.Config) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateConfigCache", ctx, obj)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateConfigCache indicates an expected call of CreateConfigCache.
+func (mr *MockConfigsManagementCacheRepositoryMockRecorder) CreateConfigCache(ctx, obj interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateConfigCache", reflect.TypeOf((*MockConfigsManagementCacheRepository)(nil).CreateConfigCache), ctx, obj)
+}
+
+// DeleteConfigCache mocks base method.
+func (m *MockConfigsManagementCacheRepository) DeleteConfigCache(ctx context.Context, key string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteConfigCache", ctx, key)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteConfigCache indicates an expected call of DeleteConfigCache.
+func (mr *MockConfigsManagementCacheRepositoryMockRecorder) DeleteConfigCache(ctx, key interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteConfigCache", reflect.TypeOf((*MockConfigsManagementCacheRepository)(nil).DeleteConfigCache), ctx, key)
+}
+
+// GetConfigCache mocks base method.
+func (m *MockConfigsManagementCacheRepository) GetConfigCache(ctx context.Context, key string) (*entity.Config, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetConfigCache", ctx, key)
+	ret0, _ := ret[0].(*entity.Config)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetConfigCache indicates an expected call of GetConfigCache.
+func (mr *MockConfigsManagementCacheRepositoryMockRecorder) GetConfigCache(ctx, key interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetConfigCache", reflect.TypeOf((*MockConfigsManagementCacheRepository)(nil).GetConfigCache), ctx, key)
 }
 
 // MockUserRepository is a mock of UserRepository interface.

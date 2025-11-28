@@ -14,7 +14,7 @@ var (
 	GetConfigVersionsTotalCountQuery = "SELECT COUNT(*) FROM configs WHERE name = $1"
 )
 
-func (r *configsRepository) GetListVersionsByConfigName(ctx context.Context, obj *entity.GetListConfigVersionsRequest) ([]*entity.ConfigResponse, *entity.PaginationResponse, error) {
+func (r *configsDBRepository) GetListVersionsByConfigName(ctx context.Context, obj *entity.GetListConfigVersionsRequest) ([]*entity.ConfigResponse, *entity.PaginationResponse, error) {
 	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 

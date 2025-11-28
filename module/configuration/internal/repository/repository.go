@@ -11,34 +11,40 @@ import (
 )
 
 type RepositoryList struct {
-	ConfigsRepo ConfigsManagementRepository
-	UserRepo    UserRepository
+	ConfigsDBRepo    ConfigsManagementDBRepository
+	ConfigsCacheRepo ConfigsManagementCacheRepository
+	UserRepo         UserRepository
 }
 
 func NewRepositoryList(db *sql.DB, cache *redis.Client) RepositoryList {
 	return RepositoryList{
-		ConfigsRepo: newConfigsManagementRepository(db, cache),
-		UserRepo:    newUserRepository(db),
+		ConfigsDBRepo:    newConfigsManagementDBRepository(db),
+		ConfigsCacheRepo: newConfigsManagementCacheRepository(cache),
+		UserRepo:         newUserRepository(db),
 	}
 }
 
-func newConfigsManagementRepository(db *sql.DB, cache *redis.Client) ConfigsManagementRepository {
-	return configsRepository.NewConfigsRepository(db, cache)
+func newConfigsManagementDBRepository(db *sql.DB) ConfigsManagementDBRepository {
+	return configsRepository.NewConfigsDBRepository(db)
+}
+
+func newConfigsManagementCacheRepository(cache *redis.Client) ConfigsManagementCacheRepository {
+	return configsRepository.NewConfigsCacheRepository(cache)
 }
 
 func newUserRepository(db *sql.DB) UserRepository {
 	return userRepository.NewUserRepository(db)
 }
 
-type ConfigsManagementRepository interface {
-	// Database
+type ConfigsManagementDBRepository interface {
 	CreateConfig(ctx context.Context, obj *entity.Config) error
 	GetConfigByConfigName(ctx context.Context, obj *entity.GetConfigRequest) (*entity.ConfigResponse, error)
 	GetListVersionsByConfigName(ctx context.Context, obj *entity.GetListConfigVersionsRequest) ([]*entity.ConfigResponse, *entity.PaginationResponse, error)
 	UpdateConfigByConfigName(ctx context.Context, obj *entity.Config) error
 	RollbackConfigVersionByConfigName(ctx context.Context, obj *entity.Config) error
+}
 
-	// Cache
+type ConfigsManagementCacheRepository interface {
 	CreateConfigCache(ctx context.Context, obj *entity.Config) error
 	GetConfigCache(ctx context.Context, key string) (*entity.Config, error)
 	DeleteConfigCache(ctx context.Context, key string) error

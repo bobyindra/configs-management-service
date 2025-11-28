@@ -10,7 +10,7 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-func (s *configsRepoSuite) TestConfigs_GetConfigCache_Success() {
+func (s *configsCacheRepoSuite) TestConfigs_GetConfigCache_Success() {
 	s.Run("Get Config Cache - Success", func() {
 		// Given
 		ctx := context.TODO()
@@ -34,7 +34,7 @@ func (s *configsRepoSuite) TestConfigs_GetConfigCache_Success() {
 	})
 }
 
-func (s *configsRepoSuite) TestConfigs_GetConfigCache_Error() {
+func (s *configsCacheRepoSuite) TestConfigs_GetConfigCache_Error() {
 	s.Run("Get Config Cache - Unexpected Error", func() {
 		// Given
 		ctx := context.TODO()

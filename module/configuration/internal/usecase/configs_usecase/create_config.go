@@ -16,13 +16,13 @@ func (u *configsUsecase) CreateConfig(ctx context.Context, params *entity.Config
 		CreatedAt:    time.Now().UTC(),
 	}
 
-	err := u.configsRepo.CreateConfig(ctx, configs)
+	err := u.configsDBRepo.CreateConfig(ctx, configs)
 	if err != nil {
 		return nil, err
 	}
 
 	// Store in cache
-	err = u.configsRepo.CreateConfigCache(ctx, configs)
+	err = u.configsCacheRepo.CreateConfigCache(ctx, configs)
 	if err != nil {
 		log.Printf("Failed to create config cache: %v", err)
 	}

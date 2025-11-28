@@ -10,7 +10,7 @@ import (
 	"github.com/bobyindra/configs-management-service/module/configuration/internal/test"
 )
 
-func (s *configsRepoSuite) TestConfigs_RollbackConfig_Success() {
+func (s *configsDBRepoSuite) TestConfigs_RollbackConfig_Success() {
 	s.Run("Test Rollback Config version return success", func() {
 		// Given
 		ctx := context.TODO()
@@ -39,7 +39,7 @@ func (s *configsRepoSuite) TestConfigs_RollbackConfig_Success() {
 	})
 }
 
-func (s *configsRepoSuite) TestConfigs_RollbackConfig_ErrDB() {
+func (s *configsDBRepoSuite) TestConfigs_RollbackConfig_ErrDB() {
 	s.Run("Test Rollback Config version return err db", func() {
 		// Given
 		ctx := context.TODO()

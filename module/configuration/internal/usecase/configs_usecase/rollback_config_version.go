@@ -14,7 +14,7 @@ func (u *configsUsecase) RollbackConfigVersionByConfigName(ctx context.Context, 
 	getParams := &entity.GetConfigRequest{
 		Name: params.Name,
 	}
-	resp, err := u.configsRepo.GetConfigByConfigName(ctx, getParams)
+	resp, err := u.configsDBRepo.GetConfigByConfigName(ctx, getParams)
 	if err != nil {
 		return nil, err
 	}
@@ -37,13 +37,13 @@ func (u *configsUsecase) RollbackConfigVersionByConfigName(ctx context.Context, 
 		CreatedAt: time.Now().UTC(),
 	}
 
-	err = u.configsRepo.RollbackConfigVersionByConfigName(ctx, configs)
+	err = u.configsDBRepo.RollbackConfigVersionByConfigName(ctx, configs)
 	if err != nil {
 		return nil, err
 	}
 
 	// Update cache
-	err = u.configsRepo.CreateConfigCache(ctx, configs)
+	err = u.configsCacheRepo.CreateConfigCache(ctx, configs)
 	if err != nil {
 		log.Printf("Failed to create config cache: %v", err)
 	}

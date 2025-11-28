@@ -13,11 +13,13 @@ import (
 	"testing"
 	"time"
 
+	"github.com/alicebob/miniredis/v2"
 	cmsConfig "github.com/bobyindra/configs-management-service/module/configuration/config"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/sqlite3"
 	"github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/redis/go-redis/v9"
 )
 
 var (
@@ -25,11 +27,14 @@ var (
 	router    *gin.Engine
 	authToken string
 	db        *sql.DB
+	cache     *redis.Client
+	mRedis    *miniredis.Miniredis
 	dbPath    = "./test.db"
 )
 
 func Setup() {
 	log.Println("Setting up integration test...")
+	BuildRedis()
 	BuildDatabase()
 
 	// Start Gin Server
@@ -39,6 +44,7 @@ func Setup() {
 	cmsConfig.CONFIGS_SCHEMA_PATH = schemaPath
 	cmsCfg := cmsConfig.CmsConfig{
 		Database:          db,
+		Redis:             cache,
 		Router:            router,
 		JWTSecret:         "test-secret",
 		JWTExpiryDuration: 86400 * time.Second,
@@ -50,7 +56,28 @@ func Setup() {
 	Login()
 }
 
+func BuildRedis() {
+	// Start Miniredis
+	var err error
+	mRedis, err = miniredis.Run()
+	if err != nil {
+		log.Fatalf("Failed to start miniredis: %v", err)
+	}
+
+	// Build Redis Client
+	cache = redis.NewClient(&redis.Options{
+		Addr:         mRedis.Addr(),
+		Password:     "",
+		DB:           0,
+		ReadTimeout:  300 * time.Millisecond,
+		WriteTimeout: 300 * time.Millisecond,
+	})
+}
+
 func BuildDatabase() {
+	// Remove existing test DB
+	os.Remove(dbPath)
+
 	// Init DB
 	var err error
 	db, err = sql.Open("sqlite3", dbPath)
@@ -79,6 +106,8 @@ func TearDown(code int) {
 	// TEARDOWN
 	log.Println("Cleaning up...")
 	server.Close()
+	cache.Close()
+	mRedis.Close()
 	db.Close()
 	os.Remove(dbPath)
 	os.Exit(code)

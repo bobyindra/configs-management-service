@@ -29,7 +29,7 @@ func newAuthUsecase(repoList repository.RepositoryList) SessionUsecase {
 }
 
 func newConfigsManagementUsecase(repoList repository.RepositoryList) ConfigsManagementUsecase {
-	return configsUscs.NewConfigsUsecase(repoList.ConfigsRepo)
+	return configsUscs.NewConfigsUsecase(repoList.ConfigsDBRepo, repoList.ConfigsCacheRepo)
 }
 
 type ConfigsManagementUsecase interface {

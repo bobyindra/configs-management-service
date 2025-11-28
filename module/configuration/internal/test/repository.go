@@ -11,18 +11,21 @@ import (
 	"github.com/golang/mock/gomock"
 )
 
-type MockRepository struct {
-	DB    sqlmock.Sqlmock
+type MockDBRepository struct {
+	DB sqlmock.Sqlmock
+}
+
+type MockCacheRepository struct {
 	Cache redismock.ClientMock
 }
 
-func NewMockUserRepository(ctrl *gomock.Controller) (*MockRepository, repository.UserRepository) {
+func NewMockUserRepository(ctrl *gomock.Controller) (*MockDBRepository, repository.UserRepository) {
 	db, sqlMock, err := sqlmock.New()
 	if err != nil {
 		log.Println(err)
 	}
 
-	mock := &MockRepository{
+	mock := &MockDBRepository{
 		DB: sqlMock,
 	}
 
@@ -31,20 +34,29 @@ func NewMockUserRepository(ctrl *gomock.Controller) (*MockRepository, repository
 	)
 }
 
-func NewMockConfigsRepository(ctrl *gomock.Controller) (*MockRepository, repository.ConfigsManagementRepository) {
+func NewMockConfigsDBRepository(ctrl *gomock.Controller) (*MockDBRepository, repository.ConfigsManagementDBRepository) {
 	db, sqlMock, err := sqlmock.New()
-	cache, cacheMock := redismock.NewClientMock()
 	if err != nil {
 		log.Println(err)
 	}
 
-	mock := &MockRepository{
-		DB:    sqlMock,
+	mock := &MockDBRepository{
+		DB: sqlMock,
+	}
+
+	return mock, configsRepo.NewConfigsDBRepository(
+		db,
+	)
+}
+
+func NewMockConfigsCacheRepository(ctrl *gomock.Controller) (*MockCacheRepository, repository.ConfigsManagementCacheRepository) {
+	cache, cacheMock := redismock.NewClientMock()
+
+	mock := &MockCacheRepository{
 		Cache: cacheMock,
 	}
 
-	return mock, configsRepo.NewConfigsRepository(
-		db,
+	return mock, configsRepo.NewConfigsCacheRepository(
 		cache,
 	)
 }

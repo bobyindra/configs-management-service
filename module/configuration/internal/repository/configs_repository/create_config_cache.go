@@ -9,7 +9,7 @@ import (
 	"github.com/bobyindra/configs-management-service/module/configuration/entity"
 )
 
-func (r *configsRepository) CreateConfigCache(ctx context.Context, obj *entity.Config) error {
+func (r *configsCacheRepository) CreateConfigCache(ctx context.Context, obj *entity.Config) error {
 	jsonData, err := json.Marshal(obj)
 	if err != nil {
 		return err
