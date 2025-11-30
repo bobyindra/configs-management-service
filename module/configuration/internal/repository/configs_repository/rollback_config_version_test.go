@@ -23,9 +23,9 @@ func (s *configsDBRepoSuite) TestConfigs_RollbackConfig_Success() {
 		s.sqlMock.ExpectQuery(regexp.QuoteMeta(configsRepo.RollbackConfigVersionQuery)).
 			WithArgs(
 				configData.Name,
+				configData.Version,
 				configData.CreatedAt,
 				configData.ActorId,
-				configData.Version,
 			).
 			WillReturnRows(rows)
 
@@ -49,9 +49,9 @@ func (s *configsDBRepoSuite) TestConfigs_RollbackConfig_ErrDB() {
 		s.sqlMock.ExpectQuery(regexp.QuoteMeta(configsRepo.RollbackConfigVersionQuery)).
 			WithArgs(
 				configData.Name,
+				configData.Version,
 				configData.CreatedAt,
 				configData.ActorId,
-				configData.Version,
 			).
 			WillReturnError(mockErr)
 
