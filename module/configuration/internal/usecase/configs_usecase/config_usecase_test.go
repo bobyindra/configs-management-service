@@ -6,6 +6,7 @@ import (
 	repoMock "github.com/bobyindra/configs-management-service/module/configuration/internal/repository/mock"
 	"github.com/bobyindra/configs-management-service/module/configuration/internal/usecase"
 	configUsecase "github.com/bobyindra/configs-management-service/module/configuration/internal/usecase/configs_usecase"
+	schemaMock "github.com/bobyindra/configs-management-service/module/configuration/schema/mock"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/suite"
 )
@@ -18,6 +19,7 @@ type configsUsecaseSuite struct {
 
 	configsDBRepo    *repoMock.MockConfigsManagementDBRepository
 	configsCacheRepo *repoMock.MockConfigsManagementCacheRepository
+	schemaRegistry   *schemaMock.MockSchemaRegistry
 }
 
 func (s *configsUsecaseSuite) SetupTest() {
@@ -26,7 +28,8 @@ func (s *configsUsecaseSuite) SetupTest() {
 	s.ctrl = ctrl
 	s.configsDBRepo = repoMock.NewMockConfigsManagementDBRepository(ctrl)
 	s.configsCacheRepo = repoMock.NewMockConfigsManagementCacheRepository(ctrl)
-	s.subject = configUsecase.NewConfigsUsecase(s.configsDBRepo, s.configsCacheRepo)
+	s.schemaRegistry = schemaMock.NewMockSchemaRegistry(ctrl)
+	s.subject = configUsecase.NewConfigsUsecase(s.configsDBRepo, s.configsCacheRepo, s.schemaRegistry)
 }
 
 func (s *configsUsecaseSuite) TearDownTest() {

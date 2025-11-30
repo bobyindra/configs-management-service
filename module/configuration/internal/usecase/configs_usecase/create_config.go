@@ -9,6 +9,13 @@ import (
 )
 
 func (u *configsUsecase) CreateConfig(ctx context.Context, params *entity.Config) (*entity.ConfigResponse, error) {
+	// Validate schema
+	err := u.validateConfigSchema(params.Name, params.ConfigValues)
+	if err != nil {
+		return nil, err
+	}
+
+	// Create config entity
 	configs := &entity.Config{
 		Name:         params.Name,
 		ConfigValues: params.ConfigValues,
@@ -16,7 +23,8 @@ func (u *configsUsecase) CreateConfig(ctx context.Context, params *entity.Config
 		CreatedAt:    time.Now().UTC(),
 	}
 
-	err := u.configsDBRepo.CreateConfig(ctx, configs)
+	// Store in DB
+	err = u.configsDBRepo.CreateConfig(ctx, configs)
 	if err != nil {
 		return nil, err
 	}

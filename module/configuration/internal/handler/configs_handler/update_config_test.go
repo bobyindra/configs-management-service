@@ -32,14 +32,7 @@ func (s *configsHandlerSuite) TestUpdateConfig_Success() {
 			ActorId:      1,
 		}
 
-		schemaJSON := []byte(`{
-			"type": "string",
-			"minLength": 5,
-			"maxLength": 100
-			}`)
-
 		// mock
-		s.schemaRegistry.EXPECT().GetSchemaByConfigName(gomock.Any()).Return(schemaJSON, nil)
 		s.configsUsecase.EXPECT().UpdateConfigByConfigName(gomock.Any(), gomock.AssignableToTypeOf(params)).Return(configResponse, nil)
 
 		// When
@@ -95,30 +88,6 @@ func (s *configsHandlerSuite) TestUpdateConfig_Error() {
 		s.Contains(w.Body.String(), expectedErrorCode, "Should contain error")
 	})
 
-	s.Run("Test Update Config - Invalid Object Type", func() {
-		// Given
-		params := &entity.Config{
-			Name:         "wording-config",
-			ConfigValues: "test values",
-		}
-
-		schemaJSON := []byte(`{
-			"type": "integer",
-			"minimum": 0,
-			"maximum": 10000
-		}`)
-
-		// mock
-		s.schemaRegistry.EXPECT().GetSchemaByConfigName(gomock.Any()).Return(schemaJSON, nil)
-
-		// When
-		w := s.updateConfig(params, "rw")
-
-		// Then
-		s.Equal(http.StatusBadRequest, w.Code, "Status code should be equal")
-		s.Contains(w.Body.String(), entity.ErrInvalidSchema.Message, "Should contain error")
-	})
-
 	s.Run("Test Update Config - Error", func() {
 		// Given
 		params := &entity.Config{
@@ -126,16 +95,9 @@ func (s *configsHandlerSuite) TestUpdateConfig_Error() {
 			ConfigValues: "test values",
 		}
 
-		schemaJSON := []byte(`{
-			"type": "string",
-			"minLength": 5,
-			"maxLength": 100
-			}`)
-
 		expectedErrorCode := "INTERNAL_ERROR"
 
 		// mock
-		s.schemaRegistry.EXPECT().GetSchemaByConfigName(gomock.Any()).Return(schemaJSON, nil)
 		s.configsUsecase.EXPECT().UpdateConfigByConfigName(gomock.Any(), gomock.AssignableToTypeOf(params)).Return(nil, testutil.ErrUnexpected)
 
 		// When

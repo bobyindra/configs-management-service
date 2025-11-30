@@ -10,6 +10,12 @@ import (
 )
 
 func (u *configsUsecase) UpdateConfigByConfigName(ctx context.Context, params *entity.Config) (*entity.ConfigResponse, error) {
+	// Validate schema
+	err := u.validateConfigSchema(params.Name, params.ConfigValues)
+	if err != nil {
+		return nil, err
+	}
+
 	// Check the config exists or not
 	getParams := &entity.GetConfigRequest{
 		Name: params.Name,

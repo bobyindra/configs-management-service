@@ -14,14 +14,16 @@ import (
 var CONFIGS_SCHEMA_PATH = "./module/configuration/schema/"
 
 func RegisterCmsHandler(cfg CmsConfig) error {
-	repoList := repository.NewRepositoryList(cfg.Database, cfg.Redis)
-	uscsList := usecase.NewUsecaseList(repoList)
-	authUtil := auth.NewAuth([]byte(cfg.JWTSecret), cfg.JWTExpiryDuration)
-	middleware := middleware.NewMiddleware(authUtil)
+	// The hardcoded schema registry is temporary and will be moved to database.
 	schemaRegistry := schema.NewSchemaRegistry(CONFIGS_SCHEMA_PATH)
 
+	repoList := repository.NewRepositoryList(cfg.Database, cfg.Redis)
+	uscsList := usecase.NewUsecaseList(repoList, schemaRegistry)
+	authUtil := auth.NewAuth([]byte(cfg.JWTSecret), cfg.JWTExpiryDuration)
+	middleware := middleware.NewMiddleware(authUtil)
+
 	registerSessionHandler(cfg.Router, authUtil, uscsList)
-	registerConfigsHandler(cfg.Router, middleware, uscsList, schemaRegistry)
+	registerConfigsHandler(cfg.Router, middleware, uscsList)
 
 	return nil
 }
@@ -34,8 +36,8 @@ func registerSessionHandler(router *gin.Engine, auth auth.Auth, uscsList usecase
 	}
 }
 
-func registerConfigsHandler(router *gin.Engine, middleware middleware.MiddlewareInterface, uscsList usecase.UsecaseList, schemaReg schema.SchemaRegistry) {
-	ch := configsHandler.NewConfigsHandler(uscsList.ConfigsManagement, schemaReg)
+func registerConfigsHandler(router *gin.Engine, middleware middleware.MiddlewareInterface, uscsList usecase.UsecaseList) {
+	ch := configsHandler.NewConfigsHandler(uscsList.ConfigsManagementUsecase)
 	v1 := router.Group("/api/v1/configs")
 	v1.Use(middleware.ValidateSession)
 	{

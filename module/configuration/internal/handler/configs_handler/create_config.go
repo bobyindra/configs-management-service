@@ -9,7 +9,6 @@ import (
 	"github.com/bobyindra/configs-management-service/module/configuration/internal/auth"
 	"github.com/bobyindra/configs-management-service/module/configuration/internal/middleware"
 	"github.com/gin-gonic/gin"
-	"github.com/kaptinlin/jsonschema"
 )
 
 func (h *ConfigsHandler) CreateConfigs(c *gin.Context) {
@@ -42,12 +41,6 @@ func (h *ConfigsHandler) CreateConfigs(c *gin.Context) {
 		return
 	}
 
-	err = h.validateConfigSchema(param)
-	if err != nil {
-		helper.BuildFailedResponse(w, err)
-		return
-	}
-
 	resp, err := h.configsUscs.CreateConfig(ctx, createConfigParam)
 	if err != nil {
 		helper.BuildFailedResponse(w, err)
@@ -69,24 +62,4 @@ func (h *ConfigsHandler) normalizeCreateConfigRequest(param entity.Config) (*ent
 	}
 
 	return &param, nil
-}
-
-func (h *ConfigsHandler) validateConfigSchema(param entity.Config) error {
-	fileSchema, err := h.schemaRegistry.GetSchemaByConfigName(param.Name)
-	if err != nil {
-		return err
-	}
-
-	compiler := jsonschema.NewCompiler()
-	sch, err := compiler.Compile(fileSchema)
-	if err != nil {
-		return err
-	}
-
-	// Validate
-	result := sch.Validate(param.ConfigValues)
-	if result.IsValid() {
-		return nil
-	}
-	return entity.ErrInvalidSchema
 }

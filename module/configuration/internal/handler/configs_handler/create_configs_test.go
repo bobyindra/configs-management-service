@@ -41,14 +41,7 @@ func (s *configsHandlerSuite) TestCreateConfig_Success() {
 			ActorId:      jwtResponse.UserID,
 		}
 
-		schemaJSON := []byte(`{
-			"type": "string",
-			"minLength": 5,
-			"maxLength": 100
-			}`)
-
 		// mock
-		s.schemaRegistry.EXPECT().GetSchemaByConfigName(gomock.Any()).Return(schemaJSON, nil)
 		s.configsUsecase.EXPECT().CreateConfig(gomock.Any(), gomock.AssignableToTypeOf(params)).Return(configResponse, nil)
 
 		// When
@@ -133,69 +126,6 @@ func (s *configsHandlerSuite) TestCreateConfig_Error() {
 		s.Contains(w.Body.String(), expectedErrorCode, "Should contain error")
 	})
 
-	s.Run("Test Create Config - Invalid Predefined Schema", func() {
-		// Given
-		params := &entity.Config{
-			Name:         "wording-config",
-			ConfigValues: "test values",
-		}
-
-		expectedErrorCode := "INTERNAL_ERROR"
-		schemaJSON := []byte(`{invalid schema`)
-
-		// mock
-		s.schemaRegistry.EXPECT().GetSchemaByConfigName(gomock.Any()).Return(schemaJSON, nil)
-
-		// When
-		w := s.createConfig(params, "rw")
-
-		// Then
-		s.Equal(http.StatusInternalServerError, w.Code, "Status code should be equal")
-		s.Contains(w.Body.String(), expectedErrorCode, "Should contain error")
-	})
-
-	s.Run("Test Create Config - Invalid object type", func() {
-		// Given
-		params := &entity.Config{
-			Name:         "wording-config",
-			ConfigValues: "test values",
-		}
-
-		schemaJSON := []byte(`{
-			"type": "integer",
-			"minimum": 0,
-			"maximum": 10000
-		}`)
-
-		// mock
-		s.schemaRegistry.EXPECT().GetSchemaByConfigName(gomock.Any()).Return(schemaJSON, nil)
-
-		// When
-		w := s.createConfig(params, "rw")
-
-		// Then
-		s.Equal(http.StatusBadRequest, w.Code, "Status code should be equal")
-		s.Contains(w.Body.String(), entity.ErrInvalidSchema.Message, "Should contain error")
-	})
-
-	s.Run("Test Create Config - Schema Not Found", func() {
-		// Given
-		params := &entity.Config{
-			Name:         "wording-config",
-			ConfigValues: "test values",
-		}
-
-		// mock
-		s.schemaRegistry.EXPECT().GetSchemaByConfigName(gomock.Any()).Return(nil, entity.ErrConfigSchemaNotFound)
-
-		// When
-		w := s.createConfig(params, "rw")
-
-		// Then
-		s.Equal(http.StatusNotFound, w.Code, "Status code should be equal")
-		s.Contains(w.Body.String(), entity.ErrConfigSchemaNotFound.Message, "Should contain error")
-	})
-
 	s.Run("Test Create Config - Error", func() {
 		// Given
 		params := &entity.Config{
@@ -203,16 +133,9 @@ func (s *configsHandlerSuite) TestCreateConfig_Error() {
 			ConfigValues: "test values",
 		}
 
-		schemaJSON := []byte(`{
-			"type": "string",
-			"minLength": 5,
-			"maxLength": 100
-		}`)
-
 		expectedErrorCode := "INTERNAL_ERROR"
 
 		// mock
-		s.schemaRegistry.EXPECT().GetSchemaByConfigName(gomock.Any()).Return(schemaJSON, nil)
 		s.configsUsecase.EXPECT().CreateConfig(gomock.Any(), gomock.AssignableToTypeOf(params)).Return(nil, testutil.ErrUnexpected)
 
 		// When

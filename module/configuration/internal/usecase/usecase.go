@@ -6,20 +6,21 @@ import (
 	"github.com/bobyindra/configs-management-service/module/configuration/entity"
 	"github.com/bobyindra/configs-management-service/module/configuration/internal/encryption"
 	"github.com/bobyindra/configs-management-service/module/configuration/internal/repository"
+	"github.com/bobyindra/configs-management-service/module/configuration/schema"
 
 	authUscs "github.com/bobyindra/configs-management-service/module/configuration/internal/usecase/auth"
 	configsUscs "github.com/bobyindra/configs-management-service/module/configuration/internal/usecase/configs_usecase"
 )
 
 type UsecaseList struct {
-	AuthUsecase       SessionUsecase
-	ConfigsManagement ConfigsManagementUsecase
+	AuthUsecase              SessionUsecase
+	ConfigsManagementUsecase ConfigsManagementUsecase
 }
 
-func NewUsecaseList(repoList repository.RepositoryList) UsecaseList {
+func NewUsecaseList(repoList repository.RepositoryList, scmReg schema.SchemaRegistry) UsecaseList {
 	return UsecaseList{
-		AuthUsecase:       newAuthUsecase(repoList),
-		ConfigsManagement: newConfigsManagementUsecase(repoList),
+		AuthUsecase:              newAuthUsecase(repoList),
+		ConfigsManagementUsecase: newConfigsManagementUsecase(repoList, scmReg),
 	}
 }
 
@@ -28,8 +29,8 @@ func newAuthUsecase(repoList repository.RepositoryList) SessionUsecase {
 	return authUscs.NewSessionUscs(encryption, repoList.UserRepo)
 }
 
-func newConfigsManagementUsecase(repoList repository.RepositoryList) ConfigsManagementUsecase {
-	return configsUscs.NewConfigsUsecase(repoList.ConfigsDBRepo, repoList.ConfigsCacheRepo)
+func newConfigsManagementUsecase(repoList repository.RepositoryList, scmReg schema.SchemaRegistry) ConfigsManagementUsecase {
+	return configsUscs.NewConfigsUsecase(repoList.ConfigsDBRepo, repoList.ConfigsCacheRepo, scmReg)
 }
 
 type ConfigsManagementUsecase interface {

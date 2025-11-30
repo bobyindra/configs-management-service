@@ -41,12 +41,6 @@ func (h *ConfigsHandler) UpdateConfig(c *gin.Context) {
 		return
 	}
 
-	err = h.validateConfigSchema(param)
-	if err != nil {
-		helper.BuildFailedResponse(w, err)
-		return
-	}
-
 	resp, err := h.configsUscs.UpdateConfigByConfigName(ctx, createConfigParam)
 	if err != nil {
 		helper.BuildFailedResponse(w, err)
