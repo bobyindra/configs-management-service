@@ -31,7 +31,7 @@ func (s *configsUsecaseSuite) TestConfigs_UpdateConfig_Success() {
 		s.schemaRegistry.EXPECT().GetSchemaByConfigName(gomock.Any()).Return(schemaJSON, nil)
 		s.configsDBRepo.EXPECT().GetConfigByConfigName(ctx, getParam).Return(cfgResponse, nil)
 		s.configsDBRepo.EXPECT().UpdateConfigByConfigName(ctx, gomock.AssignableToTypeOf(config)).Return(nil)
-		s.configsCacheRepo.EXPECT().CreateConfigCache(ctx, gomock.AssignableToTypeOf(config)).Return(nil)
+		s.configsCacheRepo.EXPECT().DeleteConfigCache(ctx, config.Name).Return(nil)
 
 		// When
 		resp, err := s.subject.UpdateConfigByConfigName(ctx, config)
@@ -265,7 +265,7 @@ func (s *configsUsecaseSuite) TestConfigs_UpdateConfig_Err() {
 		s.schemaRegistry.EXPECT().GetSchemaByConfigName(gomock.Any()).Return(schemaJSON, nil)
 		s.configsDBRepo.EXPECT().GetConfigByConfigName(ctx, getParam).Return(cfgResponse, nil)
 		s.configsDBRepo.EXPECT().UpdateConfigByConfigName(ctx, gomock.AssignableToTypeOf(config)).Return(nil)
-		s.configsCacheRepo.EXPECT().CreateConfigCache(ctx, gomock.AssignableToTypeOf(config)).Return(testutil.ErrUnexpected)
+		s.configsCacheRepo.EXPECT().DeleteConfigCache(ctx, config.Name).Return(testutil.ErrUnexpected)
 
 		// When
 		resp, err := s.subject.UpdateConfigByConfigName(ctx, config)

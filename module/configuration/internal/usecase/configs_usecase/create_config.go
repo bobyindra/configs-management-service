@@ -2,7 +2,6 @@ package configsusecase
 
 import (
 	"context"
-	"log"
 	"time"
 
 	"github.com/bobyindra/configs-management-service/module/configuration/entity"
@@ -27,12 +26,6 @@ func (u *configsUsecase) CreateConfig(ctx context.Context, params *entity.Config
 	err = u.configsDBRepo.CreateConfig(ctx, configs)
 	if err != nil {
 		return nil, err
-	}
-
-	// Store in cache
-	err = u.configsCacheRepo.CreateConfigCache(ctx, configs)
-	if err != nil {
-		log.Printf("Failed to create config cache: %v", err)
 	}
 
 	return configs.ToResponse(), nil

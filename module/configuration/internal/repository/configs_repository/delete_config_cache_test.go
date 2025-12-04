@@ -5,10 +5,11 @@ import (
 	"fmt"
 
 	"github.com/bobyindra/configs-management-service/internal/testutil"
+	"github.com/redis/go-redis/v9"
 )
 
 func (s *configsCacheRepoSuite) TestConfigs_DeleteConfigCache_Success() {
-	s.Run("Delete Config Cache - Success", func() {
+	s.Run("Delete Config Cache Found - Success", func() {
 		// Given
 		ctx := context.TODO()
 		cfgName := "test-config"
@@ -16,6 +17,24 @@ func (s *configsCacheRepoSuite) TestConfigs_DeleteConfigCache_Success() {
 
 		// mock
 		s.cacheMock.ExpectDel(key).SetVal(int64(1))
+
+		// When
+		err := s.subject.DeleteConfigCache(ctx, cfgName)
+
+		// Then
+		s.Nil(err, "Error should be nil")
+		cacheMockErr := s.cacheMock.ExpectationsWereMet()
+		s.Nil(cacheMockErr, "All Cache expectations should be met")
+	})
+
+	s.Run("Delete Config Cache Not Found - Success", func() {
+		// Given
+		ctx := context.TODO()
+		cfgName := "test-config"
+		key := fmt.Sprintf("configs-%s", cfgName)
+
+		// mock
+		s.cacheMock.ExpectDel(key).SetErr(redis.Nil)
 
 		// When
 		err := s.subject.DeleteConfigCache(ctx, cfgName)

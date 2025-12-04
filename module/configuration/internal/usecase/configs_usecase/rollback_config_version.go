@@ -42,10 +42,10 @@ func (u *configsUsecase) RollbackConfigVersionByConfigName(ctx context.Context, 
 		return nil, err
 	}
 
-	// Update cache
-	err = u.configsCacheRepo.CreateConfigCache(ctx, configs)
+	// Invalidate cache
+	err = u.configsCacheRepo.DeleteConfigCache(ctx, configs.Name)
 	if err != nil {
-		log.Printf("Failed to create config cache: %v", err)
+		log.Printf("Failed to delete config cache: %v", err)
 	}
 
 	return configs.ToResponse(), nil
